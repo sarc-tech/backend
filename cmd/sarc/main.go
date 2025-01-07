@@ -9,13 +9,17 @@ import (
 	"github.com/go-faster/errors"
 	"github.com/go-faster/sdk/app"
 	"github.com/go-faster/sdk/zctx"
+	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 
+	"github.com/sarc-tech/backend/internal/api"
 	"github.com/sarc-tech/backend/internal/httpmiddleware"
 	"github.com/sarc-tech/backend/internal/oas"
-
-	"github.com/sarc-tech/backend/internal/api"
+	incidentRepo "github.com/sarc-tech/backend/internal/repositories/incident"
+	incidentUsecase "github.com/sarc-tech/backend/internal/usecases/incident"
+	"github.com/sarc-tech/backend/pkg/database"
 )
 
 const shutdownTimeout = 15 * time.Second
@@ -25,16 +29,23 @@ func main() {
 		var arg struct {
 			Addr string
 		}
-		flag.StringVar(&arg.Addr, "addr", "0.0.0.0:8080", "listen address")
+		flag.StringVar(&arg.Addr, "addr", "0.0.0.0:8082", "listen address")
 		flag.Parse()
 
 		lg.Info("Initializing",
 			zap.String("http.addr", arg.Addr),
 		)
-		oasServer, err := oas.NewServer(api.Handler{},
-			oas.WithTracerProvider(m.TracerProvider()),
-			oas.WithMeterProvider(m.MeterProvider()),
-		)
+
+		db, err := sqlx.Connect("postgres", "postgres://user:password@localhost:5543/test?sslmode=disable")
+		if err != nil {
+			return errors.Wrap(err, "connect to database")
+		}
+		defer db.Close()
+
+		repo := incidentRepo.NewRepository(database.NewRepository[incidentRepo.Model](db))
+		uc := incidentUsecase.NewUsecase(repo)
+
+		oasServer, err := oas.NewServer(api.NewHandler(uc))
 		if err != nil {
 			return errors.Wrap(err, "server init")
 		}
