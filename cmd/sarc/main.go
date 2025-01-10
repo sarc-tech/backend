@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/go-faster/errors"
@@ -26,10 +27,17 @@ const shutdownTimeout = 15 * time.Second
 
 func main() {
 	app.Run(func(ctx context.Context, lg *zap.Logger, m *app.Metrics) error {
+
+		portStr := os.Getenv("PORT")
+
+		if portStr == "" {
+			portStr = "8082"
+		}
+
 		var arg struct {
 			Addr string
 		}
-		flag.StringVar(&arg.Addr, "addr", "0.0.0.0:8082", "listen address")
+		flag.StringVar(&arg.Addr, "addr", "0.0.0.0:"+portStr, "listen address")
 		flag.Parse()
 
 		lg.Info("Initializing",

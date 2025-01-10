@@ -1,0 +1,42 @@
+on:
+  push:
+    branches: [ "main" ]
+
+  # А также разрешаем вручную запустить из любой ветки
+  workflow_dispatch: {}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:  
+    - uses: actions/checkout@v3
+
+    - name: Login to Yandex Cloud Container Registry
+      id: login-cr
+      uses: yc-actions/yc-cr-login@v1
+      with:
+        yc-sa-json-credentials: ${{ secrets.YC_SA_JSON_CREDENTIALS }}
+
+    - name: Build, tag, and push image to Yandex Cloud Container Registry
+      env:
+        CR_REGISTRY: crpsscra410u2ga8gcf5
+        CR_REPOSITORY: sarc
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        docker build -t cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG -f Dockerfile .
+        docker push cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG
+
+    - name: Deploy Serverless Container
+      id: deploy-sls-container
+      uses: yc-actions/yc-sls-container-deploy@v2
+      with:
+        yc-sa-json-credentials: ${{ secrets.YC_SA_JSON_CREDENTIALS }}
+        container-name: sarc
+        folder-id: b1gg3s0sfecg82rbj9cc
+        revision-service-account-id: ajeik1cr3hcpb1pnalvm
+        revision-cores: 1
+        revision-memory: 128Mb
+        revision-core-fraction: 100
+        revision-concurrency: 8
+        revision-image-url: cr.yandex/crpsscra410u2ga8gcf5/sarc:${{ github.sha }}
+        revision-execution-timeout: 10

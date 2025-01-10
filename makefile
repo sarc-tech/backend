@@ -5,6 +5,24 @@ PG_PASSWORD=password
 PG_DB=test
 PG_PORT=5432
 
+COMMIT?=$(shell git rev-parse --short HEAD)
+BUILD_TIME?=$(shell date -u '+%Y-%m-%d_%H:%M:%S')
+
+export GO111MODULE=on
+
+.PHONY: build
+build: 
+	@echo "-- building binary"
+	go build \
+		-ldflags "-X main.buildHash=${COMMIT} -X main.buildTime=${BUILD_TIME}" \
+		-o ./bin/back \
+		./cmd/sarc/
+
+.PHONY: docker
+docker: 
+	@echo "-- building docker container"
+	docker build -f Dockerfile --platform=linux/amd64 -t back .
+
 # Запуск локальной базы данных
 .PHONY: docker-up
 docker-up:
