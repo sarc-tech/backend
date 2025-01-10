@@ -2,11 +2,11 @@
 
 package oas
 
-type AddIncidentsApplicationJSON Incidents
+type AddIncidentsApplicationJSON Incident
 
 func (*AddIncidentsApplicationJSON) addIncidentsReq() {}
 
-type AddIncidentsApplicationXWwwFormUrlencoded Incidents
+type AddIncidentsApplicationXWwwFormUrlencoded Incident
 
 func (*AddIncidentsApplicationXWwwFormUrlencoded) addIncidentsReq() {}
 
@@ -38,75 +38,75 @@ type GetIncidentsBadRequest struct{}
 
 func (*GetIncidentsBadRequest) getIncidentsRes() {}
 
-// Ref: #/components/schemas/Incidents
-type Incidents struct {
+// Ref: #/components/schemas/Incident
+type Incident struct {
 	// Incident id.
-	ID     OptString `json:"id"`
-	Region OptString `json:"region"`
-	Fio    OptString `json:"fio"`
-	Status OptString `json:"status"`
-	Date   OptString `json:"date"`
+	ID     string `json:"id"`
+	Region string `json:"region"`
+	Fio    string `json:"fio"`
+	Status string `json:"status"`
+	Date   string `json:"date"`
 }
 
 // GetID returns the value of ID.
-func (s *Incidents) GetID() OptString {
+func (s *Incident) GetID() string {
 	return s.ID
 }
 
 // GetRegion returns the value of Region.
-func (s *Incidents) GetRegion() OptString {
+func (s *Incident) GetRegion() string {
 	return s.Region
 }
 
 // GetFio returns the value of Fio.
-func (s *Incidents) GetFio() OptString {
+func (s *Incident) GetFio() string {
 	return s.Fio
 }
 
 // GetStatus returns the value of Status.
-func (s *Incidents) GetStatus() OptString {
+func (s *Incident) GetStatus() string {
 	return s.Status
 }
 
 // GetDate returns the value of Date.
-func (s *Incidents) GetDate() OptString {
+func (s *Incident) GetDate() string {
 	return s.Date
 }
 
 // SetID sets the value of ID.
-func (s *Incidents) SetID(val OptString) {
+func (s *Incident) SetID(val string) {
 	s.ID = val
 }
 
 // SetRegion sets the value of Region.
-func (s *Incidents) SetRegion(val OptString) {
+func (s *Incident) SetRegion(val string) {
 	s.Region = val
 }
 
 // SetFio sets the value of Fio.
-func (s *Incidents) SetFio(val OptString) {
+func (s *Incident) SetFio(val string) {
 	s.Fio = val
 }
 
 // SetStatus sets the value of Status.
-func (s *Incidents) SetStatus(val OptString) {
+func (s *Incident) SetStatus(val string) {
 	s.Status = val
 }
 
 // SetDate sets the value of Date.
-func (s *Incidents) SetDate(val OptString) {
+func (s *Incident) SetDate(val string) {
 	s.Date = val
 }
 
-func (*Incidents) addIncidentsRes()    {}
-func (*Incidents) getIncidentByIdRes() {}
-func (*Incidents) updateIncidentsRes() {}
+func (*Incident) addIncidentsRes()    {}
+func (*Incident) getIncidentByIdRes() {}
+func (*Incident) updateIncidentsRes() {}
 
 // Ref: #/components/schemas/IncidentsResponse
 type IncidentsResponse struct {
-	TrackingId OptString   `json:"trackingId"`
-	Status     OptString   `json:"status"`
-	Data       []Incidents `json:"data"`
+	TrackingId OptString  `json:"trackingId"`
+	Status     OptString  `json:"status"`
+	Data       []Incident `json:"data"`
 }
 
 // GetTrackingId returns the value of TrackingId.
@@ -120,7 +120,7 @@ func (s *IncidentsResponse) GetStatus() OptString {
 }
 
 // GetData returns the value of Data.
-func (s *IncidentsResponse) GetData() []Incidents {
+func (s *IncidentsResponse) GetData() []Incident {
 	return s.Data
 }
 
@@ -135,7 +135,7 @@ func (s *IncidentsResponse) SetStatus(val OptString) {
 }
 
 // SetData sets the value of Data.
-func (s *IncidentsResponse) SetData(val []Incidents) {
+func (s *IncidentsResponse) SetData(val []Incident) {
 	s.Data = val
 }
 
@@ -187,11 +187,11 @@ func (o OptString) Or(d string) string {
 	return d
 }
 
-type UpdateIncidentsApplicationJSON Incidents
+type UpdateIncidentsApplicationJSON Incident
 
 func (*UpdateIncidentsApplicationJSON) updateIncidentsReq() {}
 
-type UpdateIncidentsApplicationXWwwFormUrlencoded Incidents
+type UpdateIncidentsApplicationXWwwFormUrlencoded Incident
 
 func (*UpdateIncidentsApplicationXWwwFormUrlencoded) updateIncidentsReq() {}
 

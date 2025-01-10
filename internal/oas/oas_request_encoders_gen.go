@@ -42,10 +42,7 @@ func encodeAddIncidentsRequest(
 				Explode: true,
 			}
 			if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
-				if val, ok := request.ID.Get(); ok {
-					return e.EncodeValue(conv.StringToString(val))
-				}
-				return nil
+				return e.EncodeValue(conv.StringToString(request.ID))
 			}); err != nil {
 				return errors.Wrap(err, "encode query")
 			}
@@ -58,10 +55,7 @@ func encodeAddIncidentsRequest(
 				Explode: true,
 			}
 			if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
-				if val, ok := request.Region.Get(); ok {
-					return e.EncodeValue(conv.StringToString(val))
-				}
-				return nil
+				return e.EncodeValue(conv.StringToString(request.Region))
 			}); err != nil {
 				return errors.Wrap(err, "encode query")
 			}
@@ -74,10 +68,7 @@ func encodeAddIncidentsRequest(
 				Explode: true,
 			}
 			if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
-				if val, ok := request.Fio.Get(); ok {
-					return e.EncodeValue(conv.StringToString(val))
-				}
-				return nil
+				return e.EncodeValue(conv.StringToString(request.Fio))
 			}); err != nil {
 				return errors.Wrap(err, "encode query")
 			}
@@ -90,10 +81,7 @@ func encodeAddIncidentsRequest(
 				Explode: true,
 			}
 			if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
-				if val, ok := request.Status.Get(); ok {
-					return e.EncodeValue(conv.StringToString(val))
-				}
-				return nil
+				return e.EncodeValue(conv.StringToString(request.Status))
 			}); err != nil {
 				return errors.Wrap(err, "encode query")
 			}
@@ -106,10 +94,7 @@ func encodeAddIncidentsRequest(
 				Explode: true,
 			}
 			if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
-				if val, ok := request.Date.Get(); ok {
-					return e.EncodeValue(conv.StringToString(val))
-				}
-				return nil
+				return e.EncodeValue(conv.StringToString(request.Date))
 			}); err != nil {
 				return errors.Wrap(err, "encode query")
 			}
@@ -149,10 +134,7 @@ func encodeUpdateIncidentsRequest(
 				Explode: true,
 			}
 			if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
-				if val, ok := request.ID.Get(); ok {
-					return e.EncodeValue(conv.StringToString(val))
-				}
-				return nil
+				return e.EncodeValue(conv.StringToString(request.ID))
 			}); err != nil {
 				return errors.Wrap(err, "encode query")
 			}
@@ -165,10 +147,7 @@ func encodeUpdateIncidentsRequest(
 				Explode: true,
 			}
 			if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
-				if val, ok := request.Region.Get(); ok {
-					return e.EncodeValue(conv.StringToString(val))
-				}
-				return nil
+				return e.EncodeValue(conv.StringToString(request.Region))
 			}); err != nil {
 				return errors.Wrap(err, "encode query")
 			}
@@ -181,10 +160,7 @@ func encodeUpdateIncidentsRequest(
 				Explode: true,
 			}
 			if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
-				if val, ok := request.Fio.Get(); ok {
-					return e.EncodeValue(conv.StringToString(val))
-				}
-				return nil
+				return e.EncodeValue(conv.StringToString(request.Fio))
 			}); err != nil {
 				return errors.Wrap(err, "encode query")
 			}
@@ -197,10 +173,7 @@ func encodeUpdateIncidentsRequest(
 				Explode: true,
 			}
 			if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
-				if val, ok := request.Status.Get(); ok {
-					return e.EncodeValue(conv.StringToString(val))
-				}
-				return nil
+				return e.EncodeValue(conv.StringToString(request.Status))
 			}); err != nil {
 				return errors.Wrap(err, "encode query")
 			}
@@ -213,10 +186,7 @@ func encodeUpdateIncidentsRequest(
 				Explode: true,
 			}
 			if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
-				if val, ok := request.Date.Get(); ok {
-					return e.EncodeValue(conv.StringToString(val))
-				}
-				return nil
+				return e.EncodeValue(conv.StringToString(request.Date))
 			}); err != nil {
 				return errors.Wrap(err, "encode query")
 			}

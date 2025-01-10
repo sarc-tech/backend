@@ -13,7 +13,7 @@ import (
 
 func encodeAddIncidentsResponse(response AddIncidentsRes, w http.ResponseWriter, span trace.Span) error {
 	switch response := response.(type) {
-	case *Incidents:
+	case *Incident:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
 		span.SetStatus(codes.Ok, http.StatusText(200))
@@ -52,7 +52,7 @@ func encodeDeleteIncidentResponse(response *DeleteIncidentBadRequest, w http.Res
 
 func encodeGetIncidentByIdResponse(response GetIncidentByIdRes, w http.ResponseWriter, span trace.Span) error {
 	switch response := response.(type) {
-	case *Incidents:
+	case *Incident:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
 		span.SetStatus(codes.Ok, http.StatusText(200))
@@ -110,7 +110,7 @@ func encodeGetIncidentsResponse(response GetIncidentsRes, w http.ResponseWriter,
 
 func encodeUpdateIncidentsResponse(response UpdateIncidentsRes, w http.ResponseWriter, span trace.Span) error {
 	switch response := response.(type) {
-	case *Incidents:
+	case *Incident:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
 		span.SetStatus(codes.Ok, http.StatusText(200))

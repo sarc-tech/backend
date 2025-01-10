@@ -30,7 +30,7 @@ func decodeAddIncidentsResponse(resp *http.Response) (res AddIncidentsRes, _ err
 			}
 			d := jx.DecodeBytes(buf)
 
-			var response Incidents
+			var response Incident
 			if err := func() error {
 				if err := response.Decode(d); err != nil {
 					return err
@@ -86,7 +86,7 @@ func decodeGetIncidentByIdResponse(resp *http.Response) (res GetIncidentByIdRes,
 			}
 			d := jx.DecodeBytes(buf)
 
-			var response Incidents
+			var response Incident
 			if err := func() error {
 				if err := response.Decode(d); err != nil {
 					return err
@@ -177,7 +177,7 @@ func decodeUpdateIncidentsResponse(resp *http.Response) (res UpdateIncidentsRes,
 			}
 			d := jx.DecodeBytes(buf)
 
-			var response Incidents
+			var response Incident
 			if err := func() error {
 				if err := response.Decode(d); err != nil {
 					return err

@@ -30,22 +30,22 @@ func (h *handler) AddIncidents(ctx context.Context, req oas.AddIncidentsReq) (oa
 
 	incident := &models.Incident{
 		IsTraining: false, //! Нет поля в oas
-		Region:     request.Region.Value,
-		FIO:        request.Fio.Value,
-		Status:     request.Status.Value,
-		Date:       request.Date.Value,
+		Region:     request.Region,
+		FIO:        request.Fio,
+		Status:     request.Status,
+		Date:       request.Date,
 	}
 
 	if err := h.incidents.Add(ctx, incident); err != nil {
 		return nil, fmt.Errorf("failed to add incident: %w", err)
 	}
 
-	return &oas.Incidents{
-		ID:     oas.NewOptString(fmt.Sprintf("%d", incident.ID)),
-		Region: oas.NewOptString(incident.Region),
-		Fio:    oas.NewOptString(incident.FIO),
-		Status: oas.NewOptString(incident.Status),
-		Date:   oas.NewOptString(incident.Date),
+	return &oas.Incident{
+		ID:     fmt.Sprintf("%d", incident.ID),
+		Region: incident.Region,
+		Fio:    incident.FIO,
+		Status: incident.Status,
+		Date:   incident.Date,
 	}, nil //? Не понятно что вернуть
 }
 
@@ -65,12 +65,12 @@ func (h *handler) GetIncidentById(
 	if err != nil {
 		return nil, fmt.Errorf("failed to get incident: %w", err)
 	}
-	return &oas.Incidents{
-		ID:     oas.NewOptString(fmt.Sprintf("%d", incident.ID)),
-		Region: oas.NewOptString(incident.Region),
-		Fio:    oas.NewOptString(incident.FIO),
-		Status: oas.NewOptString(incident.Status),
-		Date:   oas.NewOptString(incident.Date),
+	return &oas.Incident{
+		ID:     fmt.Sprintf("%d", incident.ID),
+		Region: incident.Region,
+		Fio:    incident.FIO,
+		Status: incident.Status,
+		Date:   incident.Date,
 	}, nil
 }
 

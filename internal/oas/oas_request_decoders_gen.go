@@ -87,7 +87,7 @@ func (s *Server) decodeAddIncidentsRequest(r *http.Request) (
 
 		var request AddIncidentsApplicationXWwwFormUrlencoded
 		{
-			var unwrapped Incidents
+			var unwrapped Incident
 			q := uri.NewQueryDecoder(form)
 			{
 				cfg := uri.QueryParameterDecodingConfig{
@@ -97,28 +97,23 @@ func (s *Server) decodeAddIncidentsRequest(r *http.Request) (
 				}
 				if err := q.HasParam(cfg); err == nil {
 					if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
-						var unwrappedDotIDVal string
-						if err := func() error {
-							val, err := d.DecodeValue()
-							if err != nil {
-								return err
-							}
-
-							c, err := conv.ToString(val)
-							if err != nil {
-								return err
-							}
-
-							unwrappedDotIDVal = c
-							return nil
-						}(); err != nil {
+						val, err := d.DecodeValue()
+						if err != nil {
 							return err
 						}
-						unwrapped.ID.SetTo(unwrappedDotIDVal)
+
+						c, err := conv.ToString(val)
+						if err != nil {
+							return err
+						}
+
+						unwrapped.ID = c
 						return nil
 					}); err != nil {
 						return req, close, errors.Wrap(err, "decode \"id\"")
 					}
+				} else {
+					return req, close, errors.Wrap(err, "query")
 				}
 			}
 			{
@@ -129,28 +124,23 @@ func (s *Server) decodeAddIncidentsRequest(r *http.Request) (
 				}
 				if err := q.HasParam(cfg); err == nil {
 					if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
-						var unwrappedDotRegionVal string
-						if err := func() error {
-							val, err := d.DecodeValue()
-							if err != nil {
-								return err
-							}
-
-							c, err := conv.ToString(val)
-							if err != nil {
-								return err
-							}
-
-							unwrappedDotRegionVal = c
-							return nil
-						}(); err != nil {
+						val, err := d.DecodeValue()
+						if err != nil {
 							return err
 						}
-						unwrapped.Region.SetTo(unwrappedDotRegionVal)
+
+						c, err := conv.ToString(val)
+						if err != nil {
+							return err
+						}
+
+						unwrapped.Region = c
 						return nil
 					}); err != nil {
 						return req, close, errors.Wrap(err, "decode \"region\"")
 					}
+				} else {
+					return req, close, errors.Wrap(err, "query")
 				}
 			}
 			{
@@ -161,28 +151,23 @@ func (s *Server) decodeAddIncidentsRequest(r *http.Request) (
 				}
 				if err := q.HasParam(cfg); err == nil {
 					if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
-						var unwrappedDotFioVal string
-						if err := func() error {
-							val, err := d.DecodeValue()
-							if err != nil {
-								return err
-							}
-
-							c, err := conv.ToString(val)
-							if err != nil {
-								return err
-							}
-
-							unwrappedDotFioVal = c
-							return nil
-						}(); err != nil {
+						val, err := d.DecodeValue()
+						if err != nil {
 							return err
 						}
-						unwrapped.Fio.SetTo(unwrappedDotFioVal)
+
+						c, err := conv.ToString(val)
+						if err != nil {
+							return err
+						}
+
+						unwrapped.Fio = c
 						return nil
 					}); err != nil {
 						return req, close, errors.Wrap(err, "decode \"fio\"")
 					}
+				} else {
+					return req, close, errors.Wrap(err, "query")
 				}
 			}
 			{
@@ -193,28 +178,23 @@ func (s *Server) decodeAddIncidentsRequest(r *http.Request) (
 				}
 				if err := q.HasParam(cfg); err == nil {
 					if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
-						var unwrappedDotStatusVal string
-						if err := func() error {
-							val, err := d.DecodeValue()
-							if err != nil {
-								return err
-							}
-
-							c, err := conv.ToString(val)
-							if err != nil {
-								return err
-							}
-
-							unwrappedDotStatusVal = c
-							return nil
-						}(); err != nil {
+						val, err := d.DecodeValue()
+						if err != nil {
 							return err
 						}
-						unwrapped.Status.SetTo(unwrappedDotStatusVal)
+
+						c, err := conv.ToString(val)
+						if err != nil {
+							return err
+						}
+
+						unwrapped.Status = c
 						return nil
 					}); err != nil {
 						return req, close, errors.Wrap(err, "decode \"status\"")
 					}
+				} else {
+					return req, close, errors.Wrap(err, "query")
 				}
 			}
 			{
@@ -225,28 +205,23 @@ func (s *Server) decodeAddIncidentsRequest(r *http.Request) (
 				}
 				if err := q.HasParam(cfg); err == nil {
 					if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
-						var unwrappedDotDateVal string
-						if err := func() error {
-							val, err := d.DecodeValue()
-							if err != nil {
-								return err
-							}
-
-							c, err := conv.ToString(val)
-							if err != nil {
-								return err
-							}
-
-							unwrappedDotDateVal = c
-							return nil
-						}(); err != nil {
+						val, err := d.DecodeValue()
+						if err != nil {
 							return err
 						}
-						unwrapped.Date.SetTo(unwrappedDotDateVal)
+
+						c, err := conv.ToString(val)
+						if err != nil {
+							return err
+						}
+
+						unwrapped.Date = c
 						return nil
 					}); err != nil {
 						return req, close, errors.Wrap(err, "decode \"date\"")
 					}
+				} else {
+					return req, close, errors.Wrap(err, "query")
 				}
 			}
 			request = AddIncidentsApplicationXWwwFormUrlencoded(unwrapped)
@@ -326,7 +301,7 @@ func (s *Server) decodeUpdateIncidentsRequest(r *http.Request) (
 
 		var request UpdateIncidentsApplicationXWwwFormUrlencoded
 		{
-			var unwrapped Incidents
+			var unwrapped Incident
 			q := uri.NewQueryDecoder(form)
 			{
 				cfg := uri.QueryParameterDecodingConfig{
@@ -336,28 +311,23 @@ func (s *Server) decodeUpdateIncidentsRequest(r *http.Request) (
 				}
 				if err := q.HasParam(cfg); err == nil {
 					if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
-						var unwrappedDotIDVal string
-						if err := func() error {
-							val, err := d.DecodeValue()
-							if err != nil {
-								return err
-							}
-
-							c, err := conv.ToString(val)
-							if err != nil {
-								return err
-							}
-
-							unwrappedDotIDVal = c
-							return nil
-						}(); err != nil {
+						val, err := d.DecodeValue()
+						if err != nil {
 							return err
 						}
-						unwrapped.ID.SetTo(unwrappedDotIDVal)
+
+						c, err := conv.ToString(val)
+						if err != nil {
+							return err
+						}
+
+						unwrapped.ID = c
 						return nil
 					}); err != nil {
 						return req, close, errors.Wrap(err, "decode \"id\"")
 					}
+				} else {
+					return req, close, errors.Wrap(err, "query")
 				}
 			}
 			{
@@ -368,28 +338,23 @@ func (s *Server) decodeUpdateIncidentsRequest(r *http.Request) (
 				}
 				if err := q.HasParam(cfg); err == nil {
 					if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
-						var unwrappedDotRegionVal string
-						if err := func() error {
-							val, err := d.DecodeValue()
-							if err != nil {
-								return err
-							}
-
-							c, err := conv.ToString(val)
-							if err != nil {
-								return err
-							}
-
-							unwrappedDotRegionVal = c
-							return nil
-						}(); err != nil {
+						val, err := d.DecodeValue()
+						if err != nil {
 							return err
 						}
-						unwrapped.Region.SetTo(unwrappedDotRegionVal)
+
+						c, err := conv.ToString(val)
+						if err != nil {
+							return err
+						}
+
+						unwrapped.Region = c
 						return nil
 					}); err != nil {
 						return req, close, errors.Wrap(err, "decode \"region\"")
 					}
+				} else {
+					return req, close, errors.Wrap(err, "query")
 				}
 			}
 			{
@@ -400,28 +365,23 @@ func (s *Server) decodeUpdateIncidentsRequest(r *http.Request) (
 				}
 				if err := q.HasParam(cfg); err == nil {
 					if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
-						var unwrappedDotFioVal string
-						if err := func() error {
-							val, err := d.DecodeValue()
-							if err != nil {
-								return err
-							}
-
-							c, err := conv.ToString(val)
-							if err != nil {
-								return err
-							}
-
-							unwrappedDotFioVal = c
-							return nil
-						}(); err != nil {
+						val, err := d.DecodeValue()
+						if err != nil {
 							return err
 						}
-						unwrapped.Fio.SetTo(unwrappedDotFioVal)
+
+						c, err := conv.ToString(val)
+						if err != nil {
+							return err
+						}
+
+						unwrapped.Fio = c
 						return nil
 					}); err != nil {
 						return req, close, errors.Wrap(err, "decode \"fio\"")
 					}
+				} else {
+					return req, close, errors.Wrap(err, "query")
 				}
 			}
 			{
@@ -432,28 +392,23 @@ func (s *Server) decodeUpdateIncidentsRequest(r *http.Request) (
 				}
 				if err := q.HasParam(cfg); err == nil {
 					if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
-						var unwrappedDotStatusVal string
-						if err := func() error {
-							val, err := d.DecodeValue()
-							if err != nil {
-								return err
-							}
-
-							c, err := conv.ToString(val)
-							if err != nil {
-								return err
-							}
-
-							unwrappedDotStatusVal = c
-							return nil
-						}(); err != nil {
+						val, err := d.DecodeValue()
+						if err != nil {
 							return err
 						}
-						unwrapped.Status.SetTo(unwrappedDotStatusVal)
+
+						c, err := conv.ToString(val)
+						if err != nil {
+							return err
+						}
+
+						unwrapped.Status = c
 						return nil
 					}); err != nil {
 						return req, close, errors.Wrap(err, "decode \"status\"")
 					}
+				} else {
+					return req, close, errors.Wrap(err, "query")
 				}
 			}
 			{
@@ -464,28 +419,23 @@ func (s *Server) decodeUpdateIncidentsRequest(r *http.Request) (
 				}
 				if err := q.HasParam(cfg); err == nil {
 					if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
-						var unwrappedDotDateVal string
-						if err := func() error {
-							val, err := d.DecodeValue()
-							if err != nil {
-								return err
-							}
-
-							c, err := conv.ToString(val)
-							if err != nil {
-								return err
-							}
-
-							unwrappedDotDateVal = c
-							return nil
-						}(); err != nil {
+						val, err := d.DecodeValue()
+						if err != nil {
 							return err
 						}
-						unwrapped.Date.SetTo(unwrappedDotDateVal)
+
+						c, err := conv.ToString(val)
+						if err != nil {
+							return err
+						}
+
+						unwrapped.Date = c
 						return nil
 					}); err != nil {
 						return req, close, errors.Wrap(err, "decode \"date\"")
 					}
+				} else {
+					return req, close, errors.Wrap(err, "query")
 				}
 			}
 			request = UpdateIncidentsApplicationXWwwFormUrlencoded(unwrapped)

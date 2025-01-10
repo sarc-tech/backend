@@ -3,13 +3,18 @@
 package oas
 
 import (
+	"math/bits"
+	"strconv"
+
 	"github.com/go-faster/errors"
 	"github.com/go-faster/jx"
+
+	"github.com/ogen-go/ogen/validate"
 )
 
 // Encode encodes AddIncidentsApplicationJSON as json.
 func (s *AddIncidentsApplicationJSON) Encode(e *jx.Encoder) {
-	unwrapped := (*Incidents)(s)
+	unwrapped := (*Incident)(s)
 
 	unwrapped.Encode(e)
 }
@@ -19,7 +24,7 @@ func (s *AddIncidentsApplicationJSON) Decode(d *jx.Decoder) error {
 	if s == nil {
 		return errors.New("invalid: unable to decode AddIncidentsApplicationJSON to nil")
 	}
-	var unwrapped Incidents
+	var unwrapped Incident
 	if err := func() error {
 		if err := unwrapped.Decode(d); err != nil {
 			return err
@@ -47,7 +52,7 @@ func (s *AddIncidentsApplicationJSON) UnmarshalJSON(data []byte) error {
 
 // Encode encodes AddIncidentsApplicationXWwwFormUrlencoded as json.
 func (s *AddIncidentsApplicationXWwwFormUrlencoded) Encode(e *jx.Encoder) {
-	unwrapped := (*Incidents)(s)
+	unwrapped := (*Incident)(s)
 
 	unwrapped.Encode(e)
 }
@@ -57,7 +62,7 @@ func (s *AddIncidentsApplicationXWwwFormUrlencoded) Decode(d *jx.Decoder) error 
 	if s == nil {
 		return errors.New("invalid: unable to decode AddIncidentsApplicationXWwwFormUrlencoded to nil")
 	}
-	var unwrapped Incidents
+	var unwrapped Incident
 	if err := func() error {
 		if err := unwrapped.Decode(d); err != nil {
 			return err
@@ -84,47 +89,37 @@ func (s *AddIncidentsApplicationXWwwFormUrlencoded) UnmarshalJSON(data []byte) e
 }
 
 // Encode implements json.Marshaler.
-func (s *Incidents) Encode(e *jx.Encoder) {
+func (s *Incident) Encode(e *jx.Encoder) {
 	e.ObjStart()
 	s.encodeFields(e)
 	e.ObjEnd()
 }
 
 // encodeFields encodes fields.
-func (s *Incidents) encodeFields(e *jx.Encoder) {
+func (s *Incident) encodeFields(e *jx.Encoder) {
 	{
-		if s.ID.Set {
-			e.FieldStart("id")
-			s.ID.Encode(e)
-		}
+		e.FieldStart("id")
+		e.Str(s.ID)
 	}
 	{
-		if s.Region.Set {
-			e.FieldStart("region")
-			s.Region.Encode(e)
-		}
+		e.FieldStart("region")
+		e.Str(s.Region)
 	}
 	{
-		if s.Fio.Set {
-			e.FieldStart("fio")
-			s.Fio.Encode(e)
-		}
+		e.FieldStart("fio")
+		e.Str(s.Fio)
 	}
 	{
-		if s.Status.Set {
-			e.FieldStart("status")
-			s.Status.Encode(e)
-		}
+		e.FieldStart("status")
+		e.Str(s.Status)
 	}
 	{
-		if s.Date.Set {
-			e.FieldStart("date")
-			s.Date.Encode(e)
-		}
+		e.FieldStart("date")
+		e.Str(s.Date)
 	}
 }
 
-var jsonFieldsNameOfIncidents = [5]string{
+var jsonFieldsNameOfIncident = [5]string{
 	0: "id",
 	1: "region",
 	2: "fio",
@@ -132,18 +127,21 @@ var jsonFieldsNameOfIncidents = [5]string{
 	4: "date",
 }
 
-// Decode decodes Incidents from json.
-func (s *Incidents) Decode(d *jx.Decoder) error {
+// Decode decodes Incident from json.
+func (s *Incident) Decode(d *jx.Decoder) error {
 	if s == nil {
-		return errors.New("invalid: unable to decode Incidents to nil")
+		return errors.New("invalid: unable to decode Incident to nil")
 	}
+	var requiredBitSet [1]uint8
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
 		case "id":
+			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
-				s.ID.Reset()
-				if err := s.ID.Decode(d); err != nil {
+				v, err := d.Str()
+				s.ID = string(v)
+				if err != nil {
 					return err
 				}
 				return nil
@@ -151,9 +149,11 @@ func (s *Incidents) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"id\"")
 			}
 		case "region":
+			requiredBitSet[0] |= 1 << 1
 			if err := func() error {
-				s.Region.Reset()
-				if err := s.Region.Decode(d); err != nil {
+				v, err := d.Str()
+				s.Region = string(v)
+				if err != nil {
 					return err
 				}
 				return nil
@@ -161,9 +161,11 @@ func (s *Incidents) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"region\"")
 			}
 		case "fio":
+			requiredBitSet[0] |= 1 << 2
 			if err := func() error {
-				s.Fio.Reset()
-				if err := s.Fio.Decode(d); err != nil {
+				v, err := d.Str()
+				s.Fio = string(v)
+				if err != nil {
 					return err
 				}
 				return nil
@@ -171,9 +173,11 @@ func (s *Incidents) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"fio\"")
 			}
 		case "status":
+			requiredBitSet[0] |= 1 << 3
 			if err := func() error {
-				s.Status.Reset()
-				if err := s.Status.Decode(d); err != nil {
+				v, err := d.Str()
+				s.Status = string(v)
+				if err != nil {
 					return err
 				}
 				return nil
@@ -181,9 +185,11 @@ func (s *Incidents) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"status\"")
 			}
 		case "date":
+			requiredBitSet[0] |= 1 << 4
 			if err := func() error {
-				s.Date.Reset()
-				if err := s.Date.Decode(d); err != nil {
+				v, err := d.Str()
+				s.Date = string(v)
+				if err != nil {
 					return err
 				}
 				return nil
@@ -195,21 +201,53 @@ func (s *Incidents) Decode(d *jx.Decoder) error {
 		}
 		return nil
 	}); err != nil {
-		return errors.Wrap(err, "decode Incidents")
+		return errors.Wrap(err, "decode Incident")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00011111,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfIncident) {
+					name = jsonFieldsNameOfIncident[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
 	}
 
 	return nil
 }
 
 // MarshalJSON implements stdjson.Marshaler.
-func (s *Incidents) MarshalJSON() ([]byte, error) {
+func (s *Incident) MarshalJSON() ([]byte, error) {
 	e := jx.Encoder{}
 	s.Encode(&e)
 	return e.Bytes(), nil
 }
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *Incidents) UnmarshalJSON(data []byte) error {
+func (s *Incident) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -284,9 +322,9 @@ func (s *IncidentsResponse) Decode(d *jx.Decoder) error {
 			}
 		case "data":
 			if err := func() error {
-				s.Data = make([]Incidents, 0)
+				s.Data = make([]Incident, 0)
 				if err := d.Arr(func(d *jx.Decoder) error {
-					var elem Incidents
+					var elem Incident
 					if err := elem.Decode(d); err != nil {
 						return err
 					}
@@ -360,7 +398,7 @@ func (s *OptString) UnmarshalJSON(data []byte) error {
 
 // Encode encodes UpdateIncidentsApplicationJSON as json.
 func (s *UpdateIncidentsApplicationJSON) Encode(e *jx.Encoder) {
-	unwrapped := (*Incidents)(s)
+	unwrapped := (*Incident)(s)
 
 	unwrapped.Encode(e)
 }
@@ -370,7 +408,7 @@ func (s *UpdateIncidentsApplicationJSON) Decode(d *jx.Decoder) error {
 	if s == nil {
 		return errors.New("invalid: unable to decode UpdateIncidentsApplicationJSON to nil")
 	}
-	var unwrapped Incidents
+	var unwrapped Incident
 	if err := func() error {
 		if err := unwrapped.Decode(d); err != nil {
 			return err
@@ -398,7 +436,7 @@ func (s *UpdateIncidentsApplicationJSON) UnmarshalJSON(data []byte) error {
 
 // Encode encodes UpdateIncidentsApplicationXWwwFormUrlencoded as json.
 func (s *UpdateIncidentsApplicationXWwwFormUrlencoded) Encode(e *jx.Encoder) {
-	unwrapped := (*Incidents)(s)
+	unwrapped := (*Incident)(s)
 
 	unwrapped.Encode(e)
 }
@@ -408,7 +446,7 @@ func (s *UpdateIncidentsApplicationXWwwFormUrlencoded) Decode(d *jx.Decoder) err
 	if s == nil {
 		return errors.New("invalid: unable to decode UpdateIncidentsApplicationXWwwFormUrlencoded to nil")
 	}
-	var unwrapped Incidents
+	var unwrapped Incident
 	if err := func() error {
 		if err := unwrapped.Decode(d); err != nil {
 			return err
