@@ -29,9 +29,14 @@ func main() {
 	app.Run(func(ctx context.Context, lg *zap.Logger, m *app.Metrics) error {
 
 		portStr := os.Getenv("PORT")
+		strConn := os.Getenv("STRCON")
 
 		if portStr == "" {
 			portStr = "8082"
+		}
+
+		if strConn == "" {
+			strConn = "postgres://user:password@localhost:5543/test?sslmode=disable"
 		}
 
 		var arg struct {
@@ -44,10 +49,11 @@ func main() {
 			zap.String("http.addr", arg.Addr),
 		)
 
-		db, err := sqlx.Connect("postgres", "postgres://user:password@localhost:5543/test?sslmode=disable")
+		db, err := sqlx.Connect("postgres", strConn)
 		if err != nil {
 			return errors.Wrap(err, "connect to database")
 		}
+
 		defer db.Close()
 
 		repo := incidentRepo.NewRepository(database.NewRepository[incidentRepo.Model](db))
