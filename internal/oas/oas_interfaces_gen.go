@@ -9,6 +9,10 @@ type AddIncidentsRes interface {
 	addIncidentsRes()
 }
 
+type DeleteIncidentRes interface {
+	deleteIncidentRes()
+}
+
 type GetIncidentByIdRes interface {
 	getIncidentByIdRes()
 }

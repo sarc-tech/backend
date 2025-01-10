@@ -23,6 +23,13 @@ func (*AddIncidentsUnprocessableEntity) addIncidentsRes() {}
 // DeleteIncidentBadRequest is response for DeleteIncident operation.
 type DeleteIncidentBadRequest struct{}
 
+func (*DeleteIncidentBadRequest) deleteIncidentRes() {}
+
+// DeleteIncidentOK is response for DeleteIncident operation.
+type DeleteIncidentOK struct{}
+
+func (*DeleteIncidentOK) deleteIncidentRes() {}
+
 // GetIncidentByIdBadRequest is response for GetIncidentById operation.
 type GetIncidentByIdBadRequest struct{}
 

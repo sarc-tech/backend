@@ -27,8 +27,8 @@ func (UnimplementedHandler) AddIncidents(ctx context.Context, req AddIncidentsRe
 // Delete an incidents.
 //
 // DELETE /incidents/{incidentId}
-func (UnimplementedHandler) DeleteIncident(ctx context.Context, params DeleteIncidentParams) error {
-	return ht.ErrNotImplemented
+func (UnimplementedHandler) DeleteIncident(ctx context.Context, params DeleteIncidentParams) (r DeleteIncidentRes, _ error) {
+	return r, ht.ErrNotImplemented
 }
 
 // GetIncidentById implements getIncidentById operation.

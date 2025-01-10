@@ -49,16 +49,16 @@ func (h *handler) AddIncidents(ctx context.Context, req oas.AddIncidentsReq) (oa
 	}, nil //? Не понятно что вернуть
 }
 
-func (h *handler) DeleteIncident(ctx context.Context, params oas.DeleteIncidentParams) error {
+func (h *handler) DeleteIncident(ctx context.Context, params oas.DeleteIncidentParams) (oas.DeleteIncidentRes, error) {
 	id, err := strconv.Atoi(params.IncidentId)
 	if err != nil {
-		return fmt.Errorf("invalid request type: %T", params)
+		return nil, fmt.Errorf("invalid request type: %T", params)
 	}
 	err = h.incidents.Delete(ctx, id)
 	if err != nil {
-		return fmt.Errorf("failed to get incident: %w", err)
+		return nil, fmt.Errorf("failed to get incident: %w", err)
 	}
-	return nil
+	return &oas.DeleteIncidentOK{}, nil
 }
 
 func (h *handler) GetIncidentById(
@@ -111,7 +111,13 @@ func (h *handler) UpdateIncidents(ctx context.Context, req oas.UpdateIncidentsRe
 		return &oas.UpdateIncidentsBadRequest{}, fmt.Errorf("invalid request type: %T", req)
 	}
 
+	id, err := strconv.Atoi(request.ID)
+	if err != nil {
+		return nil, fmt.Errorf("invalid request type: %T", id)
+	}
+
 	incident := &models.Incident{
+		ID:         id,
 		IsTraining: false, //! Нет поля в oas
 		Region:     request.Region,
 		FIO:        request.Fio,
@@ -124,7 +130,7 @@ func (h *handler) UpdateIncidents(ctx context.Context, req oas.UpdateIncidentsRe
 	}
 
 	return &oas.Incident{
-		ID:     fmt.Sprintf("%d", incident.ID),
+		ID:     fmt.Sprintf("%d", id),
 		Region: incident.Region,
 		Fio:    incident.FIO,
 		Status: incident.Status,

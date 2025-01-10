@@ -61,8 +61,11 @@ func decodeAddIncidentsResponse(resp *http.Response) (res AddIncidentsRes, _ err
 	return res, validate.UnexpectedStatusCode(resp.StatusCode)
 }
 
-func decodeDeleteIncidentResponse(resp *http.Response) (res *DeleteIncidentBadRequest, _ error) {
+func decodeDeleteIncidentResponse(resp *http.Response) (res DeleteIncidentRes, _ error) {
 	switch resp.StatusCode {
+	case 200:
+		// Code 200.
+		return &DeleteIncidentOK{}, nil
 	case 400:
 		// Code 400.
 		return &DeleteIncidentBadRequest{}, nil

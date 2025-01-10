@@ -43,11 +43,23 @@ func encodeAddIncidentsResponse(response AddIncidentsRes, w http.ResponseWriter,
 	}
 }
 
-func encodeDeleteIncidentResponse(response *DeleteIncidentBadRequest, w http.ResponseWriter, span trace.Span) error {
-	w.WriteHeader(400)
-	span.SetStatus(codes.Error, http.StatusText(400))
+func encodeDeleteIncidentResponse(response DeleteIncidentRes, w http.ResponseWriter, span trace.Span) error {
+	switch response := response.(type) {
+	case *DeleteIncidentOK:
+		w.WriteHeader(200)
+		span.SetStatus(codes.Ok, http.StatusText(200))
 
-	return nil
+		return nil
+
+	case *DeleteIncidentBadRequest:
+		w.WriteHeader(400)
+		span.SetStatus(codes.Error, http.StatusText(400))
+
+		return nil
+
+	default:
+		return errors.Errorf("unexpected response type: %T", response)
+	}
 }
 
 func encodeGetIncidentByIdResponse(response GetIncidentByIdRes, w http.ResponseWriter, span trace.Span) error {

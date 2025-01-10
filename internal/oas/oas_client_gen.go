@@ -41,7 +41,7 @@ type IncidentsInvoker interface {
 	// Delete an incidents.
 	//
 	// DELETE /incidents/{incidentId}
-	DeleteIncident(ctx context.Context, params DeleteIncidentParams) error
+	DeleteIncident(ctx context.Context, params DeleteIncidentParams) (DeleteIncidentRes, error)
 	// GetIncidentById invokes getIncidentById operation.
 	//
 	// Returns a single incidents.
@@ -190,12 +190,12 @@ func (c *Client) sendAddIncidents(ctx context.Context, request AddIncidentsReq) 
 // Delete an incidents.
 //
 // DELETE /incidents/{incidentId}
-func (c *Client) DeleteIncident(ctx context.Context, params DeleteIncidentParams) error {
-	_, err := c.sendDeleteIncident(ctx, params)
-	return err
+func (c *Client) DeleteIncident(ctx context.Context, params DeleteIncidentParams) (DeleteIncidentRes, error) {
+	res, err := c.sendDeleteIncident(ctx, params)
+	return res, err
 }
 
-func (c *Client) sendDeleteIncident(ctx context.Context, params DeleteIncidentParams) (res *DeleteIncidentBadRequest, err error) {
+func (c *Client) sendDeleteIncident(ctx context.Context, params DeleteIncidentParams) (res DeleteIncidentRes, err error) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("deleteIncident"),
 		semconv.HTTPRequestMethodKey.String("DELETE"),

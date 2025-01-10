@@ -26,7 +26,7 @@ type IncidentsHandler interface {
 	// Delete an incidents.
 	//
 	// DELETE /incidents/{incidentId}
-	DeleteIncident(ctx context.Context, params DeleteIncidentParams) error
+	DeleteIncident(ctx context.Context, params DeleteIncidentParams) (DeleteIncidentRes, error)
 	// GetIncidentById implements getIncidentById operation.
 	//
 	// Returns a single incidents.

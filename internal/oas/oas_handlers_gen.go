@@ -253,7 +253,7 @@ func (s *Server) handleDeleteIncidentRequest(args [1]string, argsEscaped bool, w
 		return
 	}
 
-	var response *DeleteIncidentBadRequest
+	var response DeleteIncidentRes
 	if m := s.cfg.Middleware; m != nil {
 		mreq := middleware.Request{
 			Context:          ctx,
@@ -273,7 +273,7 @@ func (s *Server) handleDeleteIncidentRequest(args [1]string, argsEscaped bool, w
 		type (
 			Request  = struct{}
 			Params   = DeleteIncidentParams
-			Response = *DeleteIncidentBadRequest
+			Response = DeleteIncidentRes
 		)
 		response, err = middleware.HookMiddleware[
 			Request,
@@ -284,12 +284,12 @@ func (s *Server) handleDeleteIncidentRequest(args [1]string, argsEscaped bool, w
 			mreq,
 			unpackDeleteIncidentParams,
 			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				err = s.h.DeleteIncident(ctx, params)
+				response, err = s.h.DeleteIncident(ctx, params)
 				return response, err
 			},
 		)
 	} else {
-		err = s.h.DeleteIncident(ctx, params)
+		response, err = s.h.DeleteIncident(ctx, params)
 	}
 	if err != nil {
 		defer recordError("Internal", err)
