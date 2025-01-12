@@ -115,11 +115,11 @@ func (*GetUserNotFound) getUserRes() {}
 // Ref: #/components/schemas/Incident
 type Incident struct {
 	// Incident id.
-	ID       string `json:"id"`
-	Region   string `json:"region"`
-	Fio      string `json:"fio"`
-	StatusId string `json:"statusId"`
-	Date     string `json:"date"`
+	ID       string    `json:"id"`
+	Region   string    `json:"region"`
+	Fio      string    `json:"fio"`
+	StatusId OptString `json:"statusId"`
+	Date     string    `json:"date"`
 }
 
 // GetID returns the value of ID.
@@ -138,7 +138,7 @@ func (s *Incident) GetFio() string {
 }
 
 // GetStatusId returns the value of StatusId.
-func (s *Incident) GetStatusId() string {
+func (s *Incident) GetStatusId() OptString {
 	return s.StatusId
 }
 
@@ -163,7 +163,7 @@ func (s *Incident) SetFio(val string) {
 }
 
 // SetStatusId sets the value of StatusId.
-func (s *Incident) SetStatusId(val string) {
+func (s *Incident) SetStatusId(val OptString) {
 	s.StatusId = val
 }
 
@@ -181,6 +181,7 @@ type IncidentsResponse struct {
 	TrackingId string     `json:"trackingId"`
 	Status     string     `json:"status"`
 	Data       []Incident `json:"data"`
+	Statuses   []Status   `json:"statuses"`
 }
 
 // GetTrackingId returns the value of TrackingId.
@@ -198,6 +199,11 @@ func (s *IncidentsResponse) GetData() []Incident {
 	return s.Data
 }
 
+// GetStatuses returns the value of Statuses.
+func (s *IncidentsResponse) GetStatuses() []Status {
+	return s.Statuses
+}
+
 // SetTrackingId sets the value of TrackingId.
 func (s *IncidentsResponse) SetTrackingId(val string) {
 	s.TrackingId = val
@@ -211,6 +217,11 @@ func (s *IncidentsResponse) SetStatus(val string) {
 // SetData sets the value of Data.
 func (s *IncidentsResponse) SetData(val []Incident) {
 	s.Data = val
+}
+
+// SetStatuses sets the value of Statuses.
+func (s *IncidentsResponse) SetStatuses(val []Status) {
+	s.Statuses = val
 }
 
 func (*IncidentsResponse) getIncidentsRes() {}
@@ -229,6 +240,52 @@ func (*LogoutNotFound) logoutRes() {}
 type LogoutOK struct{}
 
 func (*LogoutOK) logoutRes() {}
+
+// NewOptString returns new OptString with value set to v.
+func NewOptString(v string) OptString {
+	return OptString{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptString is optional string.
+type OptString struct {
+	Value string
+	Set   bool
+}
+
+// IsSet returns true if OptString was set.
+func (o OptString) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptString) Reset() {
+	var v string
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptString) SetTo(v string) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptString) Get() (v string, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptString) Or(d string) string {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
 
 // SendSmsBadRequest is response for SendSms operation.
 type SendSmsBadRequest struct{}

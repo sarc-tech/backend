@@ -61,6 +61,7 @@ func (h Handler) GetIncidentById(ctx context.Context, params oas.GetIncidentById
 func (h Handler) GetIncidents(ctx context.Context) (oas.GetIncidentsRes, error) {
 	req := make([]oas.Incident, 0, 50)
 
+	// Получим все инциденты
 	incident := oas.Incident{}
 	rows, err := h.DB.Queryx("SELECT * FROM incidents")
 	if err != nil {
@@ -74,7 +75,23 @@ func (h Handler) GetIncidents(ctx context.Context) (oas.GetIncidentsRes, error) 
 		req = append(req, incident)
 	}
 
-	return &oas.IncidentsResponse{TrackingId: "123", Status: "Ok", Data: req}, nil
+	// Получим все статусы
+	req_status := make([]oas.Status, 0, 50)
+
+	status := oas.Status{}
+	rows, err = h.DB.Queryx("SELECT * FROM statuses")
+	if err != nil {
+		return &oas.GetIncidentsBadRequest{}, fmt.Errorf("failed to get incidents")
+	}
+	for rows.Next() {
+		err := rows.StructScan(&status)
+		if err != nil {
+			log.Fatalln(err)
+		}
+		req_status = append(req_status, status)
+	}
+
+	return &oas.IncidentsResponse{TrackingId: "123", Status: "Ok", Data: req, Statuses: req_status}, nil
 }
 
 // UpdateIncidents implements oas.Handler.
