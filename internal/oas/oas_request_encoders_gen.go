@@ -81,10 +81,7 @@ func encodeAddIncidentsRequest(
 				Explode: true,
 			}
 			if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
-				if val, ok := request.StatusId.Get(); ok {
-					return e.EncodeValue(conv.StringToString(val))
-				}
-				return nil
+				return e.EncodeValue(conv.StringToString(request.StatusId))
 			}); err != nil {
 				return errors.Wrap(err, "encode query")
 			}
@@ -229,10 +226,7 @@ func encodeUpdateIncidentsRequest(
 				Explode: true,
 			}
 			if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
-				if val, ok := request.StatusId.Get(); ok {
-					return e.EncodeValue(conv.StringToString(val))
-				}
-				return nil
+				return e.EncodeValue(conv.StringToString(request.StatusId))
 			}); err != nil {
 				return errors.Wrap(err, "encode query")
 			}

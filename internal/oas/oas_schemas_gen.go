@@ -115,11 +115,11 @@ func (*GetUserNotFound) getUserRes() {}
 // Ref: #/components/schemas/Incident
 type Incident struct {
 	// Incident id.
-	ID       string    `json:"id"`
-	Region   string    `json:"region"`
-	Fio      string    `json:"fio"`
-	StatusId OptString `json:"statusId"`
-	Date     string    `json:"date"`
+	ID       string `json:"id"`
+	Region   string `json:"region"`
+	Fio      string `json:"fio"`
+	StatusId string `json:"statusId"`
+	Date     string `json:"date"`
 }
 
 // GetID returns the value of ID.
@@ -138,7 +138,7 @@ func (s *Incident) GetFio() string {
 }
 
 // GetStatusId returns the value of StatusId.
-func (s *Incident) GetStatusId() OptString {
+func (s *Incident) GetStatusId() string {
 	return s.StatusId
 }
 
@@ -163,7 +163,7 @@ func (s *Incident) SetFio(val string) {
 }
 
 // SetStatusId sets the value of StatusId.
-func (s *Incident) SetStatusId(val OptString) {
+func (s *Incident) SetStatusId(val string) {
 	s.StatusId = val
 }
 
@@ -240,52 +240,6 @@ func (*LogoutNotFound) logoutRes() {}
 type LogoutOK struct{}
 
 func (*LogoutOK) logoutRes() {}
-
-// NewOptString returns new OptString with value set to v.
-func NewOptString(v string) OptString {
-	return OptString{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptString is optional string.
-type OptString struct {
-	Value string
-	Set   bool
-}
-
-// IsSet returns true if OptString was set.
-func (o OptString) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptString) Reset() {
-	var v string
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptString) SetTo(v string) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptString) Get() (v string, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptString) Or(d string) string {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
 
 // SendSmsBadRequest is response for SendSms operation.
 type SendSmsBadRequest struct{}

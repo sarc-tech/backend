@@ -226,10 +226,8 @@ func (s *Incident) encodeFields(e *jx.Encoder) {
 		e.Str(s.Fio)
 	}
 	{
-		if s.StatusId.Set {
-			e.FieldStart("statusId")
-			s.StatusId.Encode(e)
-		}
+		e.FieldStart("statusId")
+		e.Str(s.StatusId)
 	}
 	{
 		e.FieldStart("date")
@@ -291,9 +289,11 @@ func (s *Incident) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"fio\"")
 			}
 		case "statusId":
+			requiredBitSet[0] |= 1 << 3
 			if err := func() error {
-				s.StatusId.Reset()
-				if err := s.StatusId.Decode(d); err != nil {
+				v, err := d.Str()
+				s.StatusId = string(v)
+				if err != nil {
 					return err
 				}
 				return nil
@@ -322,7 +322,7 @@ func (s *Incident) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00010111,
+		0b00011111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -533,41 +533,6 @@ func (s *IncidentsResponse) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *IncidentsResponse) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode encodes string as json.
-func (o OptString) Encode(e *jx.Encoder) {
-	if !o.Set {
-		return
-	}
-	e.Str(string(o.Value))
-}
-
-// Decode decodes string from json.
-func (o *OptString) Decode(d *jx.Decoder) error {
-	if o == nil {
-		return errors.New("invalid: unable to decode OptString to nil")
-	}
-	o.Set = true
-	v, err := d.Str()
-	if err != nil {
-		return err
-	}
-	o.Value = string(v)
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s OptString) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *OptString) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }

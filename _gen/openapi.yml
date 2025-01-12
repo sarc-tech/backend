@@ -9,7 +9,7 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  version: 0.0.5
+  version: 0.0.6
 externalDocs:
   description: Find out more about Swagger
   url: http://swagger.io
@@ -410,7 +410,7 @@ components:
         - id
         - region
         - fio
-        - status
+        - statusId
         - date
       type: object
       properties:
