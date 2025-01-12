@@ -49,55 +49,227 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 		switch elem[0] {
-		case '/': // Prefix: "/incidents"
+		case '/': // Prefix: "/"
 			origElem := elem
-			if l := len("/incidents"); len(elem) >= l && elem[0:l] == "/incidents" {
+			if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
 				elem = elem[l:]
 			} else {
 				break
 			}
 
 			if len(elem) == 0 {
-				switch r.Method {
-				case "GET":
-					s.handleGetIncidentsRequest([0]string{}, elemIsEscaped, w, r)
-				case "POST":
-					s.handleAddIncidentsRequest([0]string{}, elemIsEscaped, w, r)
-				case "PUT":
-					s.handleUpdateIncidentsRequest([0]string{}, elemIsEscaped, w, r)
-				default:
-					s.notAllowed(w, r, "GET,POST,PUT")
-				}
-
-				return
+				break
 			}
 			switch elem[0] {
-			case '/': // Prefix: "/"
+			case 'c': // Prefix: "checksms"
 				origElem := elem
-				if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+				if l := len("checksms"); len(elem) >= l && elem[0:l] == "checksms" {
 					elem = elem[l:]
 				} else {
 					break
 				}
 
-				// Param: "incidentId"
-				// Leaf parameter
-				args[0] = elem
-				elem = ""
+				if len(elem) == 0 {
+					// Leaf node.
+					switch r.Method {
+					case "GET":
+						s.handleCheckSmsRequest([0]string{}, elemIsEscaped, w, r)
+					default:
+						s.notAllowed(w, r, "GET")
+					}
+
+					return
+				}
+
+				elem = origElem
+			case 'i': // Prefix: "incidents"
+				origElem := elem
+				if l := len("incidents"); len(elem) >= l && elem[0:l] == "incidents" {
+					elem = elem[l:]
+				} else {
+					break
+				}
+
+				if len(elem) == 0 {
+					switch r.Method {
+					case "GET":
+						s.handleGetIncidentsRequest([0]string{}, elemIsEscaped, w, r)
+					case "POST":
+						s.handleAddIncidentsRequest([0]string{}, elemIsEscaped, w, r)
+					case "PUT":
+						s.handleUpdateIncidentsRequest([0]string{}, elemIsEscaped, w, r)
+					default:
+						s.notAllowed(w, r, "GET,POST,PUT")
+					}
+
+					return
+				}
+				switch elem[0] {
+				case '/': // Prefix: "/"
+					origElem := elem
+					if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					// Param: "incidentId"
+					// Leaf parameter
+					args[0] = elem
+					elem = ""
+
+					if len(elem) == 0 {
+						// Leaf node.
+						switch r.Method {
+						case "DELETE":
+							s.handleDeleteIncidentRequest([1]string{
+								args[0],
+							}, elemIsEscaped, w, r)
+						case "GET":
+							s.handleGetIncidentByIdRequest([1]string{
+								args[0],
+							}, elemIsEscaped, w, r)
+						default:
+							s.notAllowed(w, r, "DELETE,GET")
+						}
+
+						return
+					}
+
+					elem = origElem
+				}
+
+				elem = origElem
+			case 'l': // Prefix: "logout"
+				origElem := elem
+				if l := len("logout"); len(elem) >= l && elem[0:l] == "logout" {
+					elem = elem[l:]
+				} else {
+					break
+				}
 
 				if len(elem) == 0 {
 					// Leaf node.
 					switch r.Method {
-					case "DELETE":
-						s.handleDeleteIncidentRequest([1]string{
-							args[0],
-						}, elemIsEscaped, w, r)
 					case "GET":
-						s.handleGetIncidentByIdRequest([1]string{
-							args[0],
-						}, elemIsEscaped, w, r)
+						s.handleLogoutRequest([0]string{}, elemIsEscaped, w, r)
 					default:
-						s.notAllowed(w, r, "DELETE,GET")
+						s.notAllowed(w, r, "GET")
+					}
+
+					return
+				}
+
+				elem = origElem
+			case 's': // Prefix: "s"
+				origElem := elem
+				if l := len("s"); len(elem) >= l && elem[0:l] == "s" {
+					elem = elem[l:]
+				} else {
+					break
+				}
+
+				if len(elem) == 0 {
+					break
+				}
+				switch elem[0] {
+				case 'e': // Prefix: "endsms"
+					origElem := elem
+					if l := len("endsms"); len(elem) >= l && elem[0:l] == "endsms" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					if len(elem) == 0 {
+						// Leaf node.
+						switch r.Method {
+						case "GET":
+							s.handleSendSmsRequest([0]string{}, elemIsEscaped, w, r)
+						default:
+							s.notAllowed(w, r, "GET")
+						}
+
+						return
+					}
+
+					elem = origElem
+				case 't': // Prefix: "tatuses"
+					origElem := elem
+					if l := len("tatuses"); len(elem) >= l && elem[0:l] == "tatuses" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					if len(elem) == 0 {
+						switch r.Method {
+						case "GET":
+							s.handleGetStatusesRequest([0]string{}, elemIsEscaped, w, r)
+						case "POST":
+							s.handleAddStatusRequest([0]string{}, elemIsEscaped, w, r)
+						case "PUT":
+							s.handleUpdateStatusRequest([0]string{}, elemIsEscaped, w, r)
+						default:
+							s.notAllowed(w, r, "GET,POST,PUT")
+						}
+
+						return
+					}
+					switch elem[0] {
+					case '/': // Prefix: "/"
+						origElem := elem
+						if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+							elem = elem[l:]
+						} else {
+							break
+						}
+
+						// Param: "statusId"
+						// Leaf parameter
+						args[0] = elem
+						elem = ""
+
+						if len(elem) == 0 {
+							// Leaf node.
+							switch r.Method {
+							case "DELETE":
+								s.handleDeleteStatusRequest([1]string{
+									args[0],
+								}, elemIsEscaped, w, r)
+							case "GET":
+								s.handleGetStatusByIdRequest([1]string{
+									args[0],
+								}, elemIsEscaped, w, r)
+							default:
+								s.notAllowed(w, r, "DELETE,GET")
+							}
+
+							return
+						}
+
+						elem = origElem
+					}
+
+					elem = origElem
+				}
+
+				elem = origElem
+			case 'u': // Prefix: "user"
+				origElem := elem
+				if l := len("user"); len(elem) >= l && elem[0:l] == "user" {
+					elem = elem[l:]
+				} else {
+					break
+				}
+
+				if len(elem) == 0 {
+					// Leaf node.
+					switch r.Method {
+					case "GET":
+						s.handleGetUserRequest([0]string{}, elemIsEscaped, w, r)
+					default:
+						s.notAllowed(w, r, "GET")
 					}
 
 					return
@@ -187,76 +359,286 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 			break
 		}
 		switch elem[0] {
-		case '/': // Prefix: "/incidents"
+		case '/': // Prefix: "/"
 			origElem := elem
-			if l := len("/incidents"); len(elem) >= l && elem[0:l] == "/incidents" {
+			if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
 				elem = elem[l:]
 			} else {
 				break
 			}
 
 			if len(elem) == 0 {
-				switch method {
-				case "GET":
-					r.name = GetIncidentsOperation
-					r.summary = "получение списка заявок"
-					r.operationID = "getIncidents"
-					r.pathPattern = "/incidents"
-					r.args = args
-					r.count = 0
-					return r, true
-				case "POST":
-					r.name = AddIncidentsOperation
-					r.summary = "добавление новой заявки"
-					r.operationID = "addIncidents"
-					r.pathPattern = "/incidents"
-					r.args = args
-					r.count = 0
-					return r, true
-				case "PUT":
-					r.name = UpdateIncidentsOperation
-					r.summary = "Обновление существующей заявки"
-					r.operationID = "updateIncidents"
-					r.pathPattern = "/incidents"
-					r.args = args
-					r.count = 0
-					return r, true
-				default:
-					return
-				}
+				break
 			}
 			switch elem[0] {
-			case '/': // Prefix: "/"
+			case 'c': // Prefix: "checksms"
 				origElem := elem
-				if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+				if l := len("checksms"); len(elem) >= l && elem[0:l] == "checksms" {
 					elem = elem[l:]
 				} else {
 					break
 				}
 
-				// Param: "incidentId"
-				// Leaf parameter
-				args[0] = elem
-				elem = ""
+				if len(elem) == 0 {
+					// Leaf node.
+					switch method {
+					case "GET":
+						r.name = CheckSmsOperation
+						r.summary = "Получение токена"
+						r.operationID = "CheckSms"
+						r.pathPattern = "/checksms"
+						r.args = args
+						r.count = 0
+						return r, true
+					default:
+						return
+					}
+				}
+
+				elem = origElem
+			case 'i': // Prefix: "incidents"
+				origElem := elem
+				if l := len("incidents"); len(elem) >= l && elem[0:l] == "incidents" {
+					elem = elem[l:]
+				} else {
+					break
+				}
+
+				if len(elem) == 0 {
+					switch method {
+					case "GET":
+						r.name = GetIncidentsOperation
+						r.summary = "получение списка заявок"
+						r.operationID = "getIncidents"
+						r.pathPattern = "/incidents"
+						r.args = args
+						r.count = 0
+						return r, true
+					case "POST":
+						r.name = AddIncidentsOperation
+						r.summary = "добавление новой заявки"
+						r.operationID = "addIncidents"
+						r.pathPattern = "/incidents"
+						r.args = args
+						r.count = 0
+						return r, true
+					case "PUT":
+						r.name = UpdateIncidentsOperation
+						r.summary = "Обновление существующей заявки"
+						r.operationID = "updateIncidents"
+						r.pathPattern = "/incidents"
+						r.args = args
+						r.count = 0
+						return r, true
+					default:
+						return
+					}
+				}
+				switch elem[0] {
+				case '/': // Prefix: "/"
+					origElem := elem
+					if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					// Param: "incidentId"
+					// Leaf parameter
+					args[0] = elem
+					elem = ""
+
+					if len(elem) == 0 {
+						// Leaf node.
+						switch method {
+						case "DELETE":
+							r.name = DeleteIncidentOperation
+							r.summary = "Deletes an incidents"
+							r.operationID = "deleteIncident"
+							r.pathPattern = "/incidents/{incidentId}"
+							r.args = args
+							r.count = 1
+							return r, true
+						case "GET":
+							r.name = GetIncidentByIdOperation
+							r.summary = "получение заявки по id"
+							r.operationID = "getIncidentById"
+							r.pathPattern = "/incidents/{incidentId}"
+							r.args = args
+							r.count = 1
+							return r, true
+						default:
+							return
+						}
+					}
+
+					elem = origElem
+				}
+
+				elem = origElem
+			case 'l': // Prefix: "logout"
+				origElem := elem
+				if l := len("logout"); len(elem) >= l && elem[0:l] == "logout" {
+					elem = elem[l:]
+				} else {
+					break
+				}
 
 				if len(elem) == 0 {
 					// Leaf node.
 					switch method {
-					case "DELETE":
-						r.name = DeleteIncidentOperation
-						r.summary = "Deletes an incidents"
-						r.operationID = "deleteIncident"
-						r.pathPattern = "/incidents/{incidentId}"
-						r.args = args
-						r.count = 1
-						return r, true
 					case "GET":
-						r.name = GetIncidentByIdOperation
-						r.summary = "получение заявки по id"
-						r.operationID = "getIncidentById"
-						r.pathPattern = "/incidents/{incidentId}"
+						r.name = LogoutOperation
+						r.summary = "Выход из акаунта"
+						r.operationID = "Logout"
+						r.pathPattern = "/logout"
 						r.args = args
-						r.count = 1
+						r.count = 0
+						return r, true
+					default:
+						return
+					}
+				}
+
+				elem = origElem
+			case 's': // Prefix: "s"
+				origElem := elem
+				if l := len("s"); len(elem) >= l && elem[0:l] == "s" {
+					elem = elem[l:]
+				} else {
+					break
+				}
+
+				if len(elem) == 0 {
+					break
+				}
+				switch elem[0] {
+				case 'e': // Prefix: "endsms"
+					origElem := elem
+					if l := len("endsms"); len(elem) >= l && elem[0:l] == "endsms" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					if len(elem) == 0 {
+						// Leaf node.
+						switch method {
+						case "GET":
+							r.name = SendSmsOperation
+							r.summary = "Отправка СМС"
+							r.operationID = "SendSms"
+							r.pathPattern = "/sendsms"
+							r.args = args
+							r.count = 0
+							return r, true
+						default:
+							return
+						}
+					}
+
+					elem = origElem
+				case 't': // Prefix: "tatuses"
+					origElem := elem
+					if l := len("tatuses"); len(elem) >= l && elem[0:l] == "tatuses" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					if len(elem) == 0 {
+						switch method {
+						case "GET":
+							r.name = GetStatusesOperation
+							r.summary = "получение списка заявок"
+							r.operationID = "getStatuses"
+							r.pathPattern = "/statuses"
+							r.args = args
+							r.count = 0
+							return r, true
+						case "POST":
+							r.name = AddStatusOperation
+							r.summary = "добавление новой заявки"
+							r.operationID = "addStatus"
+							r.pathPattern = "/statuses"
+							r.args = args
+							r.count = 0
+							return r, true
+						case "PUT":
+							r.name = UpdateStatusOperation
+							r.summary = "Обновление существующего статуса"
+							r.operationID = "updateStatus"
+							r.pathPattern = "/statuses"
+							r.args = args
+							r.count = 0
+							return r, true
+						default:
+							return
+						}
+					}
+					switch elem[0] {
+					case '/': // Prefix: "/"
+						origElem := elem
+						if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+							elem = elem[l:]
+						} else {
+							break
+						}
+
+						// Param: "statusId"
+						// Leaf parameter
+						args[0] = elem
+						elem = ""
+
+						if len(elem) == 0 {
+							// Leaf node.
+							switch method {
+							case "DELETE":
+								r.name = DeleteStatusOperation
+								r.summary = "Deletes an status"
+								r.operationID = "deleteStatus"
+								r.pathPattern = "/statuses/{statusId}"
+								r.args = args
+								r.count = 1
+								return r, true
+							case "GET":
+								r.name = GetStatusByIdOperation
+								r.summary = "получение заявки по id"
+								r.operationID = "getStatusById"
+								r.pathPattern = "/statuses/{statusId}"
+								r.args = args
+								r.count = 1
+								return r, true
+							default:
+								return
+							}
+						}
+
+						elem = origElem
+					}
+
+					elem = origElem
+				}
+
+				elem = origElem
+			case 'u': // Prefix: "user"
+				origElem := elem
+				if l := len("user"); len(elem) >= l && elem[0:l] == "user" {
+					elem = elem[l:]
+				} else {
+					break
+				}
+
+				if len(elem) == 0 {
+					// Leaf node.
+					switch method {
+					case "GET":
+						r.name = GetUserOperation
+						r.summary = "получение пользователя"
+						r.operationID = "getUser"
+						r.pathPattern = "/user"
+						r.args = args
+						r.count = 0
 						return r, true
 					default:
 						return

@@ -5,6 +5,11 @@ type Incident struct {
 	IsTraining bool
 	Region     string
 	FIO        string
-	Status     string
+	StatusId   string
 	Date       string
+}
+
+type Statues struct {
+	ID   int
+	Name string
 }

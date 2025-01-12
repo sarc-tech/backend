@@ -15,6 +15,105 @@ import (
 	"github.com/ogen-go/ogen/validate"
 )
 
+// CheckSmsParams is parameters of CheckSms operation.
+type CheckSmsParams struct {
+	// Phone of user.
+	Phone string
+	// Sms.
+	SMS string
+}
+
+func unpackCheckSmsParams(packed middleware.Parameters) (params CheckSmsParams) {
+	{
+		key := middleware.ParameterKey{
+			Name: "phone",
+			In:   "header",
+		}
+		params.Phone = packed[key].(string)
+	}
+	{
+		key := middleware.ParameterKey{
+			Name: "sms",
+			In:   "header",
+		}
+		params.SMS = packed[key].(string)
+	}
+	return params
+}
+
+func decodeCheckSmsParams(args [0]string, argsEscaped bool, r *http.Request) (params CheckSmsParams, _ error) {
+	h := uri.NewHeaderDecoder(r.Header)
+	// Decode header: phone.
+	if err := func() error {
+		cfg := uri.HeaderParameterDecodingConfig{
+			Name:    "phone",
+			Explode: false,
+		}
+		if err := h.HasParam(cfg); err == nil {
+			if err := h.DecodeParam(cfg, func(d uri.Decoder) error {
+				val, err := d.DecodeValue()
+				if err != nil {
+					return err
+				}
+
+				c, err := conv.ToString(val)
+				if err != nil {
+					return err
+				}
+
+				params.Phone = c
+				return nil
+			}); err != nil {
+				return err
+			}
+		} else {
+			return validate.ErrFieldRequired
+		}
+		return nil
+	}(); err != nil {
+		return params, &ogenerrors.DecodeParamError{
+			Name: "phone",
+			In:   "header",
+			Err:  err,
+		}
+	}
+	// Decode header: sms.
+	if err := func() error {
+		cfg := uri.HeaderParameterDecodingConfig{
+			Name:    "sms",
+			Explode: false,
+		}
+		if err := h.HasParam(cfg); err == nil {
+			if err := h.DecodeParam(cfg, func(d uri.Decoder) error {
+				val, err := d.DecodeValue()
+				if err != nil {
+					return err
+				}
+
+				c, err := conv.ToString(val)
+				if err != nil {
+					return err
+				}
+
+				params.SMS = c
+				return nil
+			}); err != nil {
+				return err
+			}
+		} else {
+			return validate.ErrFieldRequired
+		}
+		return nil
+	}(); err != nil {
+		return params, &ogenerrors.DecodeParamError{
+			Name: "sms",
+			In:   "header",
+			Err:  err,
+		}
+	}
+	return params, nil
+}
+
 // DeleteIncidentParams is parameters of deleteIncident operation.
 type DeleteIncidentParams struct {
 	// Request id to delete.
@@ -74,6 +173,72 @@ func decodeDeleteIncidentParams(args [1]string, argsEscaped bool, r *http.Reques
 	}(); err != nil {
 		return params, &ogenerrors.DecodeParamError{
 			Name: "incidentId",
+			In:   "path",
+			Err:  err,
+		}
+	}
+	return params, nil
+}
+
+// DeleteStatusParams is parameters of deleteStatus operation.
+type DeleteStatusParams struct {
+	// Request id to delete.
+	StatusId string
+}
+
+func unpackDeleteStatusParams(packed middleware.Parameters) (params DeleteStatusParams) {
+	{
+		key := middleware.ParameterKey{
+			Name: "statusId",
+			In:   "path",
+		}
+		params.StatusId = packed[key].(string)
+	}
+	return params
+}
+
+func decodeDeleteStatusParams(args [1]string, argsEscaped bool, r *http.Request) (params DeleteStatusParams, _ error) {
+	// Decode path: statusId.
+	if err := func() error {
+		param := args[0]
+		if argsEscaped {
+			unescaped, err := url.PathUnescape(args[0])
+			if err != nil {
+				return errors.Wrap(err, "unescape path")
+			}
+			param = unescaped
+		}
+		if len(param) > 0 {
+			d := uri.NewPathDecoder(uri.PathDecoderConfig{
+				Param:   "statusId",
+				Value:   param,
+				Style:   uri.PathStyleSimple,
+				Explode: false,
+			})
+
+			if err := func() error {
+				val, err := d.DecodeValue()
+				if err != nil {
+					return err
+				}
+
+				c, err := conv.ToString(val)
+				if err != nil {
+					return err
+				}
+
+				params.StatusId = c
+				return nil
+			}(); err != nil {
+				return err
+			}
+		} else {
+			return validate.ErrFieldRequired
+		}
+		return nil
+	}(); err != nil {
+		return params, &ogenerrors.DecodeParamError{
+			Name: "statusId",
 			In:   "path",
 			Err:  err,
 		}
@@ -141,6 +306,128 @@ func decodeGetIncidentByIdParams(args [1]string, argsEscaped bool, r *http.Reque
 		return params, &ogenerrors.DecodeParamError{
 			Name: "incidentId",
 			In:   "path",
+			Err:  err,
+		}
+	}
+	return params, nil
+}
+
+// GetStatusByIdParams is parameters of getStatusById operation.
+type GetStatusByIdParams struct {
+	// ID of Status to return.
+	StatusId string
+}
+
+func unpackGetStatusByIdParams(packed middleware.Parameters) (params GetStatusByIdParams) {
+	{
+		key := middleware.ParameterKey{
+			Name: "statusId",
+			In:   "path",
+		}
+		params.StatusId = packed[key].(string)
+	}
+	return params
+}
+
+func decodeGetStatusByIdParams(args [1]string, argsEscaped bool, r *http.Request) (params GetStatusByIdParams, _ error) {
+	// Decode path: statusId.
+	if err := func() error {
+		param := args[0]
+		if argsEscaped {
+			unescaped, err := url.PathUnescape(args[0])
+			if err != nil {
+				return errors.Wrap(err, "unescape path")
+			}
+			param = unescaped
+		}
+		if len(param) > 0 {
+			d := uri.NewPathDecoder(uri.PathDecoderConfig{
+				Param:   "statusId",
+				Value:   param,
+				Style:   uri.PathStyleSimple,
+				Explode: false,
+			})
+
+			if err := func() error {
+				val, err := d.DecodeValue()
+				if err != nil {
+					return err
+				}
+
+				c, err := conv.ToString(val)
+				if err != nil {
+					return err
+				}
+
+				params.StatusId = c
+				return nil
+			}(); err != nil {
+				return err
+			}
+		} else {
+			return validate.ErrFieldRequired
+		}
+		return nil
+	}(); err != nil {
+		return params, &ogenerrors.DecodeParamError{
+			Name: "statusId",
+			In:   "path",
+			Err:  err,
+		}
+	}
+	return params, nil
+}
+
+// SendSmsParams is parameters of SendSms operation.
+type SendSmsParams struct {
+	// Phone of user.
+	Phone string
+}
+
+func unpackSendSmsParams(packed middleware.Parameters) (params SendSmsParams) {
+	{
+		key := middleware.ParameterKey{
+			Name: "phone",
+			In:   "header",
+		}
+		params.Phone = packed[key].(string)
+	}
+	return params
+}
+
+func decodeSendSmsParams(args [0]string, argsEscaped bool, r *http.Request) (params SendSmsParams, _ error) {
+	h := uri.NewHeaderDecoder(r.Header)
+	// Decode header: phone.
+	if err := func() error {
+		cfg := uri.HeaderParameterDecodingConfig{
+			Name:    "phone",
+			Explode: false,
+		}
+		if err := h.HasParam(cfg); err == nil {
+			if err := h.DecodeParam(cfg, func(d uri.Decoder) error {
+				val, err := d.DecodeValue()
+				if err != nil {
+					return err
+				}
+
+				c, err := conv.ToString(val)
+				if err != nil {
+					return err
+				}
+
+				params.Phone = c
+				return nil
+			}); err != nil {
+				return err
+			}
+		} else {
+			return validate.ErrFieldRequired
+		}
+		return nil
+	}(); err != nil {
+		return params, &ogenerrors.DecodeParamError{
+			Name: "phone",
+			In:   "header",
 			Err:  err,
 		}
 	}

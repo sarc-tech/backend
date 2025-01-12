@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS users(
     login VARCHAR(255) NOT NULL,
     ver integer NOT NULL DEFAULT '0',
     email varchar(255) NOT NULL,
+    phone varchar(255) NOT NULL,
     password bytea NOT NULL,
     created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP

@@ -74,14 +74,14 @@ func encodeAddIncidentsRequest(
 			}
 		}
 		{
-			// Encode "status" form field.
+			// Encode "statusId" form field.
 			cfg := uri.QueryParameterEncodingConfig{
-				Name:    "status",
+				Name:    "statusId",
 				Style:   uri.QueryStyleForm,
 				Explode: true,
 			}
 			if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
-				return e.EncodeValue(conv.StringToString(request.Status))
+				return e.EncodeValue(conv.StringToString(request.StatusId))
 			}); err != nil {
 				return errors.Wrap(err, "encode query")
 			}
@@ -95,6 +95,59 @@ func encodeAddIncidentsRequest(
 			}
 			if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
 				return e.EncodeValue(conv.StringToString(request.Date))
+			}); err != nil {
+				return errors.Wrap(err, "encode query")
+			}
+		}
+		encoded := q.Values().Encode()
+		ht.SetBody(r, strings.NewReader(encoded), contentType)
+		return nil
+	default:
+		return errors.Errorf("unexpected request type: %T", req)
+	}
+}
+
+func encodeAddStatusRequest(
+	req AddStatusReq,
+	r *http.Request,
+) error {
+	switch req := req.(type) {
+	case *AddStatusApplicationJSON:
+		const contentType = "application/json"
+		e := new(jx.Encoder)
+		{
+			req.Encode(e)
+		}
+		encoded := e.Bytes()
+		ht.SetBody(r, bytes.NewReader(encoded), contentType)
+		return nil
+	case *AddStatusApplicationXWwwFormUrlencoded:
+		const contentType = "application/x-www-form-urlencoded"
+		request := req
+
+		q := uri.NewFormEncoder(map[string]string{})
+		{
+			// Encode "id" form field.
+			cfg := uri.QueryParameterEncodingConfig{
+				Name:    "id",
+				Style:   uri.QueryStyleForm,
+				Explode: true,
+			}
+			if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+				return e.EncodeValue(conv.StringToString(request.ID))
+			}); err != nil {
+				return errors.Wrap(err, "encode query")
+			}
+		}
+		{
+			// Encode "name" form field.
+			cfg := uri.QueryParameterEncodingConfig{
+				Name:    "name",
+				Style:   uri.QueryStyleForm,
+				Explode: true,
+			}
+			if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+				return e.EncodeValue(conv.StringToString(request.Name))
 			}); err != nil {
 				return errors.Wrap(err, "encode query")
 			}
@@ -166,14 +219,14 @@ func encodeUpdateIncidentsRequest(
 			}
 		}
 		{
-			// Encode "status" form field.
+			// Encode "statusId" form field.
 			cfg := uri.QueryParameterEncodingConfig{
-				Name:    "status",
+				Name:    "statusId",
 				Style:   uri.QueryStyleForm,
 				Explode: true,
 			}
 			if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
-				return e.EncodeValue(conv.StringToString(request.Status))
+				return e.EncodeValue(conv.StringToString(request.StatusId))
 			}); err != nil {
 				return errors.Wrap(err, "encode query")
 			}
@@ -187,6 +240,59 @@ func encodeUpdateIncidentsRequest(
 			}
 			if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
 				return e.EncodeValue(conv.StringToString(request.Date))
+			}); err != nil {
+				return errors.Wrap(err, "encode query")
+			}
+		}
+		encoded := q.Values().Encode()
+		ht.SetBody(r, strings.NewReader(encoded), contentType)
+		return nil
+	default:
+		return errors.Errorf("unexpected request type: %T", req)
+	}
+}
+
+func encodeUpdateStatusRequest(
+	req UpdateStatusReq,
+	r *http.Request,
+) error {
+	switch req := req.(type) {
+	case *UpdateStatusApplicationJSON:
+		const contentType = "application/json"
+		e := new(jx.Encoder)
+		{
+			req.Encode(e)
+		}
+		encoded := e.Bytes()
+		ht.SetBody(r, bytes.NewReader(encoded), contentType)
+		return nil
+	case *UpdateStatusApplicationXWwwFormUrlencoded:
+		const contentType = "application/x-www-form-urlencoded"
+		request := req
+
+		q := uri.NewFormEncoder(map[string]string{})
+		{
+			// Encode "id" form field.
+			cfg := uri.QueryParameterEncodingConfig{
+				Name:    "id",
+				Style:   uri.QueryStyleForm,
+				Explode: true,
+			}
+			if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+				return e.EncodeValue(conv.StringToString(request.ID))
+			}); err != nil {
+				return errors.Wrap(err, "encode query")
+			}
+		}
+		{
+			// Encode "name" form field.
+			cfg := uri.QueryParameterEncodingConfig{
+				Name:    "name",
+				Style:   uri.QueryStyleForm,
+				Explode: true,
+			}
+			if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+				return e.EncodeValue(conv.StringToString(request.Name))
 			}); err != nil {
 				return errors.Wrap(err, "encode query")
 			}

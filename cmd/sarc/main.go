@@ -36,8 +36,7 @@ func main() {
 		}
 
 		if strConn == "" {
-			//strConn = "postgres://user:password@localhost:5543/test?sslmode=disable"
-			strConn = "postgres://sarc:Du9WxRcT3qMqshh@rc1b-6ceelcmlg3duer00.mdb.yandexcloud.net:6432/sarc?sslmode=require"
+			strConn = "postgres://user:password@localhost:5543/test?sslmode=disable"
 		}
 
 		var arg struct {

@@ -8,7 +8,7 @@ func (r *repository) dto(incident *Model) *models.Incident {
 		IsTraining: incident.IsTraining,
 		Region:     incident.Region,
 		FIO:        incident.FIO,
-		Status:     incident.Status,
+		StatusId:   incident.StatusId,
 		Date:       incident.Date,
 	}
 }
@@ -27,7 +27,7 @@ func (r *repository) orm(incident *models.Incident) *Model {
 		IsTraining: incident.IsTraining,
 		Region:     incident.Region,
 		FIO:        incident.FIO,
-		Status:     incident.Status,
+		StatusId:   incident.StatusId,
 		Date:       incident.Date,
 	}
 }

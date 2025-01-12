@@ -22,12 +22,39 @@ func (UnimplementedHandler) AddIncidents(ctx context.Context, req AddIncidentsRe
 	return r, ht.ErrNotImplemented
 }
 
+// AddStatus implements addStatus operation.
+//
+// Add a new status.
+//
+// POST /statuses
+func (UnimplementedHandler) AddStatus(ctx context.Context, req AddStatusReq) (r AddStatusRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// CheckSms implements CheckSms operation.
+//
+// Returns a token.
+//
+// GET /checksms
+func (UnimplementedHandler) CheckSms(ctx context.Context, params CheckSmsParams) (r CheckSmsRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // DeleteIncident implements deleteIncident operation.
 //
 // Delete an incidents.
 //
 // DELETE /incidents/{incidentId}
 func (UnimplementedHandler) DeleteIncident(ctx context.Context, params DeleteIncidentParams) (r DeleteIncidentRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// DeleteStatus implements deleteStatus operation.
+//
+// Delete an status.
+//
+// DELETE /statuses/{statusId}
+func (UnimplementedHandler) DeleteStatus(ctx context.Context, params DeleteStatusParams) (r DeleteStatusRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
@@ -49,11 +76,65 @@ func (UnimplementedHandler) GetIncidents(ctx context.Context) (r GetIncidentsRes
 	return r, ht.ErrNotImplemented
 }
 
+// GetStatusById implements getStatusById operation.
+//
+// Returns a single incidents.
+//
+// GET /statuses/{statusId}
+func (UnimplementedHandler) GetStatusById(ctx context.Context, params GetStatusByIdParams) (r GetStatusByIdRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// GetStatuses implements getStatuses operation.
+//
+// List of statuses.
+//
+// GET /statuses
+func (UnimplementedHandler) GetStatuses(ctx context.Context) (r GetStatusesRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// GetUser implements getUser operation.
+//
+// Returns a user.
+//
+// GET /user
+func (UnimplementedHandler) GetUser(ctx context.Context) (r GetUserRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// Logout implements Logout operation.
+//
+// Удаляет сессию пользователя.
+//
+// GET /logout
+func (UnimplementedHandler) Logout(ctx context.Context) (r LogoutRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// SendSms implements SendSms operation.
+//
+// Returns a token.
+//
+// GET /sendsms
+func (UnimplementedHandler) SendSms(ctx context.Context, params SendSmsParams) (r SendSmsRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // UpdateIncidents implements updateIncidents operation.
 //
 // Update an existing incidents by Id.
 //
 // PUT /incidents
 func (UnimplementedHandler) UpdateIncidents(ctx context.Context, req UpdateIncidentsReq) (r UpdateIncidentsRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// UpdateStatus implements updateStatus operation.
+//
+// Update an existing status by Id.
+//
+// PUT /statuses
+func (UnimplementedHandler) UpdateStatus(ctx context.Context, req UpdateStatusReq) (r UpdateStatusRes, _ error) {
 	return r, ht.ErrNotImplemented
 }

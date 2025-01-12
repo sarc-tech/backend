@@ -6,6 +6,14 @@ package oas
 func (s *IncidentsResponse) setDefaults() {
 	{
 		val := string("Ok")
-		s.Status.SetTo(val)
+		s.Status = val
+	}
+}
+
+// setDefaults set default value of fields.
+func (s *StatususResponse) setDefaults() {
+	{
+		val := string("Ok")
+		s.Status = val
 	}
 }

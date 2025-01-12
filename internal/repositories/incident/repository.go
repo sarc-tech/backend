@@ -13,7 +13,7 @@ type Model struct {
 	IsTraining bool   `db:"is_training"`
 	Region     string `db:"region"`
 	FIO        string `db:"fio"`
-	Status     string `db:"status"`
+	StatusId   string `db:"status"`
 	Date       string `db:"date"`
 }
 
@@ -79,7 +79,7 @@ func (r *repository) Add(ctx context.Context, m *models.Incident) error {
 	result, err := r.db.Get(ctx, `
 		INSERT INTO incidents (is_training, region, fio, status, date)
 		VALUES ($1, $2, $3, $4, $5) RETURNING id
-	`, incident.IsTraining, incident.Region, incident.FIO, incident.Status, incident.Date)
+	`, incident.IsTraining, incident.Region, incident.FIO, incident.StatusId, incident.Date)
 	if err != nil {
 		return fmt.Errorf("failed to add incident: %w", err)
 	}
@@ -95,7 +95,7 @@ func (r *repository) Update(ctx context.Context, m *models.Incident) error {
 		UPDATE incidents
 		SET is_training = $1, region = $2, fio = $3, status = $4, date = $5
 		WHERE id = $6
-	`, incident.IsTraining, incident.Region, incident.FIO, incident.Status, incident.Date, incident.ID)
+	`, incident.IsTraining, incident.Region, incident.FIO, incident.StatusId, incident.Date, incident.ID)
 	if err != nil {
 		return fmt.Errorf("failed to update incident: %w", err)
 	}

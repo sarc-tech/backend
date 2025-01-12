@@ -13,3 +13,9 @@ type IncidentUsecase interface {
 	Add(ctx context.Context, m *models.Incident) error
 	Update(ctx context.Context, m *models.Incident) error
 }
+
+type StatusesHandler interface {
+}
+
+type UsersHandler interface {
+}

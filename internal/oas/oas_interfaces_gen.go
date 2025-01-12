@@ -9,8 +9,24 @@ type AddIncidentsRes interface {
 	addIncidentsRes()
 }
 
+type AddStatusReq interface {
+	addStatusReq()
+}
+
+type AddStatusRes interface {
+	addStatusRes()
+}
+
+type CheckSmsRes interface {
+	checkSmsRes()
+}
+
 type DeleteIncidentRes interface {
 	deleteIncidentRes()
+}
+
+type DeleteStatusRes interface {
+	deleteStatusRes()
 }
 
 type GetIncidentByIdRes interface {
@@ -21,10 +37,38 @@ type GetIncidentsRes interface {
 	getIncidentsRes()
 }
 
+type GetStatusByIdRes interface {
+	getStatusByIdRes()
+}
+
+type GetStatusesRes interface {
+	getStatusesRes()
+}
+
+type GetUserRes interface {
+	getUserRes()
+}
+
+type LogoutRes interface {
+	logoutRes()
+}
+
+type SendSmsRes interface {
+	sendSmsRes()
+}
+
 type UpdateIncidentsReq interface {
 	updateIncidentsReq()
 }
 
 type UpdateIncidentsRes interface {
 	updateIncidentsRes()
+}
+
+type UpdateStatusReq interface {
+	updateStatusReq()
+}
+
+type UpdateStatusRes interface {
+	updateStatusRes()
 }
