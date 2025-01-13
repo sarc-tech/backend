@@ -310,13 +310,13 @@ func (s *Server) handleAddStatusRequest(args [0]string, argsEscaped bool, w http
 //
 // Returns a token.
 //
-// GET /checksms
+// POST /checksms
 func (s *Server) handleCheckSmsRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
 	statusWriter := &codeRecorder{ResponseWriter: w}
 	w = statusWriter
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("CheckSms"),
-		semconv.HTTPRequestMethodKey.String("GET"),
+		semconv.HTTPRequestMethodKey.String("POST"),
 		semconv.HTTPRouteKey.String("/checksms"),
 	}
 
@@ -1480,13 +1480,13 @@ func (s *Server) handleLogoutRequest(args [0]string, argsEscaped bool, w http.Re
 //
 // Returns a token.
 //
-// GET /sendsms/{phone}
+// POST /sendsms/{phone}
 func (s *Server) handleSendSmsRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
 	statusWriter := &codeRecorder{ResponseWriter: w}
 	w = statusWriter
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("SendSms"),
-		semconv.HTTPRequestMethodKey.String("GET"),
+		semconv.HTTPRequestMethodKey.String("POST"),
 		semconv.HTTPRouteKey.String("/sendsms/{phone}"),
 	}
 

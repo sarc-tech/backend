@@ -93,7 +93,7 @@ type UsersHandler interface {
 	//
 	// Returns a token.
 	//
-	// GET /checksms
+	// POST /checksms
 	CheckSms(ctx context.Context, params CheckSmsParams) (CheckSmsRes, error)
 	// GetUser implements getUser operation.
 	//
@@ -111,7 +111,7 @@ type UsersHandler interface {
 	//
 	// Returns a token.
 	//
-	// GET /sendsms/{phone}
+	// POST /sendsms/{phone}
 	SendSms(ctx context.Context, params SendSmsParams) (SendSmsRes, error)
 }
 

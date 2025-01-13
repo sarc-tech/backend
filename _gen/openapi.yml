@@ -9,7 +9,7 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  version: 0.0.7
+  version: 0.0.8
 externalDocs:
   description: Find out more about Swagger
   url: http://swagger.io
@@ -304,7 +304,7 @@ paths:
           description: user not found
   /checksms:
     x-ogen-operation-group: Users
-    get:
+    post:
       tags:
         - users
       summary: Получение токена
@@ -338,7 +338,7 @@ paths:
           description: check error 
   /sendsms/{phone}:
     x-ogen-operation-group: Users
-    get:
+    post:
       tags:
         - users
       summary: Отправка СМС

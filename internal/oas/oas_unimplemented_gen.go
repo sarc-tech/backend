@@ -35,7 +35,7 @@ func (UnimplementedHandler) AddStatus(ctx context.Context, req AddStatusReq) (r 
 //
 // Returns a token.
 //
-// GET /checksms
+// POST /checksms
 func (UnimplementedHandler) CheckSms(ctx context.Context, params CheckSmsParams) (r CheckSmsRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
@@ -116,7 +116,7 @@ func (UnimplementedHandler) Logout(ctx context.Context) (r LogoutRes, _ error) {
 //
 // Returns a token.
 //
-// GET /sendsms/{phone}
+// POST /sendsms/{phone}
 func (UnimplementedHandler) SendSms(ctx context.Context, params SendSmsParams) (r SendSmsRes, _ error) {
 	return r, ht.ErrNotImplemented
 }

@@ -108,7 +108,7 @@ type UsersInvoker interface {
 	//
 	// Returns a token.
 	//
-	// GET /checksms
+	// POST /checksms
 	CheckSms(ctx context.Context, params CheckSmsParams) (CheckSmsRes, error)
 	// GetUser invokes getUser operation.
 	//
@@ -126,7 +126,7 @@ type UsersInvoker interface {
 	//
 	// Returns a token.
 	//
-	// GET /sendsms/{phone}
+	// POST /sendsms/{phone}
 	SendSms(ctx context.Context, params SendSmsParams) (SendSmsRes, error)
 }
 
@@ -332,7 +332,7 @@ func (c *Client) sendAddStatus(ctx context.Context, request AddStatusReq) (res A
 //
 // Returns a token.
 //
-// GET /checksms
+// POST /checksms
 func (c *Client) CheckSms(ctx context.Context, params CheckSmsParams) (CheckSmsRes, error) {
 	res, err := c.sendCheckSms(ctx, params)
 	return res, err
@@ -341,7 +341,7 @@ func (c *Client) CheckSms(ctx context.Context, params CheckSmsParams) (CheckSmsR
 func (c *Client) sendCheckSms(ctx context.Context, params CheckSmsParams) (res CheckSmsRes, err error) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("CheckSms"),
-		semconv.HTTPRequestMethodKey.String("GET"),
+		semconv.HTTPRequestMethodKey.String("POST"),
 		semconv.HTTPRouteKey.String("/checksms"),
 	}
 
@@ -411,7 +411,7 @@ func (c *Client) sendCheckSms(ctx context.Context, params CheckSmsParams) (res C
 	u.RawQuery = q.Values().Encode()
 
 	stage = "EncodeRequest"
-	r, err := ht.NewRequest(ctx, "GET", u)
+	r, err := ht.NewRequest(ctx, "POST", u)
 	if err != nil {
 		return res, errors.Wrap(err, "create request")
 	}
@@ -1084,7 +1084,7 @@ func (c *Client) sendLogout(ctx context.Context) (res LogoutRes, err error) {
 //
 // Returns a token.
 //
-// GET /sendsms/{phone}
+// POST /sendsms/{phone}
 func (c *Client) SendSms(ctx context.Context, params SendSmsParams) (SendSmsRes, error) {
 	res, err := c.sendSendSms(ctx, params)
 	return res, err
@@ -1093,7 +1093,7 @@ func (c *Client) SendSms(ctx context.Context, params SendSmsParams) (SendSmsRes,
 func (c *Client) sendSendSms(ctx context.Context, params SendSmsParams) (res SendSmsRes, err error) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("SendSms"),
-		semconv.HTTPRequestMethodKey.String("GET"),
+		semconv.HTTPRequestMethodKey.String("POST"),
 		semconv.HTTPRouteKey.String("/sendsms/{phone}"),
 	}
 
@@ -1149,7 +1149,7 @@ func (c *Client) sendSendSms(ctx context.Context, params SendSmsParams) (res Sen
 	uri.AddPathParts(u, pathParts[:]...)
 
 	stage = "EncodeRequest"
-	r, err := ht.NewRequest(ctx, "GET", u)
+	r, err := ht.NewRequest(ctx, "POST", u)
 	if err != nil {
 		return res, errors.Wrap(err, "create request")
 	}
