@@ -1361,13 +1361,13 @@ func (s *Server) handleGetUserRequest(args [0]string, argsEscaped bool, w http.R
 //
 // Удаляет сессию пользователя.
 //
-// GET /logout
+// POST /logout
 func (s *Server) handleLogoutRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
 	statusWriter := &codeRecorder{ResponseWriter: w}
 	w = statusWriter
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("Logout"),
-		semconv.HTTPRequestMethodKey.String("GET"),
+		semconv.HTTPRequestMethodKey.String("POST"),
 		semconv.HTTPRouteKey.String("/logout"),
 	}
 

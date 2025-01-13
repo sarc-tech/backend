@@ -105,7 +105,7 @@ type UsersHandler interface {
 	//
 	// Удаляет сессию пользователя.
 	//
-	// GET /logout
+	// POST /logout
 	Logout(ctx context.Context) (LogoutRes, error)
 	// SendSms implements SendSms operation.
 	//

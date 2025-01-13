@@ -151,10 +151,10 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				if len(elem) == 0 {
 					// Leaf node.
 					switch r.Method {
-					case "GET":
+					case "POST":
 						s.handleLogoutRequest([0]string{}, elemIsEscaped, w, r)
 					default:
-						s.notAllowed(w, r, "GET")
+						s.notAllowed(w, r, "POST")
 					}
 
 					return
@@ -494,7 +494,7 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 				if len(elem) == 0 {
 					// Leaf node.
 					switch method {
-					case "GET":
+					case "POST":
 						r.name = LogoutOperation
 						r.summary = "Выход из акаунта"
 						r.operationID = "Logout"

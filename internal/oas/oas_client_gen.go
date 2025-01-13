@@ -120,7 +120,7 @@ type UsersInvoker interface {
 	//
 	// Удаляет сессию пользователя.
 	//
-	// GET /logout
+	// POST /logout
 	Logout(ctx context.Context) (LogoutRes, error)
 	// SendSms invokes SendSms operation.
 	//
@@ -1012,7 +1012,7 @@ func (c *Client) sendGetUser(ctx context.Context) (res GetUserRes, err error) {
 //
 // Удаляет сессию пользователя.
 //
-// GET /logout
+// POST /logout
 func (c *Client) Logout(ctx context.Context) (LogoutRes, error) {
 	res, err := c.sendLogout(ctx)
 	return res, err
@@ -1021,7 +1021,7 @@ func (c *Client) Logout(ctx context.Context) (LogoutRes, error) {
 func (c *Client) sendLogout(ctx context.Context) (res LogoutRes, err error) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("Logout"),
-		semconv.HTTPRequestMethodKey.String("GET"),
+		semconv.HTTPRequestMethodKey.String("POST"),
 		semconv.HTTPRouteKey.String("/logout"),
 	}
 
@@ -1059,7 +1059,7 @@ func (c *Client) sendLogout(ctx context.Context) (res LogoutRes, err error) {
 	uri.AddPathParts(u, pathParts[:]...)
 
 	stage = "EncodeRequest"
-	r, err := ht.NewRequest(ctx, "GET", u)
+	r, err := ht.NewRequest(ctx, "POST", u)
 	if err != nil {
 		return res, errors.Wrap(err, "create request")
 	}

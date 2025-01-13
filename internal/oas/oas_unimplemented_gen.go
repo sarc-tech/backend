@@ -107,7 +107,7 @@ func (UnimplementedHandler) GetUser(ctx context.Context) (r GetUserRes, _ error)
 //
 // Удаляет сессию пользователя.
 //
-// GET /logout
+// POST /logout
 func (UnimplementedHandler) Logout(ctx context.Context) (r LogoutRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
