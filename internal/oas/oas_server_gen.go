@@ -111,7 +111,7 @@ type UsersHandler interface {
 	//
 	// Returns a token.
 	//
-	// GET /sendsms
+	// GET /sendsms/{phone}
 	SendSms(ctx context.Context, params SendSmsParams) (SendSmsRes, error)
 }
 

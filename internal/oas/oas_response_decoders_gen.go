@@ -124,7 +124,7 @@ func decodeCheckSmsResponse(resp *http.Response) (res CheckSmsRes, _ error) {
 			}
 			d := jx.DecodeBytes(buf)
 
-			var response CheckSmsOKApplicationJSON
+			var response Token
 			if err := func() error {
 				if err := response.Decode(d); err != nil {
 					return err

@@ -48,10 +48,6 @@ type CheckSmsNotFound struct{}
 
 func (*CheckSmsNotFound) checkSmsRes() {}
 
-type CheckSmsOKApplicationJSON string
-
-func (*CheckSmsOKApplicationJSON) checkSmsRes() {}
-
 // DeleteIncidentBadRequest is response for DeleteIncident operation.
 type DeleteIncidentBadRequest struct{}
 
@@ -325,6 +321,24 @@ func (s *StatususResponse) SetData(val []Status) {
 }
 
 func (*StatususResponse) getStatusesRes() {}
+
+// Ref: #/components/schemas/Token
+type Token struct {
+	// Token.
+	Token string `json:"token"`
+}
+
+// GetToken returns the value of Token.
+func (s *Token) GetToken() string {
+	return s.Token
+}
+
+// SetToken sets the value of Token.
+func (s *Token) SetToken(val string) {
+	s.Token = val
+}
+
+func (*Token) checkSmsRes() {}
 
 type UpdateIncidentsApplicationJSON Incident
 

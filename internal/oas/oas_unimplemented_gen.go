@@ -116,7 +116,7 @@ func (UnimplementedHandler) Logout(ctx context.Context) (r LogoutRes, _ error) {
 //
 // Returns a token.
 //
-// GET /sendsms
+// GET /sendsms/{phone}
 func (UnimplementedHandler) SendSms(ctx context.Context, params SendSmsParams) (r SendSmsRes, _ error) {
 	return r, ht.ErrNotImplemented
 }

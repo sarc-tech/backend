@@ -402,11 +402,11 @@ func (s *Server) handleCheckSmsRequest(args [0]string, argsEscaped bool, w http.
 			Params: middleware.Parameters{
 				{
 					Name: "phone",
-					In:   "header",
+					In:   "query",
 				}: params.Phone,
 				{
 					Name: "sms",
-					In:   "header",
+					In:   "query",
 				}: params.SMS,
 			},
 			Raw: r,
@@ -1480,14 +1480,14 @@ func (s *Server) handleLogoutRequest(args [0]string, argsEscaped bool, w http.Re
 //
 // Returns a token.
 //
-// GET /sendsms
-func (s *Server) handleSendSmsRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+// GET /sendsms/{phone}
+func (s *Server) handleSendSmsRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
 	statusWriter := &codeRecorder{ResponseWriter: w}
 	w = statusWriter
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("SendSms"),
 		semconv.HTTPRequestMethodKey.String("GET"),
-		semconv.HTTPRouteKey.String("/sendsms"),
+		semconv.HTTPRouteKey.String("/sendsms/{phone}"),
 	}
 
 	// Start a span for this request.
@@ -1572,7 +1572,7 @@ func (s *Server) handleSendSmsRequest(args [0]string, argsEscaped bool, w http.R
 			Params: middleware.Parameters{
 				{
 					Name: "phone",
-					In:   "header",
+					In:   "path",
 				}: params.Phone,
 			},
 			Raw: r,

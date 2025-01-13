@@ -173,19 +173,26 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					break
 				}
 				switch elem[0] {
-				case 'e': // Prefix: "endsms"
+				case 'e': // Prefix: "endsms/"
 					origElem := elem
-					if l := len("endsms"); len(elem) >= l && elem[0:l] == "endsms" {
+					if l := len("endsms/"); len(elem) >= l && elem[0:l] == "endsms/" {
 						elem = elem[l:]
 					} else {
 						break
 					}
 
+					// Param: "phone"
+					// Leaf parameter
+					args[0] = elem
+					elem = ""
+
 					if len(elem) == 0 {
 						// Leaf node.
 						switch r.Method {
 						case "GET":
-							s.handleSendSmsRequest([0]string{}, elemIsEscaped, w, r)
+							s.handleSendSmsRequest([1]string{
+								args[0],
+							}, elemIsEscaped, w, r)
 						default:
 							s.notAllowed(w, r, "GET")
 						}
@@ -513,13 +520,18 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 					break
 				}
 				switch elem[0] {
-				case 'e': // Prefix: "endsms"
+				case 'e': // Prefix: "endsms/"
 					origElem := elem
-					if l := len("endsms"); len(elem) >= l && elem[0:l] == "endsms" {
+					if l := len("endsms/"); len(elem) >= l && elem[0:l] == "endsms/" {
 						elem = elem[l:]
 					} else {
 						break
 					}
+
+					// Param: "phone"
+					// Leaf parameter
+					args[0] = elem
+					elem = ""
 
 					if len(elem) == 0 {
 						// Leaf node.
@@ -528,9 +540,9 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 							r.name = SendSmsOperation
 							r.summary = "Отправка СМС"
 							r.operationID = "SendSms"
-							r.pathPattern = "/sendsms"
+							r.pathPattern = "/sendsms/{phone}"
 							r.args = args
-							r.count = 0
+							r.count = 1
 							return r, true
 						default:
 							return

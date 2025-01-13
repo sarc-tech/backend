@@ -126,7 +126,7 @@ type UsersInvoker interface {
 	//
 	// Returns a token.
 	//
-	// GET /sendsms
+	// GET /sendsms/{phone}
 	SendSms(ctx context.Context, params SendSmsParams) (SendSmsRes, error)
 }
 
@@ -378,35 +378,42 @@ func (c *Client) sendCheckSms(ctx context.Context, params CheckSmsParams) (res C
 	pathParts[0] = "/checksms"
 	uri.AddPathParts(u, pathParts[:]...)
 
+	stage = "EncodeQueryParams"
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "phone" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "phone",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.StringToString(params.Phone))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "sms" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "sms",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.StringToString(params.SMS))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
 	stage = "EncodeRequest"
 	r, err := ht.NewRequest(ctx, "GET", u)
 	if err != nil {
 		return res, errors.Wrap(err, "create request")
-	}
-
-	stage = "EncodeHeaderParams"
-	h := uri.NewHeaderEncoder(r.Header)
-	{
-		cfg := uri.HeaderParameterEncodingConfig{
-			Name:    "phone",
-			Explode: false,
-		}
-		if err := h.EncodeParam(cfg, func(e uri.Encoder) error {
-			return e.EncodeValue(conv.StringToString(params.Phone))
-		}); err != nil {
-			return res, errors.Wrap(err, "encode header")
-		}
-	}
-	{
-		cfg := uri.HeaderParameterEncodingConfig{
-			Name:    "sms",
-			Explode: false,
-		}
-		if err := h.EncodeParam(cfg, func(e uri.Encoder) error {
-			return e.EncodeValue(conv.StringToString(params.SMS))
-		}); err != nil {
-			return res, errors.Wrap(err, "encode header")
-		}
 	}
 
 	stage = "SendRequest"
@@ -1077,7 +1084,7 @@ func (c *Client) sendLogout(ctx context.Context) (res LogoutRes, err error) {
 //
 // Returns a token.
 //
-// GET /sendsms
+// GET /sendsms/{phone}
 func (c *Client) SendSms(ctx context.Context, params SendSmsParams) (SendSmsRes, error) {
 	res, err := c.sendSendSms(ctx, params)
 	return res, err
@@ -1087,7 +1094,7 @@ func (c *Client) sendSendSms(ctx context.Context, params SendSmsParams) (res Sen
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("SendSms"),
 		semconv.HTTPRequestMethodKey.String("GET"),
-		semconv.HTTPRouteKey.String("/sendsms"),
+		semconv.HTTPRouteKey.String("/sendsms/{phone}"),
 	}
 
 	// Run stopwatch.
@@ -1119,28 +1126,32 @@ func (c *Client) sendSendSms(ctx context.Context, params SendSmsParams) (res Sen
 
 	stage = "BuildURL"
 	u := uri.Clone(c.requestURL(ctx))
-	var pathParts [1]string
-	pathParts[0] = "/sendsms"
+	var pathParts [2]string
+	pathParts[0] = "/sendsms/"
+	{
+		// Encode "phone" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "phone",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.Phone))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
 	uri.AddPathParts(u, pathParts[:]...)
 
 	stage = "EncodeRequest"
 	r, err := ht.NewRequest(ctx, "GET", u)
 	if err != nil {
 		return res, errors.Wrap(err, "create request")
-	}
-
-	stage = "EncodeHeaderParams"
-	h := uri.NewHeaderEncoder(r.Header)
-	{
-		cfg := uri.HeaderParameterEncodingConfig{
-			Name:    "phone",
-			Explode: false,
-		}
-		if err := h.EncodeParam(cfg, func(e uri.Encoder) error {
-			return e.EncodeValue(conv.StringToString(params.Phone))
-		}); err != nil {
-			return res, errors.Wrap(err, "encode header")
-		}
 	}
 
 	stage = "SendRequest"
