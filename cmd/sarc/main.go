@@ -53,7 +53,7 @@ func main() {
 
 		defer db.Close()
 
-		oasServer, err := oas.NewServer(api.Handler{DB: db})
+		oasServer, err := oas.NewServer(api.Handler{DB: db}, api.HandlerSecurity{})
 		if err != nil {
 			return errors.Wrap(err, "server init")
 		}

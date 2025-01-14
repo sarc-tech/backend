@@ -38,6 +38,20 @@ type AddStatusUnprocessableEntity struct{}
 
 func (*AddStatusUnprocessableEntity) addStatusRes() {}
 
+type BearerAuth struct {
+	Token string
+}
+
+// GetToken returns the value of Token.
+func (s *BearerAuth) GetToken() string {
+	return s.Token
+}
+
+// SetToken sets the value of Token.
+func (s *BearerAuth) SetToken(val string) {
+	s.Token = val
+}
+
 // CheckSmsBadRequest is response for CheckSms operation.
 type CheckSmsBadRequest struct{}
 
