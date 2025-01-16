@@ -27,14 +27,14 @@ func unpackCheckSmsParams(packed middleware.Parameters) (params CheckSmsParams) 
 	{
 		key := middleware.ParameterKey{
 			Name: "phone",
-			In:   "header",
+			In:   "query",
 		}
 		params.Phone = packed[key].(string)
 	}
 	{
 		key := middleware.ParameterKey{
 			Name: "sms",
-			In:   "header",
+			In:   "query",
 		}
 		params.SMS = packed[key].(string)
 	}
@@ -42,15 +42,17 @@ func unpackCheckSmsParams(packed middleware.Parameters) (params CheckSmsParams) 
 }
 
 func decodeCheckSmsParams(args [0]string, argsEscaped bool, r *http.Request) (params CheckSmsParams, _ error) {
-	h := uri.NewHeaderDecoder(r.Header)
-	// Decode header: phone.
+	q := uri.NewQueryDecoder(r.URL.Query())
+	// Decode query: phone.
 	if err := func() error {
-		cfg := uri.HeaderParameterDecodingConfig{
+		cfg := uri.QueryParameterDecodingConfig{
 			Name:    "phone",
-			Explode: false,
+			Style:   uri.QueryStyleForm,
+			Explode: true,
 		}
-		if err := h.HasParam(cfg); err == nil {
-			if err := h.DecodeParam(cfg, func(d uri.Decoder) error {
+
+		if err := q.HasParam(cfg); err == nil {
+			if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
 				val, err := d.DecodeValue()
 				if err != nil {
 					return err
@@ -73,18 +75,20 @@ func decodeCheckSmsParams(args [0]string, argsEscaped bool, r *http.Request) (pa
 	}(); err != nil {
 		return params, &ogenerrors.DecodeParamError{
 			Name: "phone",
-			In:   "header",
+			In:   "query",
 			Err:  err,
 		}
 	}
-	// Decode header: sms.
+	// Decode query: sms.
 	if err := func() error {
-		cfg := uri.HeaderParameterDecodingConfig{
+		cfg := uri.QueryParameterDecodingConfig{
 			Name:    "sms",
-			Explode: false,
+			Style:   uri.QueryStyleForm,
+			Explode: true,
 		}
-		if err := h.HasParam(cfg); err == nil {
-			if err := h.DecodeParam(cfg, func(d uri.Decoder) error {
+
+		if err := q.HasParam(cfg); err == nil {
+			if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
 				val, err := d.DecodeValue()
 				if err != nil {
 					return err
@@ -107,7 +111,7 @@ func decodeCheckSmsParams(args [0]string, argsEscaped bool, r *http.Request) (pa
 	}(); err != nil {
 		return params, &ogenerrors.DecodeParamError{
 			Name: "sms",
-			In:   "header",
+			In:   "query",
 			Err:  err,
 		}
 	}
@@ -388,23 +392,33 @@ func unpackSendSmsParams(packed middleware.Parameters) (params SendSmsParams) {
 	{
 		key := middleware.ParameterKey{
 			Name: "phone",
-			In:   "header",
+			In:   "path",
 		}
 		params.Phone = packed[key].(string)
 	}
 	return params
 }
 
-func decodeSendSmsParams(args [0]string, argsEscaped bool, r *http.Request) (params SendSmsParams, _ error) {
-	h := uri.NewHeaderDecoder(r.Header)
-	// Decode header: phone.
+func decodeSendSmsParams(args [1]string, argsEscaped bool, r *http.Request) (params SendSmsParams, _ error) {
+	// Decode path: phone.
 	if err := func() error {
-		cfg := uri.HeaderParameterDecodingConfig{
-			Name:    "phone",
-			Explode: false,
+		param := args[0]
+		if argsEscaped {
+			unescaped, err := url.PathUnescape(args[0])
+			if err != nil {
+				return errors.Wrap(err, "unescape path")
+			}
+			param = unescaped
 		}
-		if err := h.HasParam(cfg); err == nil {
-			if err := h.DecodeParam(cfg, func(d uri.Decoder) error {
+		if len(param) > 0 {
+			d := uri.NewPathDecoder(uri.PathDecoderConfig{
+				Param:   "phone",
+				Value:   param,
+				Style:   uri.PathStyleSimple,
+				Explode: false,
+			})
+
+			if err := func() error {
 				val, err := d.DecodeValue()
 				if err != nil {
 					return err
@@ -417,7 +431,7 @@ func decodeSendSmsParams(args [0]string, argsEscaped bool, r *http.Request) (par
 
 				params.Phone = c
 				return nil
-			}); err != nil {
+			}(); err != nil {
 				return err
 			}
 		} else {
@@ -427,7 +441,7 @@ func decodeSendSmsParams(args [0]string, argsEscaped bool, r *http.Request) (par
 	}(); err != nil {
 		return params, &ogenerrors.DecodeParamError{
 			Name: "phone",
-			In:   "header",
+			In:   "path",
 			Err:  err,
 		}
 	}

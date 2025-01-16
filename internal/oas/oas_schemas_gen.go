@@ -38,6 +38,20 @@ type AddStatusUnprocessableEntity struct{}
 
 func (*AddStatusUnprocessableEntity) addStatusRes() {}
 
+type BearerAuth struct {
+	Token string
+}
+
+// GetToken returns the value of Token.
+func (s *BearerAuth) GetToken() string {
+	return s.Token
+}
+
+// SetToken sets the value of Token.
+func (s *BearerAuth) SetToken(val string) {
+	s.Token = val
+}
+
 // CheckSmsBadRequest is response for CheckSms operation.
 type CheckSmsBadRequest struct{}
 
@@ -47,10 +61,6 @@ func (*CheckSmsBadRequest) checkSmsRes() {}
 type CheckSmsNotFound struct{}
 
 func (*CheckSmsNotFound) checkSmsRes() {}
-
-type CheckSmsOKApplicationJSON string
-
-func (*CheckSmsOKApplicationJSON) checkSmsRes() {}
 
 // DeleteIncidentBadRequest is response for DeleteIncident operation.
 type DeleteIncidentBadRequest struct{}
@@ -181,6 +191,7 @@ type IncidentsResponse struct {
 	TrackingId string     `json:"trackingId"`
 	Status     string     `json:"status"`
 	Data       []Incident `json:"data"`
+	Statuses   []Status   `json:"statuses"`
 }
 
 // GetTrackingId returns the value of TrackingId.
@@ -198,6 +209,11 @@ func (s *IncidentsResponse) GetData() []Incident {
 	return s.Data
 }
 
+// GetStatuses returns the value of Statuses.
+func (s *IncidentsResponse) GetStatuses() []Status {
+	return s.Statuses
+}
+
 // SetTrackingId sets the value of TrackingId.
 func (s *IncidentsResponse) SetTrackingId(val string) {
 	s.TrackingId = val
@@ -211,6 +227,11 @@ func (s *IncidentsResponse) SetStatus(val string) {
 // SetData sets the value of Data.
 func (s *IncidentsResponse) SetData(val []Incident) {
 	s.Data = val
+}
+
+// SetStatuses sets the value of Statuses.
+func (s *IncidentsResponse) SetStatuses(val []Status) {
+	s.Statuses = val
 }
 
 func (*IncidentsResponse) getIncidentsRes() {}
@@ -314,6 +335,24 @@ func (s *StatususResponse) SetData(val []Status) {
 }
 
 func (*StatususResponse) getStatusesRes() {}
+
+// Ref: #/components/schemas/Token
+type Token struct {
+	// Token.
+	Token string `json:"token"`
+}
+
+// GetToken returns the value of Token.
+func (s *Token) GetToken() string {
+	return s.Token
+}
+
+// SetToken sets the value of Token.
+func (s *Token) SetToken(val string) {
+	s.Token = val
+}
+
+func (*Token) checkSmsRes() {}
 
 type UpdateIncidentsApplicationJSON Incident
 

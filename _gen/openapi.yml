@@ -9,13 +9,16 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  version: 0.0.4
+  version: 0.0.11
 externalDocs:
   description: Find out more about Swagger
   url: http://swagger.io
 servers:
+  - url: https://d5drbh6fis58kjvm332b.g3ab4gln.apigw.yandexcloud.net
   - url: https://bbasntee4s9pbtmrrvb1.containers.yandexcloud.net 
   - url: http://localhost:8082
+security:
+  - bearerAuth: []  
 tags:
   - name: statuses
     description: Работа со статусами заявок
@@ -304,7 +307,8 @@ paths:
           description: user not found
   /checksms:
     x-ogen-operation-group: Users
-    get:
+    post:
+      security: []
       tags:
         - users
       summary: Получение токена
@@ -312,14 +316,14 @@ paths:
       operationId: CheckSms
       parameters:
         - name: phone
-          in: header
+          in: query
           description: phone of user
           required: true
           schema:
             type: string
             description: phone
         - name: sms
-          in: header
+          in: query
           description: sms
           required: true
           schema:
@@ -331,14 +335,15 @@ paths:
           content:
             application/json:
               schema:
-                type: string
+                $ref: '#/components/schemas/Token'
         '400':
           description: Invalid param 
         '404':
           description: check error 
-  /sendsms:
+  /sendsms/{phone}:
     x-ogen-operation-group: Users
-    get:
+    post:
+      security: []
       tags:
         - users
       summary: Отправка СМС
@@ -346,7 +351,7 @@ paths:
       operationId: SendSms
       parameters:
         - name: phone
-          in: header
+          in: path
           description: phone of user
           required: true
           schema:
@@ -361,7 +366,7 @@ paths:
           description: check error 
   /logout:
     x-ogen-operation-group: Users
-    get:
+    post:
       tags:
         - users
       summary: Выход из акаунта
@@ -375,6 +380,10 @@ paths:
         '404':
           description: check error 
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
   schemas:
     Status:
       required:
@@ -448,6 +457,15 @@ components:
         role:
           type: string
           example: Admin
+    Token:
+      required:
+        - token
+      type: object
+      properties:
+        token:
+          type: string
+          example: 123
+          description: token
     IncidentsResponse:
       required:
         - trackingId
@@ -464,3 +482,7 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Incident"
+        statuses:
+          type: array
+          items:
+            $ref: "#/components/schemas/Status"

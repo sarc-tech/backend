@@ -18,9 +18,6 @@ import (
 	"github.com/sarc-tech/backend/internal/api"
 	"github.com/sarc-tech/backend/internal/httpmiddleware"
 	"github.com/sarc-tech/backend/internal/oas"
-	incidentRepo "github.com/sarc-tech/backend/internal/repositories/incident"
-	incidentUsecase "github.com/sarc-tech/backend/internal/usecases/incident"
-	"github.com/sarc-tech/backend/pkg/database"
 )
 
 const shutdownTimeout = 15 * time.Second
@@ -36,7 +33,7 @@ func main() {
 		}
 
 		if strConn == "" {
-			strConn = "postgres://user:password@localhost:5543/test?sslmode=disable"
+			strConn = "postgres://user:password@localhost:5432/test?sslmode=disable"
 		}
 
 		var arg struct {
@@ -56,10 +53,7 @@ func main() {
 
 		defer db.Close()
 
-		repo := incidentRepo.NewRepository(database.NewRepository[incidentRepo.Model](db))
-		uc := incidentUsecase.NewUsecase(repo)
-
-		oasServer, err := oas.NewServer(api.NewHandler(uc))
+		oasServer, err := oas.NewServer(api.Handler{DB: db}, api.HandlerSecurity{})
 		if err != nil {
 			return errors.Wrap(err, "server init")
 		}

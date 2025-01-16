@@ -2,16 +2,15 @@
 -- +goose StatementBegin
 CREATE TABLE IF NOT EXISTS incidents(
     id serial PRIMARY KEY,
-    is_training boolean DEFAULT FALSE NOT NULL,
     region varchar(255),
     fio varchar(255),
-    status varchar(255),
+    statusId varchar(255),
     date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS statuses(
     id serial PRIMARY KEY,
-    name varchar(255),
+    name varchar(255)
 );
 -- +goose StatementEnd
 -- +goose Down

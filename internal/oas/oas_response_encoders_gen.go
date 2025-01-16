@@ -77,7 +77,7 @@ func encodeAddStatusResponse(response AddStatusRes, w http.ResponseWriter, span 
 
 func encodeCheckSmsResponse(response CheckSmsRes, w http.ResponseWriter, span trace.Span) error {
 	switch response := response.(type) {
-	case *CheckSmsOKApplicationJSON:
+	case *Token:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
 		span.SetStatus(codes.Ok, http.StatusText(200))
