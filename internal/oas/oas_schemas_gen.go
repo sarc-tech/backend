@@ -62,6 +62,16 @@ type CheckSmsNotFound struct{}
 
 func (*CheckSmsNotFound) checkSmsRes() {}
 
+// CheckUserBadRequest is response for CheckUser operation.
+type CheckUserBadRequest struct{}
+
+func (*CheckUserBadRequest) checkUserRes() {}
+
+// CheckUserNotFound is response for CheckUser operation.
+type CheckUserNotFound struct{}
+
+func (*CheckUserNotFound) checkUserRes() {}
+
 // DeleteIncidentBadRequest is response for DeleteIncident operation.
 type DeleteIncidentBadRequest struct{}
 
@@ -251,6 +261,52 @@ type LogoutOK struct{}
 
 func (*LogoutOK) logoutRes() {}
 
+// NewOptString returns new OptString with value set to v.
+func NewOptString(v string) OptString {
+	return OptString{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptString is optional string.
+type OptString struct {
+	Value string
+	Set   bool
+}
+
+// IsSet returns true if OptString was set.
+func (o OptString) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptString) Reset() {
+	var v string
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptString) SetTo(v string) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptString) Get() (v string, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptString) Or(d string) string {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // SendSmsBadRequest is response for SendSms operation.
 type SendSmsBadRequest struct{}
 
@@ -402,10 +458,22 @@ func (*UpdateStatusUnprocessableEntity) updateStatusRes() {}
 
 // Ref: #/components/schemas/User
 type User struct {
-	// Incident id.
-	ID   string `json:"id"`
-	Fio  string `json:"fio"`
-	Role string `json:"role"`
+	// User id.
+	ID string `json:"id"`
+	// Yandex id.
+	YandexId   string    `json:"yandexId"`
+	Surname    OptString `json:"surname"`
+	Name       string    `json:"name"`
+	Patronymic OptString `json:"patronymic"`
+	CallSign   OptString `json:"callSign"`
+	Gender     OptString `json:"gender"`
+	Birthdate  OptString `json:"birthdate"`
+	Vk         OptString `json:"vk"`
+	Telegram   OptString `json:"telegram"`
+	Email      OptString `json:"email"`
+	Phone      OptString `json:"phone"`
+	Approval   bool      `json:"approval"`
+	Role       string    `json:"role"`
 }
 
 // GetID returns the value of ID.
@@ -413,9 +481,64 @@ func (s *User) GetID() string {
 	return s.ID
 }
 
-// GetFio returns the value of Fio.
-func (s *User) GetFio() string {
-	return s.Fio
+// GetYandexId returns the value of YandexId.
+func (s *User) GetYandexId() string {
+	return s.YandexId
+}
+
+// GetSurname returns the value of Surname.
+func (s *User) GetSurname() OptString {
+	return s.Surname
+}
+
+// GetName returns the value of Name.
+func (s *User) GetName() string {
+	return s.Name
+}
+
+// GetPatronymic returns the value of Patronymic.
+func (s *User) GetPatronymic() OptString {
+	return s.Patronymic
+}
+
+// GetCallSign returns the value of CallSign.
+func (s *User) GetCallSign() OptString {
+	return s.CallSign
+}
+
+// GetGender returns the value of Gender.
+func (s *User) GetGender() OptString {
+	return s.Gender
+}
+
+// GetBirthdate returns the value of Birthdate.
+func (s *User) GetBirthdate() OptString {
+	return s.Birthdate
+}
+
+// GetVk returns the value of Vk.
+func (s *User) GetVk() OptString {
+	return s.Vk
+}
+
+// GetTelegram returns the value of Telegram.
+func (s *User) GetTelegram() OptString {
+	return s.Telegram
+}
+
+// GetEmail returns the value of Email.
+func (s *User) GetEmail() OptString {
+	return s.Email
+}
+
+// GetPhone returns the value of Phone.
+func (s *User) GetPhone() OptString {
+	return s.Phone
+}
+
+// GetApproval returns the value of Approval.
+func (s *User) GetApproval() bool {
+	return s.Approval
 }
 
 // GetRole returns the value of Role.
@@ -428,9 +551,64 @@ func (s *User) SetID(val string) {
 	s.ID = val
 }
 
-// SetFio sets the value of Fio.
-func (s *User) SetFio(val string) {
-	s.Fio = val
+// SetYandexId sets the value of YandexId.
+func (s *User) SetYandexId(val string) {
+	s.YandexId = val
+}
+
+// SetSurname sets the value of Surname.
+func (s *User) SetSurname(val OptString) {
+	s.Surname = val
+}
+
+// SetName sets the value of Name.
+func (s *User) SetName(val string) {
+	s.Name = val
+}
+
+// SetPatronymic sets the value of Patronymic.
+func (s *User) SetPatronymic(val OptString) {
+	s.Patronymic = val
+}
+
+// SetCallSign sets the value of CallSign.
+func (s *User) SetCallSign(val OptString) {
+	s.CallSign = val
+}
+
+// SetGender sets the value of Gender.
+func (s *User) SetGender(val OptString) {
+	s.Gender = val
+}
+
+// SetBirthdate sets the value of Birthdate.
+func (s *User) SetBirthdate(val OptString) {
+	s.Birthdate = val
+}
+
+// SetVk sets the value of Vk.
+func (s *User) SetVk(val OptString) {
+	s.Vk = val
+}
+
+// SetTelegram sets the value of Telegram.
+func (s *User) SetTelegram(val OptString) {
+	s.Telegram = val
+}
+
+// SetEmail sets the value of Email.
+func (s *User) SetEmail(val OptString) {
+	s.Email = val
+}
+
+// SetPhone sets the value of Phone.
+func (s *User) SetPhone(val OptString) {
+	s.Phone = val
+}
+
+// SetApproval sets the value of Approval.
+func (s *User) SetApproval(val bool) {
+	s.Approval = val
 }
 
 // SetRole sets the value of Role.
@@ -438,4 +616,5 @@ func (s *User) SetRole(val string) {
 	s.Role = val
 }
 
-func (*User) getUserRes() {}
+func (*User) checkUserRes() {}
+func (*User) getUserRes()   {}

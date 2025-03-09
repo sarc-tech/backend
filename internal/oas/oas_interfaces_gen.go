@@ -21,6 +21,10 @@ type CheckSmsRes interface {
 	checkSmsRes()
 }
 
+type CheckUserRes interface {
+	checkUserRes()
+}
+
 type DeleteIncidentRes interface {
 	deleteIncidentRes()
 }

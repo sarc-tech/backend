@@ -61,24 +61,67 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				break
 			}
 			switch elem[0] {
-			case 'c': // Prefix: "checksms"
+			case 'c': // Prefix: "check"
 				origElem := elem
-				if l := len("checksms"); len(elem) >= l && elem[0:l] == "checksms" {
+				if l := len("check"); len(elem) >= l && elem[0:l] == "check" {
 					elem = elem[l:]
 				} else {
 					break
 				}
 
 				if len(elem) == 0 {
-					// Leaf node.
-					switch r.Method {
-					case "POST":
-						s.handleCheckSmsRequest([0]string{}, elemIsEscaped, w, r)
-					default:
-						s.notAllowed(w, r, "POST")
+					break
+				}
+				switch elem[0] {
+				case 's': // Prefix: "sms"
+					origElem := elem
+					if l := len("sms"); len(elem) >= l && elem[0:l] == "sms" {
+						elem = elem[l:]
+					} else {
+						break
 					}
 
-					return
+					if len(elem) == 0 {
+						// Leaf node.
+						switch r.Method {
+						case "POST":
+							s.handleCheckSmsRequest([0]string{}, elemIsEscaped, w, r)
+						default:
+							s.notAllowed(w, r, "POST")
+						}
+
+						return
+					}
+
+					elem = origElem
+				case 'u': // Prefix: "user/"
+					origElem := elem
+					if l := len("user/"); len(elem) >= l && elem[0:l] == "user/" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					// Param: "token"
+					// Leaf parameter
+					args[0] = elem
+					elem = ""
+
+					if len(elem) == 0 {
+						// Leaf node.
+						switch r.Method {
+						case "POST":
+							s.handleCheckUserRequest([1]string{
+								args[0],
+							}, elemIsEscaped, w, r)
+						default:
+							s.notAllowed(w, r, "POST")
+						}
+
+						return
+					}
+
+					elem = origElem
 				}
 
 				elem = origElem
@@ -378,28 +421,73 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 				break
 			}
 			switch elem[0] {
-			case 'c': // Prefix: "checksms"
+			case 'c': // Prefix: "check"
 				origElem := elem
-				if l := len("checksms"); len(elem) >= l && elem[0:l] == "checksms" {
+				if l := len("check"); len(elem) >= l && elem[0:l] == "check" {
 					elem = elem[l:]
 				} else {
 					break
 				}
 
 				if len(elem) == 0 {
-					// Leaf node.
-					switch method {
-					case "POST":
-						r.name = CheckSmsOperation
-						r.summary = "Получение токена"
-						r.operationID = "CheckSms"
-						r.pathPattern = "/checksms"
-						r.args = args
-						r.count = 0
-						return r, true
-					default:
-						return
+					break
+				}
+				switch elem[0] {
+				case 's': // Prefix: "sms"
+					origElem := elem
+					if l := len("sms"); len(elem) >= l && elem[0:l] == "sms" {
+						elem = elem[l:]
+					} else {
+						break
 					}
+
+					if len(elem) == 0 {
+						// Leaf node.
+						switch method {
+						case "POST":
+							r.name = CheckSmsOperation
+							r.summary = "Получение токена"
+							r.operationID = "CheckSms"
+							r.pathPattern = "/checksms"
+							r.args = args
+							r.count = 0
+							return r, true
+						default:
+							return
+						}
+					}
+
+					elem = origElem
+				case 'u': // Prefix: "user/"
+					origElem := elem
+					if l := len("user/"); len(elem) >= l && elem[0:l] == "user/" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					// Param: "token"
+					// Leaf parameter
+					args[0] = elem
+					elem = ""
+
+					if len(elem) == 0 {
+						// Leaf node.
+						switch method {
+						case "POST":
+							r.name = CheckUserOperation
+							r.summary = "Получение токена"
+							r.operationID = "CheckUser"
+							r.pathPattern = "/checkuser/{token}"
+							r.args = args
+							r.count = 1
+							return r, true
+						default:
+							return
+						}
+					}
+
+					elem = origElem
 				}
 
 				elem = origElem

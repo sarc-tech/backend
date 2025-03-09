@@ -95,6 +95,12 @@ type UsersHandler interface {
 	//
 	// POST /checksms
 	CheckSms(ctx context.Context, params CheckSmsParams) (CheckSmsRes, error)
+	// CheckUser implements CheckUser operation.
+	//
+	// Returns a user.
+	//
+	// POST /checkuser/{token}
+	CheckUser(ctx context.Context, params CheckUserParams) (CheckUserRes, error)
 	// GetUser implements getUser operation.
 	//
 	// Returns a user.

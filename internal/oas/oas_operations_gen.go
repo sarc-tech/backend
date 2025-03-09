@@ -9,6 +9,7 @@ const (
 	AddIncidentsOperation    OperationName = "AddIncidents"
 	AddStatusOperation       OperationName = "AddStatus"
 	CheckSmsOperation        OperationName = "CheckSms"
+	CheckUserOperation       OperationName = "CheckUser"
 	DeleteIncidentOperation  OperationName = "DeleteIncident"
 	DeleteStatusOperation    OperationName = "DeleteStatus"
 	GetIncidentByIdOperation OperationName = "GetIncidentById"

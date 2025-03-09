@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"fmt"
+	"github.com/sarc-tech/backend/internal/models"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/sarc-tech/backend/internal/oas"
@@ -17,12 +18,15 @@ type Handler struct {
 }
 
 type HandlerSecurity struct {
+	DB *sqlx.DB
 }
 
 // HandleBearerAuth implements oas.SecurityHandler.
 func (h HandlerSecurity) HandleBearerAuth(ctx context.Context, operationName oas.OperationName, t oas.BearerAuth) (context.Context, error) {
-	if t.Token == "55555" {
-		return ctx, nil
+	session := models.Session{}
+	err := h.DB.Get(&session, "SELECT * FROM sessions WHERE id = $1", t.Token)
+	if err != nil {
+		return ctx, fmt.Errorf("unauthorized")
 	}
-	return ctx, fmt.Errorf("unauthorized")
+	return ctx, nil
 }

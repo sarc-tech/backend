@@ -40,6 +40,15 @@ func (UnimplementedHandler) CheckSms(ctx context.Context, params CheckSmsParams)
 	return r, ht.ErrNotImplemented
 }
 
+// CheckUser implements CheckUser operation.
+//
+// Returns a user.
+//
+// POST /checkuser/{token}
+func (UnimplementedHandler) CheckUser(ctx context.Context, params CheckUserParams) (r CheckUserRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // DeleteIncident implements deleteIncident operation.
 //
 // Delete an incidents.
