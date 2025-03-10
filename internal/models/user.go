@@ -9,7 +9,7 @@ type User struct {
 	Name       string         `json:"name"`
 	Patronymic sql.NullString `json:"patronymic"`
 	CallSign   sql.NullString `db:"call_sign" json:"call_sign"`
-	Gender     string         `db:"gender" json:"gender"`
+	Gender     sql.NullString `db:"gender" json:"gender"`
 	Birthdate  sql.NullString `db:"birthdate" json:"birthdate"`
 	Phone      sql.NullString `db:"phone" json:"phone"`
 	Vk         sql.NullString `db:"vk" json:"vk"`

@@ -35,7 +35,7 @@ func (h Handler) GetUsers(ctx context.Context) (oas.GetUsersRes, error) {
 			Name:     user.Name,
 			YandexId: user.YandexID,
 			Surname:  oas.NewOptString(user.Surname),
-			Gender:   oas.NewOptString(user.Gender),
+			Gender:   oas.NewOptString(user.Gender.String),
 			Phone:    oas.NewOptString(user.Phone.String),
 			Email:    oas.NewOptString(user.Email.String),
 			Role:     "Admin",
@@ -100,8 +100,15 @@ func (h Handler) CheckUser(ctx context.Context, params oas.CheckUserParams) (oas
 	err = h.DB.Get(&checkUser, "Select yandex_id from users where yandex_id =$1", req.ID)
 	if err == sql.ErrNoRows {
 		// Пользователь не обнаружен в системе, добавим его в базу данных
+		var sex sql.NullString
+		if req.Sex == "male" || req.Sex == "female" {
+			sex = sql.NullString{String: req.Sex, Valid: true}
+		} else {
+			sex = sql.NullString{String: "", Valid: false}
+		}
+
 		_, err = h.DB.Exec("Insert into users (yandex_id,surname,name,gender, phone, email ) values ($1,$2,$3,$4,$5,$6)",
-			req.ID, req.LastName, req.FirstName, req.Sex, req.Default.Number, req.Email)
+			req.ID, req.LastName, req.FirstName, sex, req.Default.Number, req.Email)
 		if err != nil {
 			return &oas.CheckUserBadRequest{}, err
 		}
@@ -119,7 +126,7 @@ func (h Handler) CheckUser(ctx context.Context, params oas.CheckUserParams) (oas
 	}
 	// Возвращаем пользователя
 	rez := oas.User{ID: strconv.Itoa(checkUser.ID), YandexId: checkUser.YandexID,
-		Surname: oas.NewOptString(checkUser.Surname), Name: checkUser.Name, Gender: oas.NewOptString(checkUser.Gender), Phone: oas.NewOptString(checkUser.Phone.String),
+		Surname: oas.NewOptString(checkUser.Surname), Name: checkUser.Name, Gender: oas.NewOptString(checkUser.Gender.String), Phone: oas.NewOptString(checkUser.Phone.String),
 		Email: oas.NewOptString(checkUser.Email.String),
 		Role:  "Admin", Approval: true}
 	return &rez, nil
