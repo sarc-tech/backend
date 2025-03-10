@@ -16,8 +16,28 @@ type UsersHandler interface {
 
 // GetUser implements oas.Handler.
 func (h Handler) GetUser(ctx context.Context) (oas.GetUserRes, error) {
+	v := ctx.Value("TOKEN")
+	var user models.User
+	var userId int
+	err := h.DB.Get(&userId, "SELECT user_id FROM sessions WHERE id = $1 LIMIT 1", v)
+	if err != nil {
+		return nil, err
+	}
 
-	return &oas.User{ID: "1", Name: "Иванов Иван Иванович", Role: "Admin"}, nil
+	err = h.DB.Get(&user, "SELECT * FROM users WHERE id = $1", userId)
+	if err != nil {
+		return nil, err
+	}
+
+	return &oas.User{ID: strconv.Itoa(user.ID),
+		Name:     user.Name,
+		YandexId: user.YandexID,
+		Surname:  oas.NewOptString(user.Surname),
+		Gender:   oas.NewOptString(user.Gender.String),
+		Phone:    oas.NewOptString(user.Phone.String),
+		Email:    oas.NewOptString(user.Email.String),
+		Role:     "Admin",
+		Approval: true}, nil
 }
 
 func (h Handler) GetUsers(ctx context.Context) (oas.GetUsersRes, error) {
