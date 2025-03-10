@@ -17,10 +17,6 @@ type AddStatusRes interface {
 	addStatusRes()
 }
 
-type CheckSmsRes interface {
-	checkSmsRes()
-}
-
 type CheckUserRes interface {
 	checkUserRes()
 }
@@ -53,12 +49,12 @@ type GetUserRes interface {
 	getUserRes()
 }
 
-type LogoutRes interface {
-	logoutRes()
+type GetUsersRes interface {
+	getUsersRes()
 }
 
-type SendSmsRes interface {
-	sendSmsRes()
+type LogoutRes interface {
+	logoutRes()
 }
 
 type UpdateIncidentsReq interface {

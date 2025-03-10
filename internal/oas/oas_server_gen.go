@@ -89,12 +89,6 @@ type StatusesHandler interface {
 //
 // x-ogen-operation-group: Users
 type UsersHandler interface {
-	// CheckSms implements CheckSms operation.
-	//
-	// Returns a token.
-	//
-	// POST /checksms
-	CheckSms(ctx context.Context, params CheckSmsParams) (CheckSmsRes, error)
 	// CheckUser implements CheckUser operation.
 	//
 	// Returns a user.
@@ -107,18 +101,18 @@ type UsersHandler interface {
 	//
 	// GET /user
 	GetUser(ctx context.Context) (GetUserRes, error)
+	// GetUsers implements getUsers operation.
+	//
+	// Returns a users.
+	//
+	// GET /users
+	GetUsers(ctx context.Context) (GetUsersRes, error)
 	// Logout implements Logout operation.
 	//
 	// Удаляет сессию пользователя.
 	//
 	// POST /logout
 	Logout(ctx context.Context) (LogoutRes, error)
-	// SendSms implements SendSms operation.
-	//
-	// Returns a token.
-	//
-	// POST /sendsms/{phone}
-	SendSms(ctx context.Context, params SendSmsParams) (SendSmsRes, error)
 }
 
 // Server implements http server based on OpenAPI v3 specification and

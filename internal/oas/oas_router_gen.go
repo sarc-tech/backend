@@ -61,67 +61,31 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				break
 			}
 			switch elem[0] {
-			case 'c': // Prefix: "check"
+			case 'c': // Prefix: "checkuser/"
 				origElem := elem
-				if l := len("check"); len(elem) >= l && elem[0:l] == "check" {
+				if l := len("checkuser/"); len(elem) >= l && elem[0:l] == "checkuser/" {
 					elem = elem[l:]
 				} else {
 					break
 				}
 
+				// Param: "token"
+				// Leaf parameter
+				args[0] = elem
+				elem = ""
+
 				if len(elem) == 0 {
-					break
-				}
-				switch elem[0] {
-				case 's': // Prefix: "sms"
-					origElem := elem
-					if l := len("sms"); len(elem) >= l && elem[0:l] == "sms" {
-						elem = elem[l:]
-					} else {
-						break
+					// Leaf node.
+					switch r.Method {
+					case "POST":
+						s.handleCheckUserRequest([1]string{
+							args[0],
+						}, elemIsEscaped, w, r)
+					default:
+						s.notAllowed(w, r, "POST")
 					}
 
-					if len(elem) == 0 {
-						// Leaf node.
-						switch r.Method {
-						case "POST":
-							s.handleCheckSmsRequest([0]string{}, elemIsEscaped, w, r)
-						default:
-							s.notAllowed(w, r, "POST")
-						}
-
-						return
-					}
-
-					elem = origElem
-				case 'u': // Prefix: "user/"
-					origElem := elem
-					if l := len("user/"); len(elem) >= l && elem[0:l] == "user/" {
-						elem = elem[l:]
-					} else {
-						break
-					}
-
-					// Param: "token"
-					// Leaf parameter
-					args[0] = elem
-					elem = ""
-
-					if len(elem) == 0 {
-						// Leaf node.
-						switch r.Method {
-						case "POST":
-							s.handleCheckUserRequest([1]string{
-								args[0],
-							}, elemIsEscaped, w, r)
-						default:
-							s.notAllowed(w, r, "POST")
-						}
-
-						return
-					}
-
-					elem = origElem
+					return
 				}
 
 				elem = origElem
@@ -204,27 +168,38 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				}
 
 				elem = origElem
-			case 's': // Prefix: "s"
+			case 's': // Prefix: "statuses"
 				origElem := elem
-				if l := len("s"); len(elem) >= l && elem[0:l] == "s" {
+				if l := len("statuses"); len(elem) >= l && elem[0:l] == "statuses" {
 					elem = elem[l:]
 				} else {
 					break
 				}
 
 				if len(elem) == 0 {
-					break
+					switch r.Method {
+					case "GET":
+						s.handleGetStatusesRequest([0]string{}, elemIsEscaped, w, r)
+					case "POST":
+						s.handleAddStatusRequest([0]string{}, elemIsEscaped, w, r)
+					case "PUT":
+						s.handleUpdateStatusRequest([0]string{}, elemIsEscaped, w, r)
+					default:
+						s.notAllowed(w, r, "GET,POST,PUT")
+					}
+
+					return
 				}
 				switch elem[0] {
-				case 'e': // Prefix: "endsms/"
+				case '/': // Prefix: "/"
 					origElem := elem
-					if l := len("endsms/"); len(elem) >= l && elem[0:l] == "endsms/" {
+					if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
 						elem = elem[l:]
 					} else {
 						break
 					}
 
-					// Param: "phone"
+					// Param: "statusId"
 					// Leaf parameter
 					args[0] = elem
 					elem = ""
@@ -232,73 +207,19 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					if len(elem) == 0 {
 						// Leaf node.
 						switch r.Method {
-						case "POST":
-							s.handleSendSmsRequest([1]string{
+						case "DELETE":
+							s.handleDeleteStatusRequest([1]string{
+								args[0],
+							}, elemIsEscaped, w, r)
+						case "GET":
+							s.handleGetStatusByIdRequest([1]string{
 								args[0],
 							}, elemIsEscaped, w, r)
 						default:
-							s.notAllowed(w, r, "POST")
+							s.notAllowed(w, r, "DELETE,GET")
 						}
 
 						return
-					}
-
-					elem = origElem
-				case 't': // Prefix: "tatuses"
-					origElem := elem
-					if l := len("tatuses"); len(elem) >= l && elem[0:l] == "tatuses" {
-						elem = elem[l:]
-					} else {
-						break
-					}
-
-					if len(elem) == 0 {
-						switch r.Method {
-						case "GET":
-							s.handleGetStatusesRequest([0]string{}, elemIsEscaped, w, r)
-						case "POST":
-							s.handleAddStatusRequest([0]string{}, elemIsEscaped, w, r)
-						case "PUT":
-							s.handleUpdateStatusRequest([0]string{}, elemIsEscaped, w, r)
-						default:
-							s.notAllowed(w, r, "GET,POST,PUT")
-						}
-
-						return
-					}
-					switch elem[0] {
-					case '/': // Prefix: "/"
-						origElem := elem
-						if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
-							elem = elem[l:]
-						} else {
-							break
-						}
-
-						// Param: "statusId"
-						// Leaf parameter
-						args[0] = elem
-						elem = ""
-
-						if len(elem) == 0 {
-							// Leaf node.
-							switch r.Method {
-							case "DELETE":
-								s.handleDeleteStatusRequest([1]string{
-									args[0],
-								}, elemIsEscaped, w, r)
-							case "GET":
-								s.handleGetStatusByIdRequest([1]string{
-									args[0],
-								}, elemIsEscaped, w, r)
-							default:
-								s.notAllowed(w, r, "DELETE,GET")
-							}
-
-							return
-						}
-
-						elem = origElem
 					}
 
 					elem = origElem
@@ -314,7 +235,6 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				}
 
 				if len(elem) == 0 {
-					// Leaf node.
 					switch r.Method {
 					case "GET":
 						s.handleGetUserRequest([0]string{}, elemIsEscaped, w, r)
@@ -323,6 +243,29 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					}
 
 					return
+				}
+				switch elem[0] {
+				case 's': // Prefix: "s"
+					origElem := elem
+					if l := len("s"); len(elem) >= l && elem[0:l] == "s" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					if len(elem) == 0 {
+						// Leaf node.
+						switch r.Method {
+						case "GET":
+							s.handleGetUsersRequest([0]string{}, elemIsEscaped, w, r)
+						default:
+							s.notAllowed(w, r, "GET")
+						}
+
+						return
+					}
+
+					elem = origElem
 				}
 
 				elem = origElem
@@ -421,73 +364,33 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 				break
 			}
 			switch elem[0] {
-			case 'c': // Prefix: "check"
+			case 'c': // Prefix: "checkuser/"
 				origElem := elem
-				if l := len("check"); len(elem) >= l && elem[0:l] == "check" {
+				if l := len("checkuser/"); len(elem) >= l && elem[0:l] == "checkuser/" {
 					elem = elem[l:]
 				} else {
 					break
 				}
 
+				// Param: "token"
+				// Leaf parameter
+				args[0] = elem
+				elem = ""
+
 				if len(elem) == 0 {
-					break
-				}
-				switch elem[0] {
-				case 's': // Prefix: "sms"
-					origElem := elem
-					if l := len("sms"); len(elem) >= l && elem[0:l] == "sms" {
-						elem = elem[l:]
-					} else {
-						break
+					// Leaf node.
+					switch method {
+					case "POST":
+						r.name = CheckUserOperation
+						r.summary = "Получение токена"
+						r.operationID = "CheckUser"
+						r.pathPattern = "/checkuser/{token}"
+						r.args = args
+						r.count = 1
+						return r, true
+					default:
+						return
 					}
-
-					if len(elem) == 0 {
-						// Leaf node.
-						switch method {
-						case "POST":
-							r.name = CheckSmsOperation
-							r.summary = "Получение токена"
-							r.operationID = "CheckSms"
-							r.pathPattern = "/checksms"
-							r.args = args
-							r.count = 0
-							return r, true
-						default:
-							return
-						}
-					}
-
-					elem = origElem
-				case 'u': // Prefix: "user/"
-					origElem := elem
-					if l := len("user/"); len(elem) >= l && elem[0:l] == "user/" {
-						elem = elem[l:]
-					} else {
-						break
-					}
-
-					// Param: "token"
-					// Leaf parameter
-					args[0] = elem
-					elem = ""
-
-					if len(elem) == 0 {
-						// Leaf node.
-						switch method {
-						case "POST":
-							r.name = CheckUserOperation
-							r.summary = "Получение токена"
-							r.operationID = "CheckUser"
-							r.pathPattern = "/checkuser/{token}"
-							r.args = args
-							r.count = 1
-							return r, true
-						default:
-							return
-						}
-					}
-
-					elem = origElem
 				}
 
 				elem = origElem
@@ -596,27 +499,54 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 				}
 
 				elem = origElem
-			case 's': // Prefix: "s"
+			case 's': // Prefix: "statuses"
 				origElem := elem
-				if l := len("s"); len(elem) >= l && elem[0:l] == "s" {
+				if l := len("statuses"); len(elem) >= l && elem[0:l] == "statuses" {
 					elem = elem[l:]
 				} else {
 					break
 				}
 
 				if len(elem) == 0 {
-					break
+					switch method {
+					case "GET":
+						r.name = GetStatusesOperation
+						r.summary = "получение списка заявок"
+						r.operationID = "getStatuses"
+						r.pathPattern = "/statuses"
+						r.args = args
+						r.count = 0
+						return r, true
+					case "POST":
+						r.name = AddStatusOperation
+						r.summary = "добавление новой заявки"
+						r.operationID = "addStatus"
+						r.pathPattern = "/statuses"
+						r.args = args
+						r.count = 0
+						return r, true
+					case "PUT":
+						r.name = UpdateStatusOperation
+						r.summary = "Обновление существующего статуса"
+						r.operationID = "updateStatus"
+						r.pathPattern = "/statuses"
+						r.args = args
+						r.count = 0
+						return r, true
+					default:
+						return
+					}
 				}
 				switch elem[0] {
-				case 'e': // Prefix: "endsms/"
+				case '/': // Prefix: "/"
 					origElem := elem
-					if l := len("endsms/"); len(elem) >= l && elem[0:l] == "endsms/" {
+					if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
 						elem = elem[l:]
 					} else {
 						break
 					}
 
-					// Param: "phone"
+					// Param: "statusId"
 					// Leaf parameter
 					args[0] = elem
 					elem = ""
@@ -624,97 +554,25 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 					if len(elem) == 0 {
 						// Leaf node.
 						switch method {
-						case "POST":
-							r.name = SendSmsOperation
-							r.summary = "Отправка СМС"
-							r.operationID = "SendSms"
-							r.pathPattern = "/sendsms/{phone}"
+						case "DELETE":
+							r.name = DeleteStatusOperation
+							r.summary = "Deletes an status"
+							r.operationID = "deleteStatus"
+							r.pathPattern = "/statuses/{statusId}"
+							r.args = args
+							r.count = 1
+							return r, true
+						case "GET":
+							r.name = GetStatusByIdOperation
+							r.summary = "получение заявки по id"
+							r.operationID = "getStatusById"
+							r.pathPattern = "/statuses/{statusId}"
 							r.args = args
 							r.count = 1
 							return r, true
 						default:
 							return
 						}
-					}
-
-					elem = origElem
-				case 't': // Prefix: "tatuses"
-					origElem := elem
-					if l := len("tatuses"); len(elem) >= l && elem[0:l] == "tatuses" {
-						elem = elem[l:]
-					} else {
-						break
-					}
-
-					if len(elem) == 0 {
-						switch method {
-						case "GET":
-							r.name = GetStatusesOperation
-							r.summary = "получение списка заявок"
-							r.operationID = "getStatuses"
-							r.pathPattern = "/statuses"
-							r.args = args
-							r.count = 0
-							return r, true
-						case "POST":
-							r.name = AddStatusOperation
-							r.summary = "добавление новой заявки"
-							r.operationID = "addStatus"
-							r.pathPattern = "/statuses"
-							r.args = args
-							r.count = 0
-							return r, true
-						case "PUT":
-							r.name = UpdateStatusOperation
-							r.summary = "Обновление существующего статуса"
-							r.operationID = "updateStatus"
-							r.pathPattern = "/statuses"
-							r.args = args
-							r.count = 0
-							return r, true
-						default:
-							return
-						}
-					}
-					switch elem[0] {
-					case '/': // Prefix: "/"
-						origElem := elem
-						if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
-							elem = elem[l:]
-						} else {
-							break
-						}
-
-						// Param: "statusId"
-						// Leaf parameter
-						args[0] = elem
-						elem = ""
-
-						if len(elem) == 0 {
-							// Leaf node.
-							switch method {
-							case "DELETE":
-								r.name = DeleteStatusOperation
-								r.summary = "Deletes an status"
-								r.operationID = "deleteStatus"
-								r.pathPattern = "/statuses/{statusId}"
-								r.args = args
-								r.count = 1
-								return r, true
-							case "GET":
-								r.name = GetStatusByIdOperation
-								r.summary = "получение заявки по id"
-								r.operationID = "getStatusById"
-								r.pathPattern = "/statuses/{statusId}"
-								r.args = args
-								r.count = 1
-								return r, true
-							default:
-								return
-							}
-						}
-
-						elem = origElem
 					}
 
 					elem = origElem
@@ -730,7 +588,6 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 				}
 
 				if len(elem) == 0 {
-					// Leaf node.
 					switch method {
 					case "GET":
 						r.name = GetUserOperation
@@ -743,6 +600,33 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 					default:
 						return
 					}
+				}
+				switch elem[0] {
+				case 's': // Prefix: "s"
+					origElem := elem
+					if l := len("s"); len(elem) >= l && elem[0:l] == "s" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					if len(elem) == 0 {
+						// Leaf node.
+						switch method {
+						case "GET":
+							r.name = GetUsersOperation
+							r.summary = "получение списка пользователей"
+							r.operationID = "getUsers"
+							r.pathPattern = "/users"
+							r.args = args
+							r.count = 0
+							return r, true
+						default:
+							return
+						}
+					}
+
+					elem = origElem
 				}
 
 				elem = origElem

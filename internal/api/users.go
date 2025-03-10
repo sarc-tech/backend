@@ -14,24 +14,45 @@ import (
 type UsersHandler interface {
 }
 
-// CheckSms implements oas.Handler.
-func (h Handler) CheckSms(ctx context.Context, params oas.CheckSmsParams) (oas.CheckSmsRes, error) {
-	return &oas.Token{"55555"}, nil
-}
-
 // GetUser implements oas.Handler.
 func (h Handler) GetUser(ctx context.Context) (oas.GetUserRes, error) {
+
+	return &oas.User{ID: "1", Name: "Иванов Иван Иванович", Role: "Admin"}, nil
+}
+
+func (h Handler) GetUsers(ctx context.Context) (oas.GetUsersRes, error) {
+	var users []models.User
+	q := `SELECT * FROM users`
+	err := h.DB.SelectContext(ctx, &users, q)
+	if err != nil {
+		return nil, err
+	}
+
+	req := make([]oas.User, 0, 50)
+	for _, user := range users {
+		req = append(req, oas.User{
+			ID:       strconv.Itoa(user.ID),
+			Name:     user.Name,
+			YandexId: user.YandexID,
+			Surname:  oas.NewOptString(user.Surname),
+			Gender:   oas.NewOptString(user.Gender),
+			Phone:    oas.NewOptString(user.Phone.String),
+			Email:    oas.NewOptString(user.Email.String),
+			Role:     "Admin",
+			Approval: true})
+
+	}
+
+	return &oas.UsersResponse{Data: req}, nil
+}
+
+func (h Handler) GetUserByID(ctx context.Context, id string) (oas.GetUserRes, error) {
 	return &oas.User{ID: "1", Name: "Иванов Иван Иванович", Role: "Admin"}, nil
 }
 
 // Logout implements oas.Handler.
 func (h Handler) Logout(ctx context.Context) (oas.LogoutRes, error) {
 	return &oas.LogoutOK{}, nil
-}
-
-// SendSms implements oas.Handler.
-func (h Handler) SendSms(ctx context.Context, params oas.SendSmsParams) (oas.SendSmsRes, error) {
-	return &oas.SendSmsOK{}, nil
 }
 
 func (h Handler) CheckUser(ctx context.Context, params oas.CheckUserParams) (oas.CheckUserRes, error) {

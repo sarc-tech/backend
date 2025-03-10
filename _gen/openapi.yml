@@ -9,14 +9,13 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  version: 0.0.13
+  version: 0.0.15
 externalDocs:
   description: Find out more about Swagger
   url: http://swagger.io
 servers:
-  - url: http://localhost:8082
   - url: https://d5drbh6fis58kjvm332b.g3ab4gln.apigw.yandexcloud.net
-  - url: https://bbasntee4s9pbtmrrvb1.containers.yandexcloud.net
+  - url: http://localhost:8082
 security:
   - bearerAuth: []
 tags:
@@ -150,10 +149,6 @@ paths:
           description: successful operation
         '400':
           description: Invalid value
-
-
-
-
   /incidents:
     x-ogen-operation-group: Incidents
     put:
@@ -293,41 +288,25 @@ paths:
           description: Invalid user
         '404':
           description: user not found
-  /checksms:
+  /users:
     x-ogen-operation-group: Users
-    post:
-      security: []
+    get:
       tags:
         - users
-      summary: Получение токена
-      description: Returns a token
-      operationId: CheckSms
-      parameters:
-        - name: phone
-          in: query
-          description: phone of user
-          required: true
-          schema:
-            type: string
-            description: phone
-        - name: sms
-          in: query
-          description: sms
-          required: true
-          schema:
-            type: string
-            description: sms
+      summary: получение списка пользователей
+      description: Returns a users
+      operationId: getUsers
       responses:
         '200':
           description: successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Token'
+                $ref: '#/components/schemas/UsersResponse'
         '400':
-          description: Invalid param
+          description: Invalid user
         '404':
-          description: check error
+          description: user not found
   /checkuser/{token}:
     x-ogen-operation-group: Users
     post:
@@ -356,30 +335,6 @@ paths:
           description: Invalid user
         '404':
           description: user not found
-  /sendsms/{phone}:
-    x-ogen-operation-group: Users
-    post:
-      security: []
-      tags:
-        - users
-      summary: Отправка СМС
-      description: Returns a token
-      operationId: SendSms
-      parameters:
-        - name: phone
-          in: path
-          description: phone of user
-          required: true
-          schema:
-            type: string
-            description: phone
-      responses:
-        '200':
-          description: successful operation
-        '400':
-          description: Invalid param
-        '404':
-          description: check error
   /logout:
     x-ogen-operation-group: Users
     post:
@@ -490,7 +445,7 @@ components:
           example: female
         birthdate:
           type: string
-          ormat: date
+          format: date
           example: '2022-02-22'
         vk:
           type: string
@@ -509,15 +464,22 @@ components:
         role:
           type: string
           example: Admin
-    Token:
+    UsersResponse:
       required:
-        - token
+        - trackingId
+        - status
+        - data
       type: object
       properties:
-        token:
+        trackingId:
           type: string
-          example: 123
-          description: token
+        status:
+          type: string
+          default: Ok
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/User"
     IncidentsResponse:
       required:
         - trackingId

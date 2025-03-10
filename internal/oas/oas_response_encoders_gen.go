@@ -75,38 +75,6 @@ func encodeAddStatusResponse(response AddStatusRes, w http.ResponseWriter, span 
 	}
 }
 
-func encodeCheckSmsResponse(response CheckSmsRes, w http.ResponseWriter, span trace.Span) error {
-	switch response := response.(type) {
-	case *Token:
-		w.Header().Set("Content-Type", "application/json; charset=utf-8")
-		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
-
-		e := new(jx.Encoder)
-		response.Encode(e)
-		if _, err := e.WriteTo(w); err != nil {
-			return errors.Wrap(err, "write")
-		}
-
-		return nil
-
-	case *CheckSmsBadRequest:
-		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
-
-		return nil
-
-	case *CheckSmsNotFound:
-		w.WriteHeader(404)
-		span.SetStatus(codes.Error, http.StatusText(404))
-
-		return nil
-
-	default:
-		return errors.Errorf("unexpected response type: %T", response)
-	}
-}
-
 func encodeCheckUserResponse(response CheckUserRes, w http.ResponseWriter, span trace.Span) error {
 	switch response := response.(type) {
 	case *User:
@@ -325,6 +293,38 @@ func encodeGetUserResponse(response GetUserRes, w http.ResponseWriter, span trac
 	}
 }
 
+func encodeGetUsersResponse(response GetUsersRes, w http.ResponseWriter, span trace.Span) error {
+	switch response := response.(type) {
+	case *UsersResponse:
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		w.WriteHeader(200)
+		span.SetStatus(codes.Ok, http.StatusText(200))
+
+		e := new(jx.Encoder)
+		response.Encode(e)
+		if _, err := e.WriteTo(w); err != nil {
+			return errors.Wrap(err, "write")
+		}
+
+		return nil
+
+	case *GetUsersBadRequest:
+		w.WriteHeader(400)
+		span.SetStatus(codes.Error, http.StatusText(400))
+
+		return nil
+
+	case *GetUsersNotFound:
+		w.WriteHeader(404)
+		span.SetStatus(codes.Error, http.StatusText(404))
+
+		return nil
+
+	default:
+		return errors.Errorf("unexpected response type: %T", response)
+	}
+}
+
 func encodeLogoutResponse(response LogoutRes, w http.ResponseWriter, span trace.Span) error {
 	switch response := response.(type) {
 	case *LogoutOK:
@@ -340,31 +340,6 @@ func encodeLogoutResponse(response LogoutRes, w http.ResponseWriter, span trace.
 		return nil
 
 	case *LogoutNotFound:
-		w.WriteHeader(404)
-		span.SetStatus(codes.Error, http.StatusText(404))
-
-		return nil
-
-	default:
-		return errors.Errorf("unexpected response type: %T", response)
-	}
-}
-
-func encodeSendSmsResponse(response SendSmsRes, w http.ResponseWriter, span trace.Span) error {
-	switch response := response.(type) {
-	case *SendSmsOK:
-		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
-
-		return nil
-
-	case *SendSmsBadRequest:
-		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
-
-		return nil
-
-	case *SendSmsNotFound:
 		w.WriteHeader(404)
 		span.SetStatus(codes.Error, http.StatusText(404))
 

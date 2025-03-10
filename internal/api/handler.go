@@ -28,5 +28,6 @@ func (h HandlerSecurity) HandleBearerAuth(ctx context.Context, operationName oas
 	if err != nil {
 		return ctx, fmt.Errorf("unauthorized")
 	}
+	ctx = context.WithValue(ctx, "TOKEN", t.Token)
 	return ctx, nil
 }

@@ -105,12 +105,6 @@ type StatusesInvoker interface {
 //
 // x-gen-operation-group: Users
 type UsersInvoker interface {
-	// CheckSms invokes CheckSms operation.
-	//
-	// Returns a token.
-	//
-	// POST /checksms
-	CheckSms(ctx context.Context, params CheckSmsParams) (CheckSmsRes, error)
 	// CheckUser invokes CheckUser operation.
 	//
 	// Returns a user.
@@ -123,18 +117,18 @@ type UsersInvoker interface {
 	//
 	// GET /user
 	GetUser(ctx context.Context) (GetUserRes, error)
+	// GetUsers invokes getUsers operation.
+	//
+	// Returns a users.
+	//
+	// GET /users
+	GetUsers(ctx context.Context) (GetUsersRes, error)
 	// Logout invokes Logout operation.
 	//
 	// Удаляет сессию пользователя.
 	//
 	// POST /logout
 	Logout(ctx context.Context) (LogoutRes, error)
-	// SendSms invokes SendSms operation.
-	//
-	// Returns a token.
-	//
-	// POST /sendsms/{phone}
-	SendSms(ctx context.Context, params SendSmsParams) (SendSmsRes, error)
 }
 
 // Client implements OAS client.
@@ -396,110 +390,6 @@ func (c *Client) sendAddStatus(ctx context.Context, request AddStatusReq) (res A
 
 	stage = "DecodeResponse"
 	result, err := decodeAddStatusResponse(resp)
-	if err != nil {
-		return res, errors.Wrap(err, "decode response")
-	}
-
-	return result, nil
-}
-
-// CheckSms invokes CheckSms operation.
-//
-// Returns a token.
-//
-// POST /checksms
-func (c *Client) CheckSms(ctx context.Context, params CheckSmsParams) (CheckSmsRes, error) {
-	res, err := c.sendCheckSms(ctx, params)
-	return res, err
-}
-
-func (c *Client) sendCheckSms(ctx context.Context, params CheckSmsParams) (res CheckSmsRes, err error) {
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("CheckSms"),
-		semconv.HTTPRequestMethodKey.String("POST"),
-		semconv.HTTPRouteKey.String("/checksms"),
-	}
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		elapsedDuration := time.Since(startTime)
-		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
-	}()
-
-	// Increment request counter.
-	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-
-	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, CheckSmsOperation,
-		trace.WithAttributes(otelAttrs...),
-		clientSpanKind,
-	)
-	// Track stage for error reporting.
-	var stage string
-	defer func() {
-		if err != nil {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, stage)
-			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-		}
-		span.End()
-	}()
-
-	stage = "BuildURL"
-	u := uri.Clone(c.requestURL(ctx))
-	var pathParts [1]string
-	pathParts[0] = "/checksms"
-	uri.AddPathParts(u, pathParts[:]...)
-
-	stage = "EncodeQueryParams"
-	q := uri.NewQueryEncoder()
-	{
-		// Encode "phone" parameter.
-		cfg := uri.QueryParameterEncodingConfig{
-			Name:    "phone",
-			Style:   uri.QueryStyleForm,
-			Explode: true,
-		}
-
-		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
-			return e.EncodeValue(conv.StringToString(params.Phone))
-		}); err != nil {
-			return res, errors.Wrap(err, "encode query")
-		}
-	}
-	{
-		// Encode "sms" parameter.
-		cfg := uri.QueryParameterEncodingConfig{
-			Name:    "sms",
-			Style:   uri.QueryStyleForm,
-			Explode: true,
-		}
-
-		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
-			return e.EncodeValue(conv.StringToString(params.SMS))
-		}); err != nil {
-			return res, errors.Wrap(err, "encode query")
-		}
-	}
-	u.RawQuery = q.Values().Encode()
-
-	stage = "EncodeRequest"
-	r, err := ht.NewRequest(ctx, "POST", u)
-	if err != nil {
-		return res, errors.Wrap(err, "create request")
-	}
-
-	stage = "SendRequest"
-	resp, err := c.cfg.Client.Do(r)
-	if err != nil {
-		return res, errors.Wrap(err, "do request")
-	}
-	defer resp.Body.Close()
-
-	stage = "DecodeResponse"
-	result, err := decodeCheckSmsResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -1404,6 +1294,111 @@ func (c *Client) sendGetUser(ctx context.Context) (res GetUserRes, err error) {
 	return result, nil
 }
 
+// GetUsers invokes getUsers operation.
+//
+// Returns a users.
+//
+// GET /users
+func (c *Client) GetUsers(ctx context.Context) (GetUsersRes, error) {
+	res, err := c.sendGetUsers(ctx)
+	return res, err
+}
+
+func (c *Client) sendGetUsers(ctx context.Context) (res GetUsersRes, err error) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("getUsers"),
+		semconv.HTTPRequestMethodKey.String("GET"),
+		semconv.HTTPRouteKey.String("/users"),
+	}
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, GetUsersOperation,
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [1]string
+	pathParts[0] = "/users"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+			stage = "Security:BearerAuth"
+			switch err := c.securityBearerAuth(ctx, GetUsersOperation, r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"BearerAuth\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeGetUsersResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
 // Logout invokes Logout operation.
 //
 // Удаляет сессию пользователя.
@@ -1502,96 +1497,6 @@ func (c *Client) sendLogout(ctx context.Context) (res LogoutRes, err error) {
 
 	stage = "DecodeResponse"
 	result, err := decodeLogoutResponse(resp)
-	if err != nil {
-		return res, errors.Wrap(err, "decode response")
-	}
-
-	return result, nil
-}
-
-// SendSms invokes SendSms operation.
-//
-// Returns a token.
-//
-// POST /sendsms/{phone}
-func (c *Client) SendSms(ctx context.Context, params SendSmsParams) (SendSmsRes, error) {
-	res, err := c.sendSendSms(ctx, params)
-	return res, err
-}
-
-func (c *Client) sendSendSms(ctx context.Context, params SendSmsParams) (res SendSmsRes, err error) {
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("SendSms"),
-		semconv.HTTPRequestMethodKey.String("POST"),
-		semconv.HTTPRouteKey.String("/sendsms/{phone}"),
-	}
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		elapsedDuration := time.Since(startTime)
-		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
-	}()
-
-	// Increment request counter.
-	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-
-	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, SendSmsOperation,
-		trace.WithAttributes(otelAttrs...),
-		clientSpanKind,
-	)
-	// Track stage for error reporting.
-	var stage string
-	defer func() {
-		if err != nil {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, stage)
-			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-		}
-		span.End()
-	}()
-
-	stage = "BuildURL"
-	u := uri.Clone(c.requestURL(ctx))
-	var pathParts [2]string
-	pathParts[0] = "/sendsms/"
-	{
-		// Encode "phone" parameter.
-		e := uri.NewPathEncoder(uri.PathEncoderConfig{
-			Param:   "phone",
-			Style:   uri.PathStyleSimple,
-			Explode: false,
-		})
-		if err := func() error {
-			return e.EncodeValue(conv.StringToString(params.Phone))
-		}(); err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		encoded, err := e.Result()
-		if err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		pathParts[1] = encoded
-	}
-	uri.AddPathParts(u, pathParts[:]...)
-
-	stage = "EncodeRequest"
-	r, err := ht.NewRequest(ctx, "POST", u)
-	if err != nil {
-		return res, errors.Wrap(err, "create request")
-	}
-
-	stage = "SendRequest"
-	resp, err := c.cfg.Client.Do(r)
-	if err != nil {
-		return res, errors.Wrap(err, "do request")
-	}
-	defer resp.Body.Close()
-
-	stage = "DecodeResponse"
-	result, err := decodeSendSmsResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}

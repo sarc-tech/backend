@@ -2,6 +2,10 @@
 
 package oas
 
+import (
+	"time"
+)
+
 type AddIncidentsApplicationJSON Incident
 
 func (*AddIncidentsApplicationJSON) addIncidentsReq() {}
@@ -51,16 +55,6 @@ func (s *BearerAuth) GetToken() string {
 func (s *BearerAuth) SetToken(val string) {
 	s.Token = val
 }
-
-// CheckSmsBadRequest is response for CheckSms operation.
-type CheckSmsBadRequest struct{}
-
-func (*CheckSmsBadRequest) checkSmsRes() {}
-
-// CheckSmsNotFound is response for CheckSms operation.
-type CheckSmsNotFound struct{}
-
-func (*CheckSmsNotFound) checkSmsRes() {}
 
 // CheckUserBadRequest is response for CheckUser operation.
 type CheckUserBadRequest struct{}
@@ -131,6 +125,16 @@ func (*GetUserBadRequest) getUserRes() {}
 type GetUserNotFound struct{}
 
 func (*GetUserNotFound) getUserRes() {}
+
+// GetUsersBadRequest is response for GetUsers operation.
+type GetUsersBadRequest struct{}
+
+func (*GetUsersBadRequest) getUsersRes() {}
+
+// GetUsersNotFound is response for GetUsers operation.
+type GetUsersNotFound struct{}
+
+func (*GetUsersNotFound) getUsersRes() {}
 
 // Ref: #/components/schemas/Incident
 type Incident struct {
@@ -261,6 +265,52 @@ type LogoutOK struct{}
 
 func (*LogoutOK) logoutRes() {}
 
+// NewOptDate returns new OptDate with value set to v.
+func NewOptDate(v time.Time) OptDate {
+	return OptDate{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptDate is optional time.Time.
+type OptDate struct {
+	Value time.Time
+	Set   bool
+}
+
+// IsSet returns true if OptDate was set.
+func (o OptDate) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptDate) Reset() {
+	var v time.Time
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptDate) SetTo(v time.Time) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptDate) Get() (v time.Time, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptDate) Or(d time.Time) time.Time {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptString returns new OptString with value set to v.
 func NewOptString(v string) OptString {
 	return OptString{
@@ -306,21 +356,6 @@ func (o OptString) Or(d string) string {
 	}
 	return d
 }
-
-// SendSmsBadRequest is response for SendSms operation.
-type SendSmsBadRequest struct{}
-
-func (*SendSmsBadRequest) sendSmsRes() {}
-
-// SendSmsNotFound is response for SendSms operation.
-type SendSmsNotFound struct{}
-
-func (*SendSmsNotFound) sendSmsRes() {}
-
-// SendSmsOK is response for SendSms operation.
-type SendSmsOK struct{}
-
-func (*SendSmsOK) sendSmsRes() {}
 
 // Ref: #/components/schemas/Status
 type Status struct {
@@ -392,24 +427,6 @@ func (s *StatususResponse) SetData(val []Status) {
 
 func (*StatususResponse) getStatusesRes() {}
 
-// Ref: #/components/schemas/Token
-type Token struct {
-	// Token.
-	Token string `json:"token"`
-}
-
-// GetToken returns the value of Token.
-func (s *Token) GetToken() string {
-	return s.Token
-}
-
-// SetToken sets the value of Token.
-func (s *Token) SetToken(val string) {
-	s.Token = val
-}
-
-func (*Token) checkSmsRes() {}
-
 type UpdateIncidentsApplicationJSON Incident
 
 func (*UpdateIncidentsApplicationJSON) updateIncidentsReq() {}
@@ -467,7 +484,7 @@ type User struct {
 	Patronymic OptString `json:"patronymic"`
 	CallSign   OptString `json:"callSign"`
 	Gender     OptString `json:"gender"`
-	Birthdate  OptString `json:"birthdate"`
+	Birthdate  OptDate   `json:"birthdate"`
 	Vk         OptString `json:"vk"`
 	Telegram   OptString `json:"telegram"`
 	Email      OptString `json:"email"`
@@ -512,7 +529,7 @@ func (s *User) GetGender() OptString {
 }
 
 // GetBirthdate returns the value of Birthdate.
-func (s *User) GetBirthdate() OptString {
+func (s *User) GetBirthdate() OptDate {
 	return s.Birthdate
 }
 
@@ -582,7 +599,7 @@ func (s *User) SetGender(val OptString) {
 }
 
 // SetBirthdate sets the value of Birthdate.
-func (s *User) SetBirthdate(val OptString) {
+func (s *User) SetBirthdate(val OptDate) {
 	s.Birthdate = val
 }
 
@@ -618,3 +635,42 @@ func (s *User) SetRole(val string) {
 
 func (*User) checkUserRes() {}
 func (*User) getUserRes()   {}
+
+// Ref: #/components/schemas/UsersResponse
+type UsersResponse struct {
+	TrackingId string `json:"trackingId"`
+	Status     string `json:"status"`
+	Data       []User `json:"data"`
+}
+
+// GetTrackingId returns the value of TrackingId.
+func (s *UsersResponse) GetTrackingId() string {
+	return s.TrackingId
+}
+
+// GetStatus returns the value of Status.
+func (s *UsersResponse) GetStatus() string {
+	return s.Status
+}
+
+// GetData returns the value of Data.
+func (s *UsersResponse) GetData() []User {
+	return s.Data
+}
+
+// SetTrackingId sets the value of TrackingId.
+func (s *UsersResponse) SetTrackingId(val string) {
+	s.TrackingId = val
+}
+
+// SetStatus sets the value of Status.
+func (s *UsersResponse) SetStatus(val string) {
+	s.Status = val
+}
+
+// SetData sets the value of Data.
+func (s *UsersResponse) SetData(val []User) {
+	s.Data = val
+}
+
+func (*UsersResponse) getUsersRes() {}

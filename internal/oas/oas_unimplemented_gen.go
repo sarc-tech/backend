@@ -31,15 +31,6 @@ func (UnimplementedHandler) AddStatus(ctx context.Context, req AddStatusReq) (r 
 	return r, ht.ErrNotImplemented
 }
 
-// CheckSms implements CheckSms operation.
-//
-// Returns a token.
-//
-// POST /checksms
-func (UnimplementedHandler) CheckSms(ctx context.Context, params CheckSmsParams) (r CheckSmsRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
 // CheckUser implements CheckUser operation.
 //
 // Returns a user.
@@ -112,21 +103,21 @@ func (UnimplementedHandler) GetUser(ctx context.Context) (r GetUserRes, _ error)
 	return r, ht.ErrNotImplemented
 }
 
+// GetUsers implements getUsers operation.
+//
+// Returns a users.
+//
+// GET /users
+func (UnimplementedHandler) GetUsers(ctx context.Context) (r GetUsersRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // Logout implements Logout operation.
 //
 // Удаляет сессию пользователя.
 //
 // POST /logout
 func (UnimplementedHandler) Logout(ctx context.Context) (r LogoutRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// SendSms implements SendSms operation.
-//
-// Returns a token.
-//
-// POST /sendsms/{phone}
-func (UnimplementedHandler) SendSms(ctx context.Context, params SendSmsParams) (r SendSmsRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
