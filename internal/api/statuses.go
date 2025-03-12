@@ -22,7 +22,7 @@ func (h Handler) AddStatus(ctx context.Context, req oas.AddStatusReq) (oas.AddSt
 	INSERT INTO statuses (name)
 	VALUES ($1) RETURNING id
 	`
-	h.DB.MustExec(q, request.Name)
+	h.Db.MustExec(q, request.Name)
 
 	//	id, err := rez.LastInsertId()
 
@@ -42,7 +42,7 @@ func (h Handler) DeleteStatus(ctx context.Context, params oas.DeleteStatusParams
 	DELETE FROM statuses
 	where id=$1
 	`
-	h.DB.MustExec(q, params.StatusId)
+	h.Db.MustExec(q, params.StatusId)
 
 	return &oas.DeleteStatusOK{}, nil
 }
@@ -50,7 +50,7 @@ func (h Handler) DeleteStatus(ctx context.Context, params oas.DeleteStatusParams
 // GetStatusById implements oas.Handler.
 func (h Handler) GetStatusById(ctx context.Context, params oas.GetStatusByIdParams) (oas.GetStatusByIdRes, error) {
 	rez := oas.Status{}
-	err := h.DB.Get(&rez, "SELECT * FROM statuses WHERE id=$1", params.StatusId)
+	err := h.Db.Get(&rez, "SELECT * FROM statuses WHERE id=$1", params.StatusId)
 	if err != nil {
 		return &oas.GetStatusByIdBadRequest{}, fmt.Errorf("failed to get incident by id")
 	}
@@ -62,7 +62,7 @@ func (h Handler) GetStatuses(ctx context.Context) (oas.GetStatusesRes, error) {
 	req := make([]oas.Status, 0, 50)
 
 	incident := oas.Status{}
-	rows, err := h.DB.Queryx("SELECT * FROM statuses")
+	rows, err := h.Db.Queryx("SELECT * FROM statuses")
 	if err != nil {
 		return &oas.GetStatusesBadRequest{}, fmt.Errorf("failed to get incidents")
 	}
@@ -88,7 +88,7 @@ func (h Handler) UpdateStatus(ctx context.Context, req oas.UpdateStatusReq) (oas
 	UPDATE statuses SET id=$1, name=$2
 	where id=$1
 	`
-	rez := h.DB.MustExec(q, request.ID, request.Name)
+	rez := h.Db.MustExec(q, request.ID, request.Name)
 
 	_, err := rez.RowsAffected()
 

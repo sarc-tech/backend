@@ -13,18 +13,18 @@ import (
 var _ oas.Handler = (*Handler)(nil)
 
 type Handler struct {
-	DB                       *sqlx.DB
+	Db                       *sqlx.DB
 	oas.UnimplementedHandler // automatically implement all methods
 }
 
 type HandlerSecurity struct {
-	DB *sqlx.DB
+	Db *sqlx.DB
 }
 
 // HandleBearerAuth implements oas.SecurityHandler.
 func (h HandlerSecurity) HandleBearerAuth(ctx context.Context, operationName oas.OperationName, t oas.BearerAuth) (context.Context, error) {
 	session := models.Session{}
-	err := h.DB.Get(&session, "SELECT * FROM sessions WHERE id = $1", t.Token)
+	err := h.Db.Get(&session, "SELECT * FROM sessions WHERE id = $1", t.Token)
 	if err != nil {
 		return ctx, fmt.Errorf("unauthorized")
 	}

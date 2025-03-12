@@ -19,12 +19,12 @@ func (h Handler) GetUser(ctx context.Context) (oas.GetUserRes, error) {
 	v := ctx.Value("TOKEN")
 	var user models.User
 	var userId int
-	err := h.DB.Get(&userId, "SELECT user_id FROM sessions WHERE id = $1 LIMIT 1", v)
+	err := h.Db.Get(&userId, "SELECT user_id FROM sessions WHERE id = $1 LIMIT 1", v)
 	if err != nil {
 		return nil, err
 	}
 
-	err = h.DB.Get(&user, "SELECT * FROM users WHERE id = $1", userId)
+	err = h.Db.Get(&user, "SELECT * FROM users WHERE id = $1", userId)
 	if err != nil {
 		return nil, err
 	}
@@ -43,7 +43,7 @@ func (h Handler) GetUser(ctx context.Context) (oas.GetUserRes, error) {
 func (h Handler) GetUsers(ctx context.Context) (oas.GetUsersRes, error) {
 	var users []models.User
 	q := `SELECT * FROM users`
-	err := h.DB.SelectContext(ctx, &users, q)
+	err := h.Db.SelectContext(ctx, &users, q)
 	if err != nil {
 		return nil, err
 	}
@@ -117,7 +117,7 @@ func (h Handler) CheckUser(ctx context.Context, params oas.CheckUserParams) (oas
 	fmt.Println(req)
 	// Проверим существует ли у нас пользователь
 	checkUser := models.User{}
-	err = h.DB.Get(&checkUser, "Select yandex_id from users where yandex_id =$1", req.ID)
+	err = h.Db.Get(&checkUser, "Select yandex_id from users where yandex_id =$1", req.ID)
 	if err == sql.ErrNoRows {
 		// Пользователь не обнаружен в системе, добавим его в базу данных
 		var sex sql.NullString
@@ -127,7 +127,7 @@ func (h Handler) CheckUser(ctx context.Context, params oas.CheckUserParams) (oas
 			sex = sql.NullString{String: "", Valid: false}
 		}
 
-		_, err = h.DB.Exec("Insert into users (yandex_id,surname,name,gender, phone, email ) values ($1,$2,$3,$4,$5,$6)",
+		_, err = h.Db.Exec("Insert into users (yandex_id,surname,name,gender, phone, email ) values ($1,$2,$3,$4,$5,$6)",
 			req.ID, req.LastName, req.FirstName, sex, req.Default.Number, req.Email)
 		if err != nil {
 			return &oas.CheckUserBadRequest{}, err
@@ -135,12 +135,12 @@ func (h Handler) CheckUser(ctx context.Context, params oas.CheckUserParams) (oas
 	}
 
 	// Получаем пользователя из базы данных
-	err = h.DB.Get(&checkUser, "Select * from users where yandex_id =$1", req.ID)
+	err = h.Db.Get(&checkUser, "Select * from users where yandex_id =$1", req.ID)
 	if err != nil {
 		return &oas.CheckUserBadRequest{}, err
 	}
 	// Заполним сессию пользователя
-	_, err = h.DB.Exec("INSERT INTO sessions (user_id,id) values ($1,$2)", checkUser.ID, params.Token)
+	_, err = h.Db.Exec("INSERT INTO sessions (user_id,id) values ($1,$2)", checkUser.ID, params.Token)
 	if err != nil {
 		return &oas.CheckUserBadRequest{}, err
 	}

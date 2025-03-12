@@ -19,7 +19,7 @@ func (h Handler) AddIncidents(ctx context.Context, req oas.AddIncidentsReq) (oas
 	INSERT INTO incidents (region, fio, statusId, date)
 	VALUES ($1, $2, $3, $4) RETURNING id
 	`
-	h.DB.MustExec(q, request.Region, request.Fio, request.StatusId, request.Date)
+	h.Db.MustExec(q, request.Region, request.Fio, request.StatusId, request.Date)
 
 	//	id, err := rez.LastInsertId()
 
@@ -42,7 +42,7 @@ func (h Handler) DeleteIncident(ctx context.Context, params oas.DeleteIncidentPa
 	DELETE FROM incidents
 	where id=$1
 	`
-	h.DB.MustExec(q, params.IncidentId)
+	h.Db.MustExec(q, params.IncidentId)
 
 	return &oas.DeleteIncidentOK{}, nil
 }
@@ -50,7 +50,7 @@ func (h Handler) DeleteIncident(ctx context.Context, params oas.DeleteIncidentPa
 // GetIncidentById implements oas.Handler.
 func (h Handler) GetIncidentById(ctx context.Context, params oas.GetIncidentByIdParams) (oas.GetIncidentByIdRes, error) {
 	rez := oas.Incident{}
-	err := h.DB.Get(&rez, "SELECT * FROM incidents WHERE id=$1", params.IncidentId)
+	err := h.Db.Get(&rez, "SELECT * FROM incidents WHERE id=$1", params.IncidentId)
 	if err != nil {
 		return &oas.GetIncidentByIdBadRequest{}, fmt.Errorf("failed to get incident by id")
 	}
@@ -63,7 +63,7 @@ func (h Handler) GetIncidents(ctx context.Context) (oas.GetIncidentsRes, error) 
 
 	// Получим все инциденты
 	incident := oas.Incident{}
-	rows, err := h.DB.Queryx("SELECT * FROM incidents")
+	rows, err := h.Db.Queryx("SELECT * FROM incidents")
 	if err != nil {
 		return &oas.GetIncidentsBadRequest{}, fmt.Errorf("failed to get incidents")
 	}
@@ -79,7 +79,7 @@ func (h Handler) GetIncidents(ctx context.Context) (oas.GetIncidentsRes, error) 
 	req_status := make([]oas.Status, 0, 50)
 
 	status := oas.Status{}
-	rows, err = h.DB.Queryx("SELECT * FROM statuses")
+	rows, err = h.Db.Queryx("SELECT * FROM statuses")
 	if err != nil {
 		return &oas.GetIncidentsBadRequest{}, fmt.Errorf("failed to get incidents")
 	}
@@ -105,7 +105,7 @@ func (h Handler) UpdateIncidents(ctx context.Context, req oas.UpdateIncidentsReq
 	UPDATE incidents SET id=$1, region=$2, fio=$3, statusid=$4, date=$5
 	where id=$1
 	`
-	rez := h.DB.MustExec(q, request.ID, request.Region, request.Fio, request.StatusId, request.Date)
+	rez := h.Db.MustExec(q, request.ID, request.Region, request.Fio, request.StatusId, request.Date)
 
 	_, err := rez.RowsAffected()
 
