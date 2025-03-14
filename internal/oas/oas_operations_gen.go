@@ -16,8 +16,10 @@ const (
 	GetStatusByIdOperation   OperationName = "GetStatusById"
 	GetStatusesOperation     OperationName = "GetStatuses"
 	GetUserOperation         OperationName = "GetUser"
+	GetUserByIdOperation     OperationName = "GetUserById"
 	GetUsersOperation        OperationName = "GetUsers"
 	LogoutOperation          OperationName = "Logout"
 	UpdateIncidentsOperation OperationName = "UpdateIncidents"
 	UpdateStatusOperation    OperationName = "UpdateStatus"
+	UpdateUserOperation      OperationName = "UpdateUser"
 )

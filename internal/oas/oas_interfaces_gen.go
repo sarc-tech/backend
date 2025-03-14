@@ -45,6 +45,10 @@ type GetStatusesRes interface {
 	getStatusesRes()
 }
 
+type GetUserByIdRes interface {
+	getUserByIdRes()
+}
+
 type GetUserRes interface {
 	getUserRes()
 }
@@ -71,4 +75,8 @@ type UpdateStatusReq interface {
 
 type UpdateStatusRes interface {
 	updateStatusRes()
+}
+
+type UpdateUserRes interface {
+	updateUserRes()
 }

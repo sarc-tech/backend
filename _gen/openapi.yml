@@ -9,7 +9,7 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  version: 0.0.15
+  version: 0.0.16
 externalDocs:
   description: Find out more about Swagger
   url: http://swagger.io
@@ -277,6 +277,57 @@ paths:
       summary: получение пользователя
       description: Returns a user
       operationId: getUser
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid user
+        '404':
+          description: user not found
+    put:
+      tags:
+        - users
+      summary: Обновление текущего пользователя
+      description: Update a user
+      operationId: updateUser
+      requestBody:
+        description: Update an existent user in the system
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid user
+        '404':
+          description: user not found
+  /user/{userId}:
+    x-ogen-operation-group: Users
+    get:
+      tags:
+        - users
+      summary: получение пользователя по id
+      description: Returns a user
+      operationId: getUserById
+      parameters:
+        - name: userId
+          in: path
+          description: ID of User to return
+          required: true
+          schema:
+            type: string
+            description: user id
       responses:
         '200':
           description: successful operation

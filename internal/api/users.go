@@ -66,8 +66,41 @@ func (h Handler) GetUsers(ctx context.Context) (oas.GetUsersRes, error) {
 	return &oas.UsersResponse{Data: req}, nil
 }
 
-func (h Handler) GetUserByID(ctx context.Context, id string) (oas.GetUserRes, error) {
-	return &oas.User{ID: "1", Name: "Иванов Иван Иванович", Role: "Admin"}, nil
+func (h Handler) GetUserById(ctx context.Context, params oas.GetUserByIdParams) (oas.GetUserByIdRes, error) {
+
+	var user models.User
+	err := h.Db.Get(&user, "SELECT * FROM users WHERE id = $1", params.UserId)
+	if err != nil {
+		return nil, err
+	}
+
+	return &oas.User{ID: strconv.Itoa(user.ID),
+		Name:     user.Name,
+		YandexId: user.YandexID,
+		Surname:  oas.NewOptString(user.Surname),
+		Gender:   oas.NewOptString(user.Gender.String),
+		Phone:    oas.NewOptString(user.Phone.String),
+		Email:    oas.NewOptString(user.Email.String),
+		Role:     "Admin",
+		Approval: true}, nil
+}
+
+func (h Handler) UpdateUser(ctx context.Context, req *oas.User) (oas.UpdateUserRes, error) {
+	var user models.User
+	err := h.Db.Get(&user, "SELECT * FROM users WHERE id = $1", req.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &oas.User{ID: strconv.Itoa(user.ID),
+		Name:     user.Name,
+		YandexId: user.YandexID,
+		Surname:  oas.NewOptString(user.Surname),
+		Gender:   oas.NewOptString(user.Gender.String),
+		Phone:    oas.NewOptString(user.Phone.String),
+		Email:    oas.NewOptString(user.Email.String),
+		Role:     "Admin",
+		Approval: true}, nil
 }
 
 // Logout implements oas.Handler.

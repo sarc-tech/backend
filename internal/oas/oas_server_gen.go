@@ -101,6 +101,12 @@ type UsersHandler interface {
 	//
 	// GET /user
 	GetUser(ctx context.Context) (GetUserRes, error)
+	// GetUserById implements getUserById operation.
+	//
+	// Returns a user.
+	//
+	// GET /user/{userId}
+	GetUserById(ctx context.Context, params GetUserByIdParams) (GetUserByIdRes, error)
 	// GetUsers implements getUsers operation.
 	//
 	// Returns a users.
@@ -113,6 +119,12 @@ type UsersHandler interface {
 	//
 	// POST /logout
 	Logout(ctx context.Context) (LogoutRes, error)
+	// UpdateUser implements updateUser operation.
+	//
+	// Update a user.
+	//
+	// PUT /user
+	UpdateUser(ctx context.Context, req *User) (UpdateUserRes, error)
 }
 
 // Server implements http server based on OpenAPI v3 specification and

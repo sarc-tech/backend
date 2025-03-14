@@ -121,6 +121,16 @@ type GetUserBadRequest struct{}
 
 func (*GetUserBadRequest) getUserRes() {}
 
+// GetUserByIdBadRequest is response for GetUserById operation.
+type GetUserByIdBadRequest struct{}
+
+func (*GetUserByIdBadRequest) getUserByIdRes() {}
+
+// GetUserByIdNotFound is response for GetUserById operation.
+type GetUserByIdNotFound struct{}
+
+func (*GetUserByIdNotFound) getUserByIdRes() {}
+
 // GetUserNotFound is response for GetUser operation.
 type GetUserNotFound struct{}
 
@@ -473,6 +483,16 @@ type UpdateStatusUnprocessableEntity struct{}
 
 func (*UpdateStatusUnprocessableEntity) updateStatusRes() {}
 
+// UpdateUserBadRequest is response for UpdateUser operation.
+type UpdateUserBadRequest struct{}
+
+func (*UpdateUserBadRequest) updateUserRes() {}
+
+// UpdateUserNotFound is response for UpdateUser operation.
+type UpdateUserNotFound struct{}
+
+func (*UpdateUserNotFound) updateUserRes() {}
+
 // Ref: #/components/schemas/User
 type User struct {
 	// User id.
@@ -633,8 +653,10 @@ func (s *User) SetRole(val string) {
 	s.Role = val
 }
 
-func (*User) checkUserRes() {}
-func (*User) getUserRes()   {}
+func (*User) checkUserRes()   {}
+func (*User) getUserByIdRes() {}
+func (*User) getUserRes()     {}
+func (*User) updateUserRes()  {}
 
 // Ref: #/components/schemas/UsersResponse
 type UsersResponse struct {

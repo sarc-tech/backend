@@ -103,6 +103,15 @@ func (UnimplementedHandler) GetUser(ctx context.Context) (r GetUserRes, _ error)
 	return r, ht.ErrNotImplemented
 }
 
+// GetUserById implements getUserById operation.
+//
+// Returns a user.
+//
+// GET /user/{userId}
+func (UnimplementedHandler) GetUserById(ctx context.Context, params GetUserByIdParams) (r GetUserByIdRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // GetUsers implements getUsers operation.
 //
 // Returns a users.
@@ -136,5 +145,14 @@ func (UnimplementedHandler) UpdateIncidents(ctx context.Context, req UpdateIncid
 //
 // PUT /statuses
 func (UnimplementedHandler) UpdateStatus(ctx context.Context, req UpdateStatusReq) (r UpdateStatusRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// UpdateUser implements updateUser operation.
+//
+// Update a user.
+//
+// PUT /user
+func (UnimplementedHandler) UpdateUser(ctx context.Context, req *User) (r UpdateUserRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
