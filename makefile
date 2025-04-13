@@ -1,8 +1,8 @@
 # Команды по работе с локальной базой данных
 # Переменные для подключения к базе данных
-PG_USER=user
-PG_PASSWORD=password
-PG_DB=test
+PG_USER=sarc
+PG_PASSWORD=sarc
+PG_DB=sarc
 PG_PORT=5432
 
 COMMIT?=$(shell git rev-parse --short HEAD)
@@ -34,6 +34,7 @@ docker-down:
 	docker stop pg-17.2
 
 # Запуск миграций
+# goose -dir db/migrations postgres "postgresql://sarc:sarc@localhost:5432/sarc?sslmode=disable" up  (for local development)
 .PHONY: g-up
 g-up:
 	goose -dir db/migrations postgres "postgresql://$(PG_USER):$(PG_PASSWORD)@localhost:$(PG_PORT)/$(PG_DB)?sslmode=disable" up

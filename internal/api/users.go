@@ -16,15 +16,7 @@ type UsersHandler interface {
 
 // GetUser implements oas.Handler.
 func (h Handler) GetUser(ctx context.Context) (oas.GetUserRes, error) {
-	v := ctx.Value("TOKEN")
-	var user models.User
-	var userId int
-	err := h.Db.Get(&userId, "SELECT user_id FROM sessions WHERE id = $1 LIMIT 1", v)
-	if err != nil {
-		return nil, err
-	}
-
-	err = h.Db.Get(&user, "SELECT * FROM users WHERE id = $1", userId)
+	user, err := h.repo.GetUser(ctx.Value("TOKEN").(string))
 	if err != nil {
 		return nil, err
 	}
@@ -41,16 +33,14 @@ func (h Handler) GetUser(ctx context.Context) (oas.GetUserRes, error) {
 }
 
 func (h Handler) GetUsers(ctx context.Context) (oas.GetUsersRes, error) {
-	var users []models.User
-	q := `SELECT * FROM users`
-	err := h.Db.SelectContext(ctx, &users, q)
+	users, err := h.repo.GetUsers()
 	if err != nil {
 		return nil, err
 	}
 
 	req := make([]oas.User, 0, 50)
-	for _, user := range users {
-		req = append(req, oas.User{
+	for i, user := range users {
+		req[i] = oas.User{
 			ID:       strconv.Itoa(user.ID),
 			Name:     user.Name,
 			YandexId: user.YandexID,
@@ -59,8 +49,8 @@ func (h Handler) GetUsers(ctx context.Context) (oas.GetUsersRes, error) {
 			Phone:    oas.NewOptString(user.Phone.String),
 			Email:    oas.NewOptString(user.Email.String),
 			Role:     "Admin",
-			Approval: true})
-
+			Approval: true,
+		}
 	}
 
 	return &oas.UsersResponse{Data: req}, nil
@@ -68,8 +58,7 @@ func (h Handler) GetUsers(ctx context.Context) (oas.GetUsersRes, error) {
 
 func (h Handler) GetUserById(ctx context.Context, params oas.GetUserByIdParams) (oas.GetUserByIdRes, error) {
 
-	var user models.User
-	err := h.Db.Get(&user, "SELECT * FROM users WHERE id = $1", params.UserId)
+	user, err := h.repo.GetUserById(params.UserId)
 	if err != nil {
 		return nil, err
 	}
@@ -160,7 +149,7 @@ func (h Handler) CheckUser(ctx context.Context, params oas.CheckUserParams) (oas
 			sex = sql.NullString{String: "", Valid: false}
 		}
 
-		_, err = h.Db.Exec("Insert into users (yandex_id,surname,name,gender, phone, email ) values ($1,$2,$3,$4,$5,$6)",
+		_, err = h.Db.Exec("Insert into users (yandex_id,surname,name,gender, phone, email, approval) values ($1,$2,$3,$4,$5,$6,true)",
 			req.ID, req.LastName, req.FirstName, sex, req.Default.Number, req.Email)
 		if err != nil {
 			return &oas.CheckUserBadRequest{}, err
