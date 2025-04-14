@@ -14,8 +14,8 @@ externalDocs:
   description: Find out more about Swagger
   url: http://swagger.io
 servers:
-  - url: https://d5drbh6fis58kjvm332b.g3ab4gln.apigw.yandexcloud.net
   - url: http://localhost:8082
+  - url: https://d5drbh6fis58kjvm332b.g3ab4gln.apigw.yandexcloud.net
 security:
   - bearerAuth: []
 tags:
@@ -31,67 +31,10 @@ tags:
 paths:
   /statuses:
     x-ogen-operation-group: Statuses
-    put:
-      tags:
-        - statuses
-      summary: Обновление существующего статуса
-      description: Update an existing status by Id
-      operationId: updateStatus
-      requestBody:
-        description: Update an existent status in the system
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Status'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Status'
-        required: true
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-        '400':
-          description: Ошибочный ID статуса
-        '404':
-          description: Статус не найден
-        '422':
-          description: Validation exception
-    post:
-      tags:
-        - statuses
-      summary: добавление новой заявки
-      description: Add a new status
-      operationId: addStatus
-      requestBody:
-        description: Add a new status
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Status'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Status'
-        required: true
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-        '400':
-          description: Invalid input
-        '422':
-          description: Validation exception
     get:
       tags:
         - statuses
-      summary: получение списка заявок
-      description: list of statuses
+      summary: получение списка статусов
       operationId: getStatuses
       responses:
         '200':
@@ -99,54 +42,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/StatususResponse'
-        '400':
-          description: Invalid value
-  /statuses/{statusId}:
-    x-ogen-operation-group: Statuses
-    get:
-      tags:
-        - statuses
-      summary: получение заявки по id
-      description: Returns a single incidents
-      operationId: getStatusById
-      parameters:
-        - name: statusId
-          in: path
-          description: ID of Status to return
-          required: true
-          schema:
-            type: string
-            description: status id
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-        '400':
-          description: Invalid ID
-        '404':
-          description: Incidents not found
-
-    delete:
-      tags:
-        - statuses
-      summary: Deletes an status
-      description: delete an status
-      operationId: deleteStatus
-      parameters:
-        - name: statusId
-          in: path
-          description: request id to delete
-          required: true
-          schema:
-            type: string
-            description: status id
-      responses:
-        '200':
-          description: successful operation
+                $ref: '#/components/schemas/StatusesResponse'
         '400':
           description: Invalid value
   /incidents:
@@ -156,14 +52,11 @@ paths:
         - incidents
       summary: Обновление существующей заявки
       description: Update an existing incidents by Id
-      operationId: updateIncidents
+      operationId: updateIncident
       requestBody:
         description: Update an existent incidents in the system
         content:
           application/json:
-            schema:
-              $ref: '#/components/schemas/Incident'
-          application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/Incident'
         required: true
@@ -173,7 +66,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Incident'
+                $ref: '#/components/schemas/IncidentResponse'
         '400':
           description: Ошибочный ID заявки
         '404':
@@ -185,14 +78,11 @@ paths:
         - incidents
       summary: добавление новой заявки
       description: Add a new incidents
-      operationId: addIncidents
+      operationId: addIncident
       requestBody:
         description: Add a new incidents
         content:
           application/json:
-            schema:
-              $ref: '#/components/schemas/Incident'
-          application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/Incident'
         required: true
@@ -202,7 +92,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Incident'
+                $ref: '#/components/schemas/IncidentResponse'
         '400':
           description: Invalid input
         '422':
@@ -236,7 +126,7 @@ paths:
           description: ID of Incidents to return
           required: true
           schema:
-            type: string
+            type: integer
             description: incident id
       responses:
         '200':
@@ -244,7 +134,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Incident'
+                $ref: '#/components/schemas/IncidentResponse'
         '400':
           description: Invalid ID
         '404':
@@ -262,7 +152,7 @@ paths:
           description: request id to delete
           required: true
           schema:
-            type: string
+            type: integer
             description: incident id
       responses:
         '200':
@@ -274,7 +164,7 @@ paths:
     get:
       tags:
         - users
-      summary: получение пользователя
+      summary: получение текущего пользователя
       description: Returns a user
       operationId: getUser
       responses:
@@ -283,7 +173,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/UserResponse'
         '400':
           description: Invalid user
         '404':
@@ -307,7 +197,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/UserResponse'
         '400':
           description: Invalid user
         '404':
@@ -326,7 +216,7 @@ paths:
           description: ID of User to return
           required: true
           schema:
-            type: string
+            type: integer
             description: user id
       responses:
         '200':
@@ -334,7 +224,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/UserResponse'
         '400':
           description: Invalid user
         '404':
@@ -381,7 +271,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/UserResponse'
         '400':
           description: Invalid user
         '404':
@@ -414,13 +304,13 @@ components:
       type: object
       properties:
         id:
-          type: string
+          type: integer
           example: 123
           description: status id
         name:
           type: string
           example: Новая
-    StatususResponse:
+    StatusesResponse:
       required:
         - trackingId
         - status
@@ -438,7 +328,6 @@ components:
             $ref: "#/components/schemas/Status"
     Incident:
       required:
-        - id
         - region
         - fio
         - statusId
@@ -446,7 +335,7 @@ components:
       type: object
       properties:
         id:
-          type: string
+          type: integer
           example: 123
           description: incident id
         region:
@@ -462,9 +351,22 @@ components:
           type: string
           format: DateTime
           example: '2024-12-19T17:01:39.000Z'
+    IncidentResponse:
+      required:
+        - trackingId
+        - status
+        - data
+      type: object
+      properties:
+        trackingId:
+          type: string
+        status:
+          type: string
+          default: Ok
+        data:
+          $ref: "#/components/schemas/Incident"
     User:
       required:
-        - id
         - yandexId
         - name
         - approval
@@ -472,17 +374,17 @@ components:
       type: object
       properties:
         id:
-          type: string
+          type: integer
           example: 123
           description: user id
         yandexId:
           type: string
           example: 123
           description: yandex id
-        surname:
+        last_name:
           type: string
           example: Иванов
-        name:
+        first_name:
           type: string
           example: Иван
         patronymic:
@@ -531,6 +433,20 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/User"
+    UserResponse:
+      required:
+        - trackingId
+        - status
+        - data
+      type: object
+      properties:
+        trackingId:
+          type: string
+        status:
+          type: string
+          default: Ok
+        data:
+          $ref: "#/components/schemas/User"
     IncidentsResponse:
       required:
         - trackingId
@@ -547,7 +463,3 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Incident"
-        statuses:
-          type: array
-          items:
-            $ref: "#/components/schemas/Status"

@@ -17,12 +17,12 @@ type Handler interface {
 //
 // x-ogen-operation-group: Incidents
 type IncidentsHandler interface {
-	// AddIncidents implements addIncidents operation.
+	// AddIncident implements addIncident operation.
 	//
 	// Add a new incidents.
 	//
 	// POST /incidents
-	AddIncidents(ctx context.Context, req AddIncidentsReq) (AddIncidentsRes, error)
+	AddIncident(ctx context.Context, req *Incident) (AddIncidentRes, error)
 	// DeleteIncident implements deleteIncident operation.
 	//
 	// Delete an incidents.
@@ -41,48 +41,24 @@ type IncidentsHandler interface {
 	//
 	// GET /incidents
 	GetIncidents(ctx context.Context) (GetIncidentsRes, error)
-	// UpdateIncidents implements updateIncidents operation.
+	// UpdateIncident implements updateIncident operation.
 	//
 	// Update an existing incidents by Id.
 	//
 	// PUT /incidents
-	UpdateIncidents(ctx context.Context, req UpdateIncidentsReq) (UpdateIncidentsRes, error)
+	UpdateIncident(ctx context.Context, req *Incident) (UpdateIncidentRes, error)
 }
 
 // StatusesHandler handles operations described by OpenAPI v3 specification.
 //
 // x-ogen-operation-group: Statuses
 type StatusesHandler interface {
-	// AddStatus implements addStatus operation.
-	//
-	// Add a new status.
-	//
-	// POST /statuses
-	AddStatus(ctx context.Context, req AddStatusReq) (AddStatusRes, error)
-	// DeleteStatus implements deleteStatus operation.
-	//
-	// Delete an status.
-	//
-	// DELETE /statuses/{statusId}
-	DeleteStatus(ctx context.Context, params DeleteStatusParams) (DeleteStatusRes, error)
-	// GetStatusById implements getStatusById operation.
-	//
-	// Returns a single incidents.
-	//
-	// GET /statuses/{statusId}
-	GetStatusById(ctx context.Context, params GetStatusByIdParams) (GetStatusByIdRes, error)
 	// GetStatuses implements getStatuses operation.
 	//
-	// List of statuses.
+	// Получение списка статусов.
 	//
 	// GET /statuses
 	GetStatuses(ctx context.Context) (GetStatusesRes, error)
-	// UpdateStatus implements updateStatus operation.
-	//
-	// Update an existing status by Id.
-	//
-	// PUT /statuses
-	UpdateStatus(ctx context.Context, req UpdateStatusReq) (UpdateStatusRes, error)
 }
 
 // UsersHandler handles operations described by OpenAPI v3 specification.

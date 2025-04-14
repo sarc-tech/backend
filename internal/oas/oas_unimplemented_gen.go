@@ -13,21 +13,12 @@ type UnimplementedHandler struct{}
 
 var _ Handler = UnimplementedHandler{}
 
-// AddIncidents implements addIncidents operation.
+// AddIncident implements addIncident operation.
 //
 // Add a new incidents.
 //
 // POST /incidents
-func (UnimplementedHandler) AddIncidents(ctx context.Context, req AddIncidentsReq) (r AddIncidentsRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// AddStatus implements addStatus operation.
-//
-// Add a new status.
-//
-// POST /statuses
-func (UnimplementedHandler) AddStatus(ctx context.Context, req AddStatusReq) (r AddStatusRes, _ error) {
+func (UnimplementedHandler) AddIncident(ctx context.Context, req *Incident) (r AddIncidentRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
@@ -49,15 +40,6 @@ func (UnimplementedHandler) DeleteIncident(ctx context.Context, params DeleteInc
 	return r, ht.ErrNotImplemented
 }
 
-// DeleteStatus implements deleteStatus operation.
-//
-// Delete an status.
-//
-// DELETE /statuses/{statusId}
-func (UnimplementedHandler) DeleteStatus(ctx context.Context, params DeleteStatusParams) (r DeleteStatusRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
 // GetIncidentById implements getIncidentById operation.
 //
 // Returns a single incidents.
@@ -76,18 +58,9 @@ func (UnimplementedHandler) GetIncidents(ctx context.Context) (r GetIncidentsRes
 	return r, ht.ErrNotImplemented
 }
 
-// GetStatusById implements getStatusById operation.
-//
-// Returns a single incidents.
-//
-// GET /statuses/{statusId}
-func (UnimplementedHandler) GetStatusById(ctx context.Context, params GetStatusByIdParams) (r GetStatusByIdRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
 // GetStatuses implements getStatuses operation.
 //
-// List of statuses.
+// Получение списка статусов.
 //
 // GET /statuses
 func (UnimplementedHandler) GetStatuses(ctx context.Context) (r GetStatusesRes, _ error) {
@@ -130,21 +103,12 @@ func (UnimplementedHandler) Logout(ctx context.Context) (r LogoutRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
-// UpdateIncidents implements updateIncidents operation.
+// UpdateIncident implements updateIncident operation.
 //
 // Update an existing incidents by Id.
 //
 // PUT /incidents
-func (UnimplementedHandler) UpdateIncidents(ctx context.Context, req UpdateIncidentsReq) (r UpdateIncidentsRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// UpdateStatus implements updateStatus operation.
-//
-// Update an existing status by Id.
-//
-// PUT /statuses
-func (UnimplementedHandler) UpdateStatus(ctx context.Context, req UpdateStatusReq) (r UpdateStatusRes, _ error) {
+func (UnimplementedHandler) UpdateIncident(ctx context.Context, req *Incident) (r UpdateIncidentRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 

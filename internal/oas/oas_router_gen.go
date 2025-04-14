@@ -102,9 +102,9 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					case "GET":
 						s.handleGetIncidentsRequest([0]string{}, elemIsEscaped, w, r)
 					case "POST":
-						s.handleAddIncidentsRequest([0]string{}, elemIsEscaped, w, r)
+						s.handleAddIncidentRequest([0]string{}, elemIsEscaped, w, r)
 					case "PUT":
-						s.handleUpdateIncidentsRequest([0]string{}, elemIsEscaped, w, r)
+						s.handleUpdateIncidentRequest([0]string{}, elemIsEscaped, w, r)
 					default:
 						s.notAllowed(w, r, "GET,POST,PUT")
 					}
@@ -177,52 +177,15 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				}
 
 				if len(elem) == 0 {
+					// Leaf node.
 					switch r.Method {
 					case "GET":
 						s.handleGetStatusesRequest([0]string{}, elemIsEscaped, w, r)
-					case "POST":
-						s.handleAddStatusRequest([0]string{}, elemIsEscaped, w, r)
-					case "PUT":
-						s.handleUpdateStatusRequest([0]string{}, elemIsEscaped, w, r)
 					default:
-						s.notAllowed(w, r, "GET,POST,PUT")
+						s.notAllowed(w, r, "GET")
 					}
 
 					return
-				}
-				switch elem[0] {
-				case '/': // Prefix: "/"
-					origElem := elem
-					if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
-						elem = elem[l:]
-					} else {
-						break
-					}
-
-					// Param: "statusId"
-					// Leaf parameter
-					args[0] = elem
-					elem = ""
-
-					if len(elem) == 0 {
-						// Leaf node.
-						switch r.Method {
-						case "DELETE":
-							s.handleDeleteStatusRequest([1]string{
-								args[0],
-							}, elemIsEscaped, w, r)
-						case "GET":
-							s.handleGetStatusByIdRequest([1]string{
-								args[0],
-							}, elemIsEscaped, w, r)
-						default:
-							s.notAllowed(w, r, "DELETE,GET")
-						}
-
-						return
-					}
-
-					elem = origElem
 				}
 
 				elem = origElem
@@ -443,17 +406,17 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 						r.count = 0
 						return r, true
 					case "POST":
-						r.name = AddIncidentsOperation
+						r.name = AddIncidentOperation
 						r.summary = "добавление новой заявки"
-						r.operationID = "addIncidents"
+						r.operationID = "addIncident"
 						r.pathPattern = "/incidents"
 						r.args = args
 						r.count = 0
 						return r, true
 					case "PUT":
-						r.name = UpdateIncidentsOperation
+						r.name = UpdateIncidentOperation
 						r.summary = "Обновление существующей заявки"
-						r.operationID = "updateIncidents"
+						r.operationID = "updateIncident"
 						r.pathPattern = "/incidents"
 						r.args = args
 						r.count = 0
@@ -538,27 +501,12 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 				}
 
 				if len(elem) == 0 {
+					// Leaf node.
 					switch method {
 					case "GET":
 						r.name = GetStatusesOperation
-						r.summary = "получение списка заявок"
+						r.summary = "получение списка статусов"
 						r.operationID = "getStatuses"
-						r.pathPattern = "/statuses"
-						r.args = args
-						r.count = 0
-						return r, true
-					case "POST":
-						r.name = AddStatusOperation
-						r.summary = "добавление новой заявки"
-						r.operationID = "addStatus"
-						r.pathPattern = "/statuses"
-						r.args = args
-						r.count = 0
-						return r, true
-					case "PUT":
-						r.name = UpdateStatusOperation
-						r.summary = "Обновление существующего статуса"
-						r.operationID = "updateStatus"
 						r.pathPattern = "/statuses"
 						r.args = args
 						r.count = 0
@@ -566,46 +514,6 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 					default:
 						return
 					}
-				}
-				switch elem[0] {
-				case '/': // Prefix: "/"
-					origElem := elem
-					if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
-						elem = elem[l:]
-					} else {
-						break
-					}
-
-					// Param: "statusId"
-					// Leaf parameter
-					args[0] = elem
-					elem = ""
-
-					if len(elem) == 0 {
-						// Leaf node.
-						switch method {
-						case "DELETE":
-							r.name = DeleteStatusOperation
-							r.summary = "Deletes an status"
-							r.operationID = "deleteStatus"
-							r.pathPattern = "/statuses/{statusId}"
-							r.args = args
-							r.count = 1
-							return r, true
-						case "GET":
-							r.name = GetStatusByIdOperation
-							r.summary = "получение заявки по id"
-							r.operationID = "getStatusById"
-							r.pathPattern = "/statuses/{statusId}"
-							r.args = args
-							r.count = 1
-							return r, true
-						default:
-							return
-						}
-					}
-
-					elem = origElem
 				}
 
 				elem = origElem
@@ -621,7 +529,7 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 					switch method {
 					case "GET":
 						r.name = GetUserOperation
-						r.summary = "получение пользователя"
+						r.summary = "получение текущего пользователя"
 						r.operationID = "getUser"
 						r.pathPattern = "/user"
 						r.args = args

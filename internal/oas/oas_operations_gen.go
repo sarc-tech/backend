@@ -6,20 +6,16 @@ package oas
 type OperationName = string
 
 const (
-	AddIncidentsOperation    OperationName = "AddIncidents"
-	AddStatusOperation       OperationName = "AddStatus"
+	AddIncidentOperation     OperationName = "AddIncident"
 	CheckUserOperation       OperationName = "CheckUser"
 	DeleteIncidentOperation  OperationName = "DeleteIncident"
-	DeleteStatusOperation    OperationName = "DeleteStatus"
 	GetIncidentByIdOperation OperationName = "GetIncidentById"
 	GetIncidentsOperation    OperationName = "GetIncidents"
-	GetStatusByIdOperation   OperationName = "GetStatusById"
 	GetStatusesOperation     OperationName = "GetStatuses"
 	GetUserOperation         OperationName = "GetUser"
 	GetUserByIdOperation     OperationName = "GetUserById"
 	GetUsersOperation        OperationName = "GetUsers"
 	LogoutOperation          OperationName = "Logout"
-	UpdateIncidentsOperation OperationName = "UpdateIncidents"
-	UpdateStatusOperation    OperationName = "UpdateStatus"
+	UpdateIncidentOperation  OperationName = "UpdateIncident"
 	UpdateUserOperation      OperationName = "UpdateUser"
 )
