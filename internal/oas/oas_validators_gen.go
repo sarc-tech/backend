@@ -31,7 +31,7 @@ func (s *IncidentsResponse) Validate() error {
 	return nil
 }
 
-func (s *StatususResponse) Validate() error {
+func (s *StatusesResponse) Validate() error {
 	if s == nil {
 		return validate.ErrNilPointer
 	}

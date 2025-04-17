@@ -11,9 +11,9 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-func encodeAddIncidentsResponse(response AddIncidentsRes, w http.ResponseWriter, span trace.Span) error {
+func encodeAddIncidentResponse(response AddIncidentRes, w http.ResponseWriter, span trace.Span) error {
 	switch response := response.(type) {
-	case *Incident:
+	case *IncidentResponse:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
 		span.SetStatus(codes.Ok, http.StatusText(200))
@@ -26,45 +26,13 @@ func encodeAddIncidentsResponse(response AddIncidentsRes, w http.ResponseWriter,
 
 		return nil
 
-	case *AddIncidentsBadRequest:
+	case *AddIncidentBadRequest:
 		w.WriteHeader(400)
 		span.SetStatus(codes.Error, http.StatusText(400))
 
 		return nil
 
-	case *AddIncidentsUnprocessableEntity:
-		w.WriteHeader(422)
-		span.SetStatus(codes.Error, http.StatusText(422))
-
-		return nil
-
-	default:
-		return errors.Errorf("unexpected response type: %T", response)
-	}
-}
-
-func encodeAddStatusResponse(response AddStatusRes, w http.ResponseWriter, span trace.Span) error {
-	switch response := response.(type) {
-	case *Status:
-		w.Header().Set("Content-Type", "application/json; charset=utf-8")
-		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
-
-		e := new(jx.Encoder)
-		response.Encode(e)
-		if _, err := e.WriteTo(w); err != nil {
-			return errors.Wrap(err, "write")
-		}
-
-		return nil
-
-	case *AddStatusBadRequest:
-		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
-
-		return nil
-
-	case *AddStatusUnprocessableEntity:
+	case *AddIncidentUnprocessableEntity:
 		w.WriteHeader(422)
 		span.SetStatus(codes.Error, http.StatusText(422))
 
@@ -77,7 +45,7 @@ func encodeAddStatusResponse(response AddStatusRes, w http.ResponseWriter, span 
 
 func encodeCheckUserResponse(response CheckUserRes, w http.ResponseWriter, span trace.Span) error {
 	switch response := response.(type) {
-	case *User:
+	case *UserResponse:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
 		span.SetStatus(codes.Ok, http.StatusText(200))
@@ -126,28 +94,9 @@ func encodeDeleteIncidentResponse(response DeleteIncidentRes, w http.ResponseWri
 	}
 }
 
-func encodeDeleteStatusResponse(response DeleteStatusRes, w http.ResponseWriter, span trace.Span) error {
-	switch response := response.(type) {
-	case *DeleteStatusOK:
-		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
-
-		return nil
-
-	case *DeleteStatusBadRequest:
-		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
-
-		return nil
-
-	default:
-		return errors.Errorf("unexpected response type: %T", response)
-	}
-}
-
 func encodeGetIncidentByIdResponse(response GetIncidentByIdRes, w http.ResponseWriter, span trace.Span) error {
 	switch response := response.(type) {
-	case *Incident:
+	case *IncidentResponse:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
 		span.SetStatus(codes.Ok, http.StatusText(200))
@@ -203,41 +152,9 @@ func encodeGetIncidentsResponse(response GetIncidentsRes, w http.ResponseWriter,
 	}
 }
 
-func encodeGetStatusByIdResponse(response GetStatusByIdRes, w http.ResponseWriter, span trace.Span) error {
-	switch response := response.(type) {
-	case *Status:
-		w.Header().Set("Content-Type", "application/json; charset=utf-8")
-		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
-
-		e := new(jx.Encoder)
-		response.Encode(e)
-		if _, err := e.WriteTo(w); err != nil {
-			return errors.Wrap(err, "write")
-		}
-
-		return nil
-
-	case *GetStatusByIdBadRequest:
-		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
-
-		return nil
-
-	case *GetStatusByIdNotFound:
-		w.WriteHeader(404)
-		span.SetStatus(codes.Error, http.StatusText(404))
-
-		return nil
-
-	default:
-		return errors.Errorf("unexpected response type: %T", response)
-	}
-}
-
 func encodeGetStatusesResponse(response GetStatusesRes, w http.ResponseWriter, span trace.Span) error {
 	switch response := response.(type) {
-	case *StatususResponse:
+	case *StatusesResponse:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
 		span.SetStatus(codes.Ok, http.StatusText(200))
@@ -263,7 +180,7 @@ func encodeGetStatusesResponse(response GetStatusesRes, w http.ResponseWriter, s
 
 func encodeGetUserResponse(response GetUserRes, w http.ResponseWriter, span trace.Span) error {
 	switch response := response.(type) {
-	case *User:
+	case *UserResponse:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
 		span.SetStatus(codes.Ok, http.StatusText(200))
@@ -295,7 +212,7 @@ func encodeGetUserResponse(response GetUserRes, w http.ResponseWriter, span trac
 
 func encodeGetUserByIdResponse(response GetUserByIdRes, w http.ResponseWriter, span trace.Span) error {
 	switch response := response.(type) {
-	case *User:
+	case *UserResponse:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
 		span.SetStatus(codes.Ok, http.StatusText(200))
@@ -382,9 +299,9 @@ func encodeLogoutResponse(response LogoutRes, w http.ResponseWriter, span trace.
 	}
 }
 
-func encodeUpdateIncidentsResponse(response UpdateIncidentsRes, w http.ResponseWriter, span trace.Span) error {
+func encodeUpdateIncidentResponse(response UpdateIncidentRes, w http.ResponseWriter, span trace.Span) error {
 	switch response := response.(type) {
-	case *Incident:
+	case *IncidentResponse:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
 		span.SetStatus(codes.Ok, http.StatusText(200))
@@ -397,57 +314,19 @@ func encodeUpdateIncidentsResponse(response UpdateIncidentsRes, w http.ResponseW
 
 		return nil
 
-	case *UpdateIncidentsBadRequest:
+	case *UpdateIncidentBadRequest:
 		w.WriteHeader(400)
 		span.SetStatus(codes.Error, http.StatusText(400))
 
 		return nil
 
-	case *UpdateIncidentsNotFound:
+	case *UpdateIncidentNotFound:
 		w.WriteHeader(404)
 		span.SetStatus(codes.Error, http.StatusText(404))
 
 		return nil
 
-	case *UpdateIncidentsUnprocessableEntity:
-		w.WriteHeader(422)
-		span.SetStatus(codes.Error, http.StatusText(422))
-
-		return nil
-
-	default:
-		return errors.Errorf("unexpected response type: %T", response)
-	}
-}
-
-func encodeUpdateStatusResponse(response UpdateStatusRes, w http.ResponseWriter, span trace.Span) error {
-	switch response := response.(type) {
-	case *Status:
-		w.Header().Set("Content-Type", "application/json; charset=utf-8")
-		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
-
-		e := new(jx.Encoder)
-		response.Encode(e)
-		if _, err := e.WriteTo(w); err != nil {
-			return errors.Wrap(err, "write")
-		}
-
-		return nil
-
-	case *UpdateStatusBadRequest:
-		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
-
-		return nil
-
-	case *UpdateStatusNotFound:
-		w.WriteHeader(404)
-		span.SetStatus(codes.Error, http.StatusText(404))
-
-		return nil
-
-	case *UpdateStatusUnprocessableEntity:
+	case *UpdateIncidentUnprocessableEntity:
 		w.WriteHeader(422)
 		span.SetStatus(codes.Error, http.StatusText(422))
 
@@ -460,7 +339,7 @@ func encodeUpdateStatusResponse(response UpdateStatusRes, w http.ResponseWriter,
 
 func encodeUpdateUserResponse(response UpdateUserRes, w http.ResponseWriter, span trace.Span) error {
 	switch response := response.(type) {
-	case *User:
+	case *UserResponse:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
 		span.SetStatus(codes.Ok, http.StatusText(200))

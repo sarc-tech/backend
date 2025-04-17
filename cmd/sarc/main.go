@@ -2,15 +2,12 @@ package main
 
 import (
 	"context"
-	"flag"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/go-faster/errors"
 	"github.com/go-faster/sdk/app"
 	"github.com/go-faster/sdk/zctx"
-	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
@@ -18,42 +15,22 @@ import (
 	"github.com/sarc-tech/backend/internal/api"
 	"github.com/sarc-tech/backend/internal/httpmiddleware"
 	"github.com/sarc-tech/backend/internal/oas"
+	"github.com/sarc-tech/backend/internal/repo"
+	"github.com/sarc-tech/backend/internal/utils"
 )
 
 const shutdownTimeout = 15 * time.Second
 
 func main() {
-	app.Run(func(ctx context.Context, lg *zap.Logger, m *app.Metrics) error {
+	app.Run(func(ctx context.Context, lg *zap.Logger, m *app.Telemetry) error {
+		addr := "0.0.0.0:"+utils.PORT
 
-		portStr := os.Getenv("PORT")
-		strConn := os.Getenv("STRCON")
+		lg.Info("Initializing",zap.String("http.addr", addr),)
 
-		if portStr == "" {
-			portStr = "8082"
-		}
+		repo := repo.NewCommonDBHandler(lg)
+		defer repo.Close()
 
-		if strConn == "" {
-			strConn = "postgres://user:password@localhost:5432/test?sslmode=disable"
-		}
-
-		var arg struct {
-			Addr string
-		}
-		flag.StringVar(&arg.Addr, "addr", "0.0.0.0:"+portStr, "listen address")
-		flag.Parse()
-
-		lg.Info("Initializing",
-			zap.String("http.addr", arg.Addr),
-		)
-
-		db, err := sqlx.Connect("postgres", strConn)
-		if err != nil {
-			return errors.Wrap(err, "connect to database")
-		}
-
-		defer db.Close()
-
-		oasServer, err := oas.NewServer(api.Handler{Db: db}, api.HandlerSecurity{Db: db})
+		oasServer, err := oas.NewServer(api.NewHandler(repo), api.NewHandlerSecurity(repo))
 		if err != nil {
 			return errors.Wrap(err, "server init")
 		}
@@ -62,7 +39,7 @@ func main() {
 		routeFinder := httpmiddleware.MakeRouteFinder(oasServer)
 		httpServer := http.Server{
 			ReadHeaderTimeout: time.Second,
-			Addr:              arg.Addr,
+			Addr:              addr,
 			Handler: httpmiddleware.Wrap(oasServer,
 				httpmiddleware.InjectLogger(zctx.From(ctx)),
 				httpmiddleware.Instrument("api", routeFinder, m),

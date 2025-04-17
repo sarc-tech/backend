@@ -84,7 +84,7 @@ func decodeCheckUserParams(args [1]string, argsEscaped bool, r *http.Request) (p
 // DeleteIncidentParams is parameters of deleteIncident operation.
 type DeleteIncidentParams struct {
 	// Request id to delete.
-	IncidentId string
+	IncidentId int
 }
 
 func unpackDeleteIncidentParams(packed middleware.Parameters) (params DeleteIncidentParams) {
@@ -93,7 +93,7 @@ func unpackDeleteIncidentParams(packed middleware.Parameters) (params DeleteInci
 			Name: "incidentId",
 			In:   "path",
 		}
-		params.IncidentId = packed[key].(string)
+		params.IncidentId = packed[key].(int)
 	}
 	return params
 }
@@ -123,7 +123,7 @@ func decodeDeleteIncidentParams(args [1]string, argsEscaped bool, r *http.Reques
 					return err
 				}
 
-				c, err := conv.ToString(val)
+				c, err := conv.ToInt(val)
 				if err != nil {
 					return err
 				}
@@ -147,76 +147,10 @@ func decodeDeleteIncidentParams(args [1]string, argsEscaped bool, r *http.Reques
 	return params, nil
 }
 
-// DeleteStatusParams is parameters of deleteStatus operation.
-type DeleteStatusParams struct {
-	// Request id to delete.
-	StatusId string
-}
-
-func unpackDeleteStatusParams(packed middleware.Parameters) (params DeleteStatusParams) {
-	{
-		key := middleware.ParameterKey{
-			Name: "statusId",
-			In:   "path",
-		}
-		params.StatusId = packed[key].(string)
-	}
-	return params
-}
-
-func decodeDeleteStatusParams(args [1]string, argsEscaped bool, r *http.Request) (params DeleteStatusParams, _ error) {
-	// Decode path: statusId.
-	if err := func() error {
-		param := args[0]
-		if argsEscaped {
-			unescaped, err := url.PathUnescape(args[0])
-			if err != nil {
-				return errors.Wrap(err, "unescape path")
-			}
-			param = unescaped
-		}
-		if len(param) > 0 {
-			d := uri.NewPathDecoder(uri.PathDecoderConfig{
-				Param:   "statusId",
-				Value:   param,
-				Style:   uri.PathStyleSimple,
-				Explode: false,
-			})
-
-			if err := func() error {
-				val, err := d.DecodeValue()
-				if err != nil {
-					return err
-				}
-
-				c, err := conv.ToString(val)
-				if err != nil {
-					return err
-				}
-
-				params.StatusId = c
-				return nil
-			}(); err != nil {
-				return err
-			}
-		} else {
-			return validate.ErrFieldRequired
-		}
-		return nil
-	}(); err != nil {
-		return params, &ogenerrors.DecodeParamError{
-			Name: "statusId",
-			In:   "path",
-			Err:  err,
-		}
-	}
-	return params, nil
-}
-
 // GetIncidentByIdParams is parameters of getIncidentById operation.
 type GetIncidentByIdParams struct {
 	// ID of Incidents to return.
-	IncidentId string
+	IncidentId int
 }
 
 func unpackGetIncidentByIdParams(packed middleware.Parameters) (params GetIncidentByIdParams) {
@@ -225,7 +159,7 @@ func unpackGetIncidentByIdParams(packed middleware.Parameters) (params GetIncide
 			Name: "incidentId",
 			In:   "path",
 		}
-		params.IncidentId = packed[key].(string)
+		params.IncidentId = packed[key].(int)
 	}
 	return params
 }
@@ -255,7 +189,7 @@ func decodeGetIncidentByIdParams(args [1]string, argsEscaped bool, r *http.Reque
 					return err
 				}
 
-				c, err := conv.ToString(val)
+				c, err := conv.ToInt(val)
 				if err != nil {
 					return err
 				}
@@ -279,76 +213,10 @@ func decodeGetIncidentByIdParams(args [1]string, argsEscaped bool, r *http.Reque
 	return params, nil
 }
 
-// GetStatusByIdParams is parameters of getStatusById operation.
-type GetStatusByIdParams struct {
-	// ID of Status to return.
-	StatusId string
-}
-
-func unpackGetStatusByIdParams(packed middleware.Parameters) (params GetStatusByIdParams) {
-	{
-		key := middleware.ParameterKey{
-			Name: "statusId",
-			In:   "path",
-		}
-		params.StatusId = packed[key].(string)
-	}
-	return params
-}
-
-func decodeGetStatusByIdParams(args [1]string, argsEscaped bool, r *http.Request) (params GetStatusByIdParams, _ error) {
-	// Decode path: statusId.
-	if err := func() error {
-		param := args[0]
-		if argsEscaped {
-			unescaped, err := url.PathUnescape(args[0])
-			if err != nil {
-				return errors.Wrap(err, "unescape path")
-			}
-			param = unescaped
-		}
-		if len(param) > 0 {
-			d := uri.NewPathDecoder(uri.PathDecoderConfig{
-				Param:   "statusId",
-				Value:   param,
-				Style:   uri.PathStyleSimple,
-				Explode: false,
-			})
-
-			if err := func() error {
-				val, err := d.DecodeValue()
-				if err != nil {
-					return err
-				}
-
-				c, err := conv.ToString(val)
-				if err != nil {
-					return err
-				}
-
-				params.StatusId = c
-				return nil
-			}(); err != nil {
-				return err
-			}
-		} else {
-			return validate.ErrFieldRequired
-		}
-		return nil
-	}(); err != nil {
-		return params, &ogenerrors.DecodeParamError{
-			Name: "statusId",
-			In:   "path",
-			Err:  err,
-		}
-	}
-	return params, nil
-}
-
 // GetUserByIdParams is parameters of getUserById operation.
 type GetUserByIdParams struct {
 	// ID of User to return.
-	UserId string
+	UserId int
 }
 
 func unpackGetUserByIdParams(packed middleware.Parameters) (params GetUserByIdParams) {
@@ -357,7 +225,7 @@ func unpackGetUserByIdParams(packed middleware.Parameters) (params GetUserByIdPa
 			Name: "userId",
 			In:   "path",
 		}
-		params.UserId = packed[key].(string)
+		params.UserId = packed[key].(int)
 	}
 	return params
 }
@@ -387,7 +255,7 @@ func decodeGetUserByIdParams(args [1]string, argsEscaped bool, r *http.Request) 
 					return err
 				}
 
-				c, err := conv.ToString(val)
+				c, err := conv.ToInt(val)
 				if err != nil {
 					return err
 				}

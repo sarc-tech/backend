@@ -3,12 +3,12 @@ package api
 import (
 	"context"
 	"database/sql"
-	"encoding/json"
 	"fmt"
+	"net/http"
+
 	"github.com/sarc-tech/backend/internal/models"
 	"github.com/sarc-tech/backend/internal/oas"
-	"net/http"
-	"strconv"
+	"github.com/sarc-tech/backend/internal/utils"
 )
 
 type UsersHandler interface {
@@ -16,116 +16,56 @@ type UsersHandler interface {
 
 // GetUser implements oas.Handler.
 func (h Handler) GetUser(ctx context.Context) (oas.GetUserRes, error) {
-	v := ctx.Value("TOKEN")
-	var user models.User
-	var userId int
-	err := h.Db.Get(&userId, "SELECT user_id FROM sessions WHERE id = $1 LIMIT 1", v)
+	user, err := h.repo.GetUser(ctx.Value("TOKEN").(string))
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to get user")
 	}
 
-	err = h.Db.Get(&user, "SELECT * FROM users WHERE id = $1", userId)
-	if err != nil {
-		return nil, err
-	}
-
-	return &oas.User{ID: strconv.Itoa(user.ID),
-		Name:     user.Name,
-		YandexId: user.YandexID,
-		Surname:  oas.NewOptString(user.Surname),
-		Gender:   oas.NewOptString(user.Gender.String),
-		Phone:    oas.NewOptString(user.Phone.String),
-		Email:    oas.NewOptString(user.Email.String),
-		Role:     "Admin",
-		Approval: true}, nil
+	return &oas.UserResponse{TrackingId: utils.GetTraceID(ctx), Data: *user.MapUserToApi()}, nil
 }
 
 func (h Handler) GetUsers(ctx context.Context) (oas.GetUsersRes, error) {
-	var users []models.User
-	q := `SELECT * FROM users`
-	err := h.Db.SelectContext(ctx, &users, q)
+	users, err := h.repo.GetUsers()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to get users")
 	}
 
-	req := make([]oas.User, 0, 50)
-	for _, user := range users {
-		req = append(req, oas.User{
-			ID:       strconv.Itoa(user.ID),
-			Name:     user.Name,
-			YandexId: user.YandexID,
-			Surname:  oas.NewOptString(user.Surname),
-			Gender:   oas.NewOptString(user.Gender.String),
-			Phone:    oas.NewOptString(user.Phone.String),
-			Email:    oas.NewOptString(user.Email.String),
-			Role:     "Admin",
-			Approval: true})
-
+	res := make([]oas.User, len(users), len(users))
+	for i, user := range users {
+		res[i] = *user.MapUserToApi()
 	}
 
-	return &oas.UsersResponse{Data: req}, nil
+	return &oas.UsersResponse{TrackingId: utils.GetTraceID(ctx), Data: res}, nil
 }
 
 func (h Handler) GetUserById(ctx context.Context, params oas.GetUserByIdParams) (oas.GetUserByIdRes, error) {
-
-	var user models.User
-	err := h.Db.Get(&user, "SELECT * FROM users WHERE id = $1", params.UserId)
+	user, err := h.repo.GetUserById(params.UserId)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to get user by id")
 	}
 
-	return &oas.User{ID: strconv.Itoa(user.ID),
-		Name:     user.Name,
-		YandexId: user.YandexID,
-		Surname:  oas.NewOptString(user.Surname),
-		Gender:   oas.NewOptString(user.Gender.String),
-		Phone:    oas.NewOptString(user.Phone.String),
-		Email:    oas.NewOptString(user.Email.String),
-		Role:     "Admin",
-		Approval: true}, nil
+	return &oas.UserResponse{TrackingId: utils.GetTraceID(ctx), Data: *user.MapUserToApi()}, nil
 }
 
 func (h Handler) UpdateUser(ctx context.Context, req *oas.User) (oas.UpdateUserRes, error) {
-	var user models.User
-	err := h.Db.Get(&user, "SELECT * FROM users WHERE id = $1", req.ID)
+	user, err := h.repo.UpdateUser(req)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to update user")
 	}
 
-	return &oas.User{ID: strconv.Itoa(user.ID),
-		Name:     user.Name,
-		YandexId: user.YandexID,
-		Surname:  oas.NewOptString(user.Surname),
-		Gender:   oas.NewOptString(user.Gender.String),
-		Phone:    oas.NewOptString(user.Phone.String),
-		Email:    oas.NewOptString(user.Email.String),
-		Role:     "Admin",
-		Approval: true}, nil
+	return &oas.UserResponse{TrackingId: utils.GetTraceID(ctx), Data: *user.MapUserToApi()}, nil
 }
 
 // Logout implements oas.Handler.
 func (h Handler) Logout(ctx context.Context) (oas.LogoutRes, error) {
+	err := h.repo.DeleteSession(ctx.Value("TOKEN").(string))
+	if err != nil {
+		return nil, fmt.Errorf("failed to delete session")
+	}
 	return &oas.LogoutOK{}, nil
 }
 
 func (h Handler) CheckUser(ctx context.Context, params oas.CheckUserParams) (oas.CheckUserRes, error) {
-
-	type Phone struct {
-		Number string `json:"number"`
-	}
-
-	type User struct {
-		ID        string `json:"id"`
-		Login     string `json:"login"`
-		Psuid     string `json:"psuid"`
-		Birthday  string `json:"birthday"`
-		Sex       string `json:"sex"`
-		FirstName string `json:"first_name"`
-		LastName  string `json:"last_name"`
-		Email     string `json:"default_email"`
-		Default   Phone  `json:"default_phone"`
-	}
-
 	// Проверяем пользователя в базе данных
 	request, err := http.NewRequest(http.MethodGet, "https://login.yandex.ru/info?format=json", nil)
 	if err != nil {
@@ -142,45 +82,24 @@ func (h Handler) CheckUser(ctx context.Context, params oas.CheckUserParams) (oas
 
 	defer response.Body.Close()
 
-	var req User
-	err = json.NewDecoder(response.Body).Decode(&req)
+	userFromYandex, err := models.MapUserFromYandex(response.Body, params.Token)
 	if err != nil {
 		return &oas.CheckUserBadRequest{}, nil
 	}
-	fmt.Println(req)
 	// Проверим существует ли у нас пользователь
-	checkUser := models.User{}
-	err = h.Db.Get(&checkUser, "Select yandex_id from users where yandex_id =$1", req.ID)
+	userFromDb, err := h.repo.GetUserByYandexId(userFromYandex.YandexID)
 	if err == sql.ErrNoRows {
 		// Пользователь не обнаружен в системе, добавим его в базу данных
-		var sex sql.NullString
-		if req.Sex == "male" || req.Sex == "female" {
-			sex = sql.NullString{String: req.Sex, Valid: true}
-		} else {
-			sex = sql.NullString{String: "", Valid: false}
-		}
-
-		_, err = h.Db.Exec("Insert into users (yandex_id,surname,name,gender, phone, email ) values ($1,$2,$3,$4,$5,$6)",
-			req.ID, req.LastName, req.FirstName, sex, req.Default.Number, req.Email)
+		userFromDb, err = h.repo.CreateUserFromModel(userFromYandex)
 		if err != nil {
 			return &oas.CheckUserBadRequest{}, err
 		}
 	}
-
-	// Получаем пользователя из базы данных
-	err = h.Db.Get(&checkUser, "Select * from users where yandex_id =$1", req.ID)
-	if err != nil {
-		return &oas.CheckUserBadRequest{}, err
-	}
 	// Заполним сессию пользователя
-	_, err = h.Db.Exec("INSERT INTO sessions (user_id,id) values ($1,$2)", checkUser.ID, params.Token)
+	err = h.repo.CreateSession(userFromDb)
 	if err != nil {
 		return &oas.CheckUserBadRequest{}, err
 	}
 	// Возвращаем пользователя
-	rez := oas.User{ID: strconv.Itoa(checkUser.ID), YandexId: checkUser.YandexID,
-		Surname: oas.NewOptString(checkUser.Surname), Name: checkUser.Name, Gender: oas.NewOptString(checkUser.Gender.String), Phone: oas.NewOptString(checkUser.Phone.String),
-		Email: oas.NewOptString(checkUser.Email.String),
-		Role:  "Admin", Approval: true}
-	return &rez, nil
+	return &oas.UserResponse{TrackingId: utils.GetTraceID(ctx), Data: *userFromDb.MapUserToApi()}, nil
 }

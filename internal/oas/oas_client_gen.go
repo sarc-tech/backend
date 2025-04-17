@@ -33,12 +33,12 @@ type Invoker interface {
 //
 // x-gen-operation-group: Incidents
 type IncidentsInvoker interface {
-	// AddIncidents invokes addIncidents operation.
+	// AddIncident invokes addIncident operation.
 	//
 	// Add a new incidents.
 	//
 	// POST /incidents
-	AddIncidents(ctx context.Context, request AddIncidentsReq) (AddIncidentsRes, error)
+	AddIncident(ctx context.Context, request *Incident) (AddIncidentRes, error)
 	// DeleteIncident invokes deleteIncident operation.
 	//
 	// Delete an incidents.
@@ -57,48 +57,24 @@ type IncidentsInvoker interface {
 	//
 	// GET /incidents
 	GetIncidents(ctx context.Context) (GetIncidentsRes, error)
-	// UpdateIncidents invokes updateIncidents operation.
+	// UpdateIncident invokes updateIncident operation.
 	//
 	// Update an existing incidents by Id.
 	//
 	// PUT /incidents
-	UpdateIncidents(ctx context.Context, request UpdateIncidentsReq) (UpdateIncidentsRes, error)
+	UpdateIncident(ctx context.Context, request *Incident) (UpdateIncidentRes, error)
 }
 
 // StatusesInvoker invokes operations described by OpenAPI v3 specification.
 //
 // x-gen-operation-group: Statuses
 type StatusesInvoker interface {
-	// AddStatus invokes addStatus operation.
-	//
-	// Add a new status.
-	//
-	// POST /statuses
-	AddStatus(ctx context.Context, request AddStatusReq) (AddStatusRes, error)
-	// DeleteStatus invokes deleteStatus operation.
-	//
-	// Delete an status.
-	//
-	// DELETE /statuses/{statusId}
-	DeleteStatus(ctx context.Context, params DeleteStatusParams) (DeleteStatusRes, error)
-	// GetStatusById invokes getStatusById operation.
-	//
-	// Returns a single incidents.
-	//
-	// GET /statuses/{statusId}
-	GetStatusById(ctx context.Context, params GetStatusByIdParams) (GetStatusByIdRes, error)
 	// GetStatuses invokes getStatuses operation.
 	//
-	// List of statuses.
+	// Получение списка статусов.
 	//
 	// GET /statuses
 	GetStatuses(ctx context.Context) (GetStatusesRes, error)
-	// UpdateStatus invokes updateStatus operation.
-	//
-	// Update an existing status by Id.
-	//
-	// PUT /statuses
-	UpdateStatus(ctx context.Context, request UpdateStatusReq) (UpdateStatusRes, error)
 }
 
 // UsersInvoker invokes operations described by OpenAPI v3 specification.
@@ -193,19 +169,19 @@ func (c *Client) requestURL(ctx context.Context) *url.URL {
 	return u
 }
 
-// AddIncidents invokes addIncidents operation.
+// AddIncident invokes addIncident operation.
 //
 // Add a new incidents.
 //
 // POST /incidents
-func (c *Client) AddIncidents(ctx context.Context, request AddIncidentsReq) (AddIncidentsRes, error) {
-	res, err := c.sendAddIncidents(ctx, request)
+func (c *Client) AddIncident(ctx context.Context, request *Incident) (AddIncidentRes, error) {
+	res, err := c.sendAddIncident(ctx, request)
 	return res, err
 }
 
-func (c *Client) sendAddIncidents(ctx context.Context, request AddIncidentsReq) (res AddIncidentsRes, err error) {
+func (c *Client) sendAddIncident(ctx context.Context, request *Incident) (res AddIncidentRes, err error) {
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("addIncidents"),
+		otelogen.OperationID("addIncident"),
 		semconv.HTTPRequestMethodKey.String("POST"),
 		semconv.HTTPRouteKey.String("/incidents"),
 	}
@@ -222,7 +198,7 @@ func (c *Client) sendAddIncidents(ctx context.Context, request AddIncidentsReq) 
 	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
 
 	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, AddIncidentsOperation,
+	ctx, span := c.cfg.Tracer.Start(ctx, AddIncidentOperation,
 		trace.WithAttributes(otelAttrs...),
 		clientSpanKind,
 	)
@@ -248,7 +224,7 @@ func (c *Client) sendAddIncidents(ctx context.Context, request AddIncidentsReq) 
 	if err != nil {
 		return res, errors.Wrap(err, "create request")
 	}
-	if err := encodeAddIncidentsRequest(request, r); err != nil {
+	if err := encodeAddIncidentRequest(request, r); err != nil {
 		return res, errors.Wrap(err, "encode request")
 	}
 
@@ -257,7 +233,7 @@ func (c *Client) sendAddIncidents(ctx context.Context, request AddIncidentsReq) 
 		var satisfied bitset
 		{
 			stage = "Security:BearerAuth"
-			switch err := c.securityBearerAuth(ctx, AddIncidentsOperation, r); {
+			switch err := c.securityBearerAuth(ctx, AddIncidentOperation, r); {
 			case err == nil: // if NO error
 				satisfied[0] |= 1 << 0
 			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
@@ -293,115 +269,7 @@ func (c *Client) sendAddIncidents(ctx context.Context, request AddIncidentsReq) 
 	defer resp.Body.Close()
 
 	stage = "DecodeResponse"
-	result, err := decodeAddIncidentsResponse(resp)
-	if err != nil {
-		return res, errors.Wrap(err, "decode response")
-	}
-
-	return result, nil
-}
-
-// AddStatus invokes addStatus operation.
-//
-// Add a new status.
-//
-// POST /statuses
-func (c *Client) AddStatus(ctx context.Context, request AddStatusReq) (AddStatusRes, error) {
-	res, err := c.sendAddStatus(ctx, request)
-	return res, err
-}
-
-func (c *Client) sendAddStatus(ctx context.Context, request AddStatusReq) (res AddStatusRes, err error) {
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("addStatus"),
-		semconv.HTTPRequestMethodKey.String("POST"),
-		semconv.HTTPRouteKey.String("/statuses"),
-	}
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		elapsedDuration := time.Since(startTime)
-		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
-	}()
-
-	// Increment request counter.
-	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-
-	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, AddStatusOperation,
-		trace.WithAttributes(otelAttrs...),
-		clientSpanKind,
-	)
-	// Track stage for error reporting.
-	var stage string
-	defer func() {
-		if err != nil {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, stage)
-			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-		}
-		span.End()
-	}()
-
-	stage = "BuildURL"
-	u := uri.Clone(c.requestURL(ctx))
-	var pathParts [1]string
-	pathParts[0] = "/statuses"
-	uri.AddPathParts(u, pathParts[:]...)
-
-	stage = "EncodeRequest"
-	r, err := ht.NewRequest(ctx, "POST", u)
-	if err != nil {
-		return res, errors.Wrap(err, "create request")
-	}
-	if err := encodeAddStatusRequest(request, r); err != nil {
-		return res, errors.Wrap(err, "encode request")
-	}
-
-	{
-		type bitset = [1]uint8
-		var satisfied bitset
-		{
-			stage = "Security:BearerAuth"
-			switch err := c.securityBearerAuth(ctx, AddStatusOperation, r); {
-			case err == nil: // if NO error
-				satisfied[0] |= 1 << 0
-			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
-				// Skip this security.
-			default:
-				return res, errors.Wrap(err, "security \"BearerAuth\"")
-			}
-		}
-
-		if ok := func() bool {
-		nextRequirement:
-			for _, requirement := range []bitset{
-				{0b00000001},
-			} {
-				for i, mask := range requirement {
-					if satisfied[i]&mask != mask {
-						continue nextRequirement
-					}
-				}
-				return true
-			}
-			return false
-		}(); !ok {
-			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
-		}
-	}
-
-	stage = "SendRequest"
-	resp, err := c.cfg.Client.Do(r)
-	if err != nil {
-		return res, errors.Wrap(err, "do request")
-	}
-	defer resp.Body.Close()
-
-	stage = "DecodeResponse"
-	result, err := decodeAddStatusResponse(resp)
+	result, err := decodeAddIncidentResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -555,7 +423,7 @@ func (c *Client) sendDeleteIncident(ctx context.Context, params DeleteIncidentPa
 			Explode: false,
 		})
 		if err := func() error {
-			return e.EncodeValue(conv.StringToString(params.IncidentId))
+			return e.EncodeValue(conv.IntToString(params.IncidentId))
 		}(); err != nil {
 			return res, errors.Wrap(err, "encode path")
 		}
@@ -622,129 +490,6 @@ func (c *Client) sendDeleteIncident(ctx context.Context, params DeleteIncidentPa
 	return result, nil
 }
 
-// DeleteStatus invokes deleteStatus operation.
-//
-// Delete an status.
-//
-// DELETE /statuses/{statusId}
-func (c *Client) DeleteStatus(ctx context.Context, params DeleteStatusParams) (DeleteStatusRes, error) {
-	res, err := c.sendDeleteStatus(ctx, params)
-	return res, err
-}
-
-func (c *Client) sendDeleteStatus(ctx context.Context, params DeleteStatusParams) (res DeleteStatusRes, err error) {
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("deleteStatus"),
-		semconv.HTTPRequestMethodKey.String("DELETE"),
-		semconv.HTTPRouteKey.String("/statuses/{statusId}"),
-	}
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		elapsedDuration := time.Since(startTime)
-		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
-	}()
-
-	// Increment request counter.
-	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-
-	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, DeleteStatusOperation,
-		trace.WithAttributes(otelAttrs...),
-		clientSpanKind,
-	)
-	// Track stage for error reporting.
-	var stage string
-	defer func() {
-		if err != nil {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, stage)
-			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-		}
-		span.End()
-	}()
-
-	stage = "BuildURL"
-	u := uri.Clone(c.requestURL(ctx))
-	var pathParts [2]string
-	pathParts[0] = "/statuses/"
-	{
-		// Encode "statusId" parameter.
-		e := uri.NewPathEncoder(uri.PathEncoderConfig{
-			Param:   "statusId",
-			Style:   uri.PathStyleSimple,
-			Explode: false,
-		})
-		if err := func() error {
-			return e.EncodeValue(conv.StringToString(params.StatusId))
-		}(); err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		encoded, err := e.Result()
-		if err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		pathParts[1] = encoded
-	}
-	uri.AddPathParts(u, pathParts[:]...)
-
-	stage = "EncodeRequest"
-	r, err := ht.NewRequest(ctx, "DELETE", u)
-	if err != nil {
-		return res, errors.Wrap(err, "create request")
-	}
-
-	{
-		type bitset = [1]uint8
-		var satisfied bitset
-		{
-			stage = "Security:BearerAuth"
-			switch err := c.securityBearerAuth(ctx, DeleteStatusOperation, r); {
-			case err == nil: // if NO error
-				satisfied[0] |= 1 << 0
-			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
-				// Skip this security.
-			default:
-				return res, errors.Wrap(err, "security \"BearerAuth\"")
-			}
-		}
-
-		if ok := func() bool {
-		nextRequirement:
-			for _, requirement := range []bitset{
-				{0b00000001},
-			} {
-				for i, mask := range requirement {
-					if satisfied[i]&mask != mask {
-						continue nextRequirement
-					}
-				}
-				return true
-			}
-			return false
-		}(); !ok {
-			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
-		}
-	}
-
-	stage = "SendRequest"
-	resp, err := c.cfg.Client.Do(r)
-	if err != nil {
-		return res, errors.Wrap(err, "do request")
-	}
-	defer resp.Body.Close()
-
-	stage = "DecodeResponse"
-	result, err := decodeDeleteStatusResponse(resp)
-	if err != nil {
-		return res, errors.Wrap(err, "decode response")
-	}
-
-	return result, nil
-}
-
 // GetIncidentById invokes getIncidentById operation.
 //
 // Returns a single incidents.
@@ -801,7 +546,7 @@ func (c *Client) sendGetIncidentById(ctx context.Context, params GetIncidentById
 			Explode: false,
 		})
 		if err := func() error {
-			return e.EncodeValue(conv.StringToString(params.IncidentId))
+			return e.EncodeValue(conv.IntToString(params.IncidentId))
 		}(); err != nil {
 			return res, errors.Wrap(err, "encode path")
 		}
@@ -973,132 +718,9 @@ func (c *Client) sendGetIncidents(ctx context.Context) (res GetIncidentsRes, err
 	return result, nil
 }
 
-// GetStatusById invokes getStatusById operation.
-//
-// Returns a single incidents.
-//
-// GET /statuses/{statusId}
-func (c *Client) GetStatusById(ctx context.Context, params GetStatusByIdParams) (GetStatusByIdRes, error) {
-	res, err := c.sendGetStatusById(ctx, params)
-	return res, err
-}
-
-func (c *Client) sendGetStatusById(ctx context.Context, params GetStatusByIdParams) (res GetStatusByIdRes, err error) {
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("getStatusById"),
-		semconv.HTTPRequestMethodKey.String("GET"),
-		semconv.HTTPRouteKey.String("/statuses/{statusId}"),
-	}
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		elapsedDuration := time.Since(startTime)
-		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
-	}()
-
-	// Increment request counter.
-	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-
-	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, GetStatusByIdOperation,
-		trace.WithAttributes(otelAttrs...),
-		clientSpanKind,
-	)
-	// Track stage for error reporting.
-	var stage string
-	defer func() {
-		if err != nil {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, stage)
-			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-		}
-		span.End()
-	}()
-
-	stage = "BuildURL"
-	u := uri.Clone(c.requestURL(ctx))
-	var pathParts [2]string
-	pathParts[0] = "/statuses/"
-	{
-		// Encode "statusId" parameter.
-		e := uri.NewPathEncoder(uri.PathEncoderConfig{
-			Param:   "statusId",
-			Style:   uri.PathStyleSimple,
-			Explode: false,
-		})
-		if err := func() error {
-			return e.EncodeValue(conv.StringToString(params.StatusId))
-		}(); err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		encoded, err := e.Result()
-		if err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		pathParts[1] = encoded
-	}
-	uri.AddPathParts(u, pathParts[:]...)
-
-	stage = "EncodeRequest"
-	r, err := ht.NewRequest(ctx, "GET", u)
-	if err != nil {
-		return res, errors.Wrap(err, "create request")
-	}
-
-	{
-		type bitset = [1]uint8
-		var satisfied bitset
-		{
-			stage = "Security:BearerAuth"
-			switch err := c.securityBearerAuth(ctx, GetStatusByIdOperation, r); {
-			case err == nil: // if NO error
-				satisfied[0] |= 1 << 0
-			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
-				// Skip this security.
-			default:
-				return res, errors.Wrap(err, "security \"BearerAuth\"")
-			}
-		}
-
-		if ok := func() bool {
-		nextRequirement:
-			for _, requirement := range []bitset{
-				{0b00000001},
-			} {
-				for i, mask := range requirement {
-					if satisfied[i]&mask != mask {
-						continue nextRequirement
-					}
-				}
-				return true
-			}
-			return false
-		}(); !ok {
-			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
-		}
-	}
-
-	stage = "SendRequest"
-	resp, err := c.cfg.Client.Do(r)
-	if err != nil {
-		return res, errors.Wrap(err, "do request")
-	}
-	defer resp.Body.Close()
-
-	stage = "DecodeResponse"
-	result, err := decodeGetStatusByIdResponse(resp)
-	if err != nil {
-		return res, errors.Wrap(err, "decode response")
-	}
-
-	return result, nil
-}
-
 // GetStatuses invokes getStatuses operation.
 //
-// List of statuses.
+// Получение списка статусов.
 //
 // GET /statuses
 func (c *Client) GetStatuses(ctx context.Context) (GetStatusesRes, error) {
@@ -1362,7 +984,7 @@ func (c *Client) sendGetUserById(ctx context.Context, params GetUserByIdParams) 
 			Explode: false,
 		})
 		if err := func() error {
-			return e.EncodeValue(conv.StringToString(params.UserId))
+			return e.EncodeValue(conv.IntToString(params.UserId))
 		}(); err != nil {
 			return res, errors.Wrap(err, "encode path")
 		}
@@ -1639,19 +1261,19 @@ func (c *Client) sendLogout(ctx context.Context) (res LogoutRes, err error) {
 	return result, nil
 }
 
-// UpdateIncidents invokes updateIncidents operation.
+// UpdateIncident invokes updateIncident operation.
 //
 // Update an existing incidents by Id.
 //
 // PUT /incidents
-func (c *Client) UpdateIncidents(ctx context.Context, request UpdateIncidentsReq) (UpdateIncidentsRes, error) {
-	res, err := c.sendUpdateIncidents(ctx, request)
+func (c *Client) UpdateIncident(ctx context.Context, request *Incident) (UpdateIncidentRes, error) {
+	res, err := c.sendUpdateIncident(ctx, request)
 	return res, err
 }
 
-func (c *Client) sendUpdateIncidents(ctx context.Context, request UpdateIncidentsReq) (res UpdateIncidentsRes, err error) {
+func (c *Client) sendUpdateIncident(ctx context.Context, request *Incident) (res UpdateIncidentRes, err error) {
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("updateIncidents"),
+		otelogen.OperationID("updateIncident"),
 		semconv.HTTPRequestMethodKey.String("PUT"),
 		semconv.HTTPRouteKey.String("/incidents"),
 	}
@@ -1668,7 +1290,7 @@ func (c *Client) sendUpdateIncidents(ctx context.Context, request UpdateIncident
 	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
 
 	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, UpdateIncidentsOperation,
+	ctx, span := c.cfg.Tracer.Start(ctx, UpdateIncidentOperation,
 		trace.WithAttributes(otelAttrs...),
 		clientSpanKind,
 	)
@@ -1694,7 +1316,7 @@ func (c *Client) sendUpdateIncidents(ctx context.Context, request UpdateIncident
 	if err != nil {
 		return res, errors.Wrap(err, "create request")
 	}
-	if err := encodeUpdateIncidentsRequest(request, r); err != nil {
+	if err := encodeUpdateIncidentRequest(request, r); err != nil {
 		return res, errors.Wrap(err, "encode request")
 	}
 
@@ -1703,7 +1325,7 @@ func (c *Client) sendUpdateIncidents(ctx context.Context, request UpdateIncident
 		var satisfied bitset
 		{
 			stage = "Security:BearerAuth"
-			switch err := c.securityBearerAuth(ctx, UpdateIncidentsOperation, r); {
+			switch err := c.securityBearerAuth(ctx, UpdateIncidentOperation, r); {
 			case err == nil: // if NO error
 				satisfied[0] |= 1 << 0
 			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
@@ -1739,115 +1361,7 @@ func (c *Client) sendUpdateIncidents(ctx context.Context, request UpdateIncident
 	defer resp.Body.Close()
 
 	stage = "DecodeResponse"
-	result, err := decodeUpdateIncidentsResponse(resp)
-	if err != nil {
-		return res, errors.Wrap(err, "decode response")
-	}
-
-	return result, nil
-}
-
-// UpdateStatus invokes updateStatus operation.
-//
-// Update an existing status by Id.
-//
-// PUT /statuses
-func (c *Client) UpdateStatus(ctx context.Context, request UpdateStatusReq) (UpdateStatusRes, error) {
-	res, err := c.sendUpdateStatus(ctx, request)
-	return res, err
-}
-
-func (c *Client) sendUpdateStatus(ctx context.Context, request UpdateStatusReq) (res UpdateStatusRes, err error) {
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("updateStatus"),
-		semconv.HTTPRequestMethodKey.String("PUT"),
-		semconv.HTTPRouteKey.String("/statuses"),
-	}
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		elapsedDuration := time.Since(startTime)
-		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
-	}()
-
-	// Increment request counter.
-	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-
-	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, UpdateStatusOperation,
-		trace.WithAttributes(otelAttrs...),
-		clientSpanKind,
-	)
-	// Track stage for error reporting.
-	var stage string
-	defer func() {
-		if err != nil {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, stage)
-			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-		}
-		span.End()
-	}()
-
-	stage = "BuildURL"
-	u := uri.Clone(c.requestURL(ctx))
-	var pathParts [1]string
-	pathParts[0] = "/statuses"
-	uri.AddPathParts(u, pathParts[:]...)
-
-	stage = "EncodeRequest"
-	r, err := ht.NewRequest(ctx, "PUT", u)
-	if err != nil {
-		return res, errors.Wrap(err, "create request")
-	}
-	if err := encodeUpdateStatusRequest(request, r); err != nil {
-		return res, errors.Wrap(err, "encode request")
-	}
-
-	{
-		type bitset = [1]uint8
-		var satisfied bitset
-		{
-			stage = "Security:BearerAuth"
-			switch err := c.securityBearerAuth(ctx, UpdateStatusOperation, r); {
-			case err == nil: // if NO error
-				satisfied[0] |= 1 << 0
-			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
-				// Skip this security.
-			default:
-				return res, errors.Wrap(err, "security \"BearerAuth\"")
-			}
-		}
-
-		if ok := func() bool {
-		nextRequirement:
-			for _, requirement := range []bitset{
-				{0b00000001},
-			} {
-				for i, mask := range requirement {
-					if satisfied[i]&mask != mask {
-						continue nextRequirement
-					}
-				}
-				return true
-			}
-			return false
-		}(); !ok {
-			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
-		}
-	}
-
-	stage = "SendRequest"
-	resp, err := c.cfg.Client.Do(r)
-	if err != nil {
-		return res, errors.Wrap(err, "do request")
-	}
-	defer resp.Body.Close()
-
-	stage = "DecodeResponse"
-	result, err := decodeUpdateStatusResponse(resp)
+	result, err := decodeUpdateIncidentResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}

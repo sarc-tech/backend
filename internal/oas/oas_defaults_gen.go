@@ -3,6 +3,14 @@
 package oas
 
 // setDefaults set default value of fields.
+func (s *IncidentResponse) setDefaults() {
+	{
+		val := string("Ok")
+		s.Status = val
+	}
+}
+
+// setDefaults set default value of fields.
 func (s *IncidentsResponse) setDefaults() {
 	{
 		val := string("Ok")
@@ -11,7 +19,15 @@ func (s *IncidentsResponse) setDefaults() {
 }
 
 // setDefaults set default value of fields.
-func (s *StatususResponse) setDefaults() {
+func (s *StatusesResponse) setDefaults() {
+	{
+		val := string("Ok")
+		s.Status = val
+	}
+}
+
+// setDefaults set default value of fields.
+func (s *UserResponse) setDefaults() {
 	{
 		val := string("Ok")
 		s.Status = val

@@ -3,9 +3,9 @@ package api
 import (
 	"context"
 	"fmt"
-	"github.com/sarc-tech/backend/internal/models"
 
-	"github.com/jmoiron/sqlx"
+	"github.com/sarc-tech/backend/internal/repo"
+
 	"github.com/sarc-tech/backend/internal/oas"
 )
 
@@ -13,18 +13,30 @@ import (
 var _ oas.Handler = (*Handler)(nil)
 
 type Handler struct {
-	Db                       *sqlx.DB
+	repo                     *repo.RepoHandler
 	oas.UnimplementedHandler // automatically implement all methods
 }
 
+func NewHandler(repo *repo.RepoHandler) *Handler {
+	return &Handler{
+		repo: repo,
+	}
+}
+
+// HandleUserLogin implements oas.Handler.
 type HandlerSecurity struct {
-	Db *sqlx.DB
+	repo                     *repo.RepoHandler
+}
+
+func NewHandlerSecurity(repo *repo.RepoHandler) *HandlerSecurity {
+	return &HandlerSecurity{
+		repo: repo,
+	}
 }
 
 // HandleBearerAuth implements oas.SecurityHandler.
 func (h HandlerSecurity) HandleBearerAuth(ctx context.Context, operationName oas.OperationName, t oas.BearerAuth) (context.Context, error) {
-	session := models.Session{}
-	err := h.Db.Get(&session, "SELECT * FROM sessions WHERE id = $1", t.Token)
+	_, err := h.repo.GetSession(t.Token)
 	if err != nil {
 		return ctx, fmt.Errorf("unauthorized")
 	}

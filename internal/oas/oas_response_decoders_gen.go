@@ -14,7 +14,7 @@ import (
 	"github.com/ogen-go/ogen/validate"
 )
 
-func decodeAddIncidentsResponse(resp *http.Response) (res AddIncidentsRes, _ error) {
+func decodeAddIncidentResponse(resp *http.Response) (res AddIncidentRes, _ error) {
 	switch resp.StatusCode {
 	case 200:
 		// Code 200.
@@ -30,7 +30,7 @@ func decodeAddIncidentsResponse(resp *http.Response) (res AddIncidentsRes, _ err
 			}
 			d := jx.DecodeBytes(buf)
 
-			var response Incident
+			var response IncidentResponse
 			if err := func() error {
 				if err := response.Decode(d); err != nil {
 					return err
@@ -53,57 +53,10 @@ func decodeAddIncidentsResponse(resp *http.Response) (res AddIncidentsRes, _ err
 		}
 	case 400:
 		// Code 400.
-		return &AddIncidentsBadRequest{}, nil
+		return &AddIncidentBadRequest{}, nil
 	case 422:
 		// Code 422.
-		return &AddIncidentsUnprocessableEntity{}, nil
-	}
-	return res, validate.UnexpectedStatusCode(resp.StatusCode)
-}
-
-func decodeAddStatusResponse(resp *http.Response) (res AddStatusRes, _ error) {
-	switch resp.StatusCode {
-	case 200:
-		// Code 200.
-		ct, _, err := mime.ParseMediaType(resp.Header.Get("Content-Type"))
-		if err != nil {
-			return res, errors.Wrap(err, "parse media type")
-		}
-		switch {
-		case ct == "application/json":
-			buf, err := io.ReadAll(resp.Body)
-			if err != nil {
-				return res, err
-			}
-			d := jx.DecodeBytes(buf)
-
-			var response Status
-			if err := func() error {
-				if err := response.Decode(d); err != nil {
-					return err
-				}
-				if err := d.Skip(); err != io.EOF {
-					return errors.New("unexpected trailing data")
-				}
-				return nil
-			}(); err != nil {
-				err = &ogenerrors.DecodeBodyError{
-					ContentType: ct,
-					Body:        buf,
-					Err:         err,
-				}
-				return res, err
-			}
-			return &response, nil
-		default:
-			return res, validate.InvalidContentType(ct)
-		}
-	case 400:
-		// Code 400.
-		return &AddStatusBadRequest{}, nil
-	case 422:
-		// Code 422.
-		return &AddStatusUnprocessableEntity{}, nil
+		return &AddIncidentUnprocessableEntity{}, nil
 	}
 	return res, validate.UnexpectedStatusCode(resp.StatusCode)
 }
@@ -124,7 +77,7 @@ func decodeCheckUserResponse(resp *http.Response) (res CheckUserRes, _ error) {
 			}
 			d := jx.DecodeBytes(buf)
 
-			var response User
+			var response UserResponse
 			if err := func() error {
 				if err := response.Decode(d); err != nil {
 					return err
@@ -167,18 +120,6 @@ func decodeDeleteIncidentResponse(resp *http.Response) (res DeleteIncidentRes, _
 	return res, validate.UnexpectedStatusCode(resp.StatusCode)
 }
 
-func decodeDeleteStatusResponse(resp *http.Response) (res DeleteStatusRes, _ error) {
-	switch resp.StatusCode {
-	case 200:
-		// Code 200.
-		return &DeleteStatusOK{}, nil
-	case 400:
-		// Code 400.
-		return &DeleteStatusBadRequest{}, nil
-	}
-	return res, validate.UnexpectedStatusCode(resp.StatusCode)
-}
-
 func decodeGetIncidentByIdResponse(resp *http.Response) (res GetIncidentByIdRes, _ error) {
 	switch resp.StatusCode {
 	case 200:
@@ -195,7 +136,7 @@ func decodeGetIncidentByIdResponse(resp *http.Response) (res GetIncidentByIdRes,
 			}
 			d := jx.DecodeBytes(buf)
 
-			var response Incident
+			var response IncidentResponse
 			if err := func() error {
 				if err := response.Decode(d); err != nil {
 					return err
@@ -279,53 +220,6 @@ func decodeGetIncidentsResponse(resp *http.Response) (res GetIncidentsRes, _ err
 	return res, validate.UnexpectedStatusCode(resp.StatusCode)
 }
 
-func decodeGetStatusByIdResponse(resp *http.Response) (res GetStatusByIdRes, _ error) {
-	switch resp.StatusCode {
-	case 200:
-		// Code 200.
-		ct, _, err := mime.ParseMediaType(resp.Header.Get("Content-Type"))
-		if err != nil {
-			return res, errors.Wrap(err, "parse media type")
-		}
-		switch {
-		case ct == "application/json":
-			buf, err := io.ReadAll(resp.Body)
-			if err != nil {
-				return res, err
-			}
-			d := jx.DecodeBytes(buf)
-
-			var response Status
-			if err := func() error {
-				if err := response.Decode(d); err != nil {
-					return err
-				}
-				if err := d.Skip(); err != io.EOF {
-					return errors.New("unexpected trailing data")
-				}
-				return nil
-			}(); err != nil {
-				err = &ogenerrors.DecodeBodyError{
-					ContentType: ct,
-					Body:        buf,
-					Err:         err,
-				}
-				return res, err
-			}
-			return &response, nil
-		default:
-			return res, validate.InvalidContentType(ct)
-		}
-	case 400:
-		// Code 400.
-		return &GetStatusByIdBadRequest{}, nil
-	case 404:
-		// Code 404.
-		return &GetStatusByIdNotFound{}, nil
-	}
-	return res, validate.UnexpectedStatusCode(resp.StatusCode)
-}
-
 func decodeGetStatusesResponse(resp *http.Response) (res GetStatusesRes, _ error) {
 	switch resp.StatusCode {
 	case 200:
@@ -342,7 +236,7 @@ func decodeGetStatusesResponse(resp *http.Response) (res GetStatusesRes, _ error
 			}
 			d := jx.DecodeBytes(buf)
 
-			var response StatususResponse
+			var response StatusesResponse
 			if err := func() error {
 				if err := response.Decode(d); err != nil {
 					return err
@@ -395,7 +289,7 @@ func decodeGetUserResponse(resp *http.Response) (res GetUserRes, _ error) {
 			}
 			d := jx.DecodeBytes(buf)
 
-			var response User
+			var response UserResponse
 			if err := func() error {
 				if err := response.Decode(d); err != nil {
 					return err
@@ -442,7 +336,7 @@ func decodeGetUserByIdResponse(resp *http.Response) (res GetUserByIdRes, _ error
 			}
 			d := jx.DecodeBytes(buf)
 
-			var response User
+			var response UserResponse
 			if err := func() error {
 				if err := response.Decode(d); err != nil {
 					return err
@@ -544,7 +438,7 @@ func decodeLogoutResponse(resp *http.Response) (res LogoutRes, _ error) {
 	return res, validate.UnexpectedStatusCode(resp.StatusCode)
 }
 
-func decodeUpdateIncidentsResponse(resp *http.Response) (res UpdateIncidentsRes, _ error) {
+func decodeUpdateIncidentResponse(resp *http.Response) (res UpdateIncidentRes, _ error) {
 	switch resp.StatusCode {
 	case 200:
 		// Code 200.
@@ -560,7 +454,7 @@ func decodeUpdateIncidentsResponse(resp *http.Response) (res UpdateIncidentsRes,
 			}
 			d := jx.DecodeBytes(buf)
 
-			var response Incident
+			var response IncidentResponse
 			if err := func() error {
 				if err := response.Decode(d); err != nil {
 					return err
@@ -583,63 +477,13 @@ func decodeUpdateIncidentsResponse(resp *http.Response) (res UpdateIncidentsRes,
 		}
 	case 400:
 		// Code 400.
-		return &UpdateIncidentsBadRequest{}, nil
+		return &UpdateIncidentBadRequest{}, nil
 	case 404:
 		// Code 404.
-		return &UpdateIncidentsNotFound{}, nil
+		return &UpdateIncidentNotFound{}, nil
 	case 422:
 		// Code 422.
-		return &UpdateIncidentsUnprocessableEntity{}, nil
-	}
-	return res, validate.UnexpectedStatusCode(resp.StatusCode)
-}
-
-func decodeUpdateStatusResponse(resp *http.Response) (res UpdateStatusRes, _ error) {
-	switch resp.StatusCode {
-	case 200:
-		// Code 200.
-		ct, _, err := mime.ParseMediaType(resp.Header.Get("Content-Type"))
-		if err != nil {
-			return res, errors.Wrap(err, "parse media type")
-		}
-		switch {
-		case ct == "application/json":
-			buf, err := io.ReadAll(resp.Body)
-			if err != nil {
-				return res, err
-			}
-			d := jx.DecodeBytes(buf)
-
-			var response Status
-			if err := func() error {
-				if err := response.Decode(d); err != nil {
-					return err
-				}
-				if err := d.Skip(); err != io.EOF {
-					return errors.New("unexpected trailing data")
-				}
-				return nil
-			}(); err != nil {
-				err = &ogenerrors.DecodeBodyError{
-					ContentType: ct,
-					Body:        buf,
-					Err:         err,
-				}
-				return res, err
-			}
-			return &response, nil
-		default:
-			return res, validate.InvalidContentType(ct)
-		}
-	case 400:
-		// Code 400.
-		return &UpdateStatusBadRequest{}, nil
-	case 404:
-		// Code 404.
-		return &UpdateStatusNotFound{}, nil
-	case 422:
-		// Code 422.
-		return &UpdateStatusUnprocessableEntity{}, nil
+		return &UpdateIncidentUnprocessableEntity{}, nil
 	}
 	return res, validate.UnexpectedStatusCode(resp.StatusCode)
 }
@@ -660,7 +504,7 @@ func decodeUpdateUserResponse(resp *http.Response) (res UpdateUserRes, _ error) 
 			}
 			d := jx.DecodeBytes(buf)
 
-			var response User
+			var response UserResponse
 			if err := func() error {
 				if err := response.Decode(d); err != nil {
 					return err

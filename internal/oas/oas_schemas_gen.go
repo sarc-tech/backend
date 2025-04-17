@@ -6,41 +6,15 @@ import (
 	"time"
 )
 
-type AddIncidentsApplicationJSON Incident
+// AddIncidentBadRequest is response for AddIncident operation.
+type AddIncidentBadRequest struct{}
 
-func (*AddIncidentsApplicationJSON) addIncidentsReq() {}
+func (*AddIncidentBadRequest) addIncidentRes() {}
 
-type AddIncidentsApplicationXWwwFormUrlencoded Incident
+// AddIncidentUnprocessableEntity is response for AddIncident operation.
+type AddIncidentUnprocessableEntity struct{}
 
-func (*AddIncidentsApplicationXWwwFormUrlencoded) addIncidentsReq() {}
-
-// AddIncidentsBadRequest is response for AddIncidents operation.
-type AddIncidentsBadRequest struct{}
-
-func (*AddIncidentsBadRequest) addIncidentsRes() {}
-
-// AddIncidentsUnprocessableEntity is response for AddIncidents operation.
-type AddIncidentsUnprocessableEntity struct{}
-
-func (*AddIncidentsUnprocessableEntity) addIncidentsRes() {}
-
-type AddStatusApplicationJSON Status
-
-func (*AddStatusApplicationJSON) addStatusReq() {}
-
-type AddStatusApplicationXWwwFormUrlencoded Status
-
-func (*AddStatusApplicationXWwwFormUrlencoded) addStatusReq() {}
-
-// AddStatusBadRequest is response for AddStatus operation.
-type AddStatusBadRequest struct{}
-
-func (*AddStatusBadRequest) addStatusRes() {}
-
-// AddStatusUnprocessableEntity is response for AddStatus operation.
-type AddStatusUnprocessableEntity struct{}
-
-func (*AddStatusUnprocessableEntity) addStatusRes() {}
+func (*AddIncidentUnprocessableEntity) addIncidentRes() {}
 
 type BearerAuth struct {
 	Token string
@@ -76,16 +50,6 @@ type DeleteIncidentOK struct{}
 
 func (*DeleteIncidentOK) deleteIncidentRes() {}
 
-// DeleteStatusBadRequest is response for DeleteStatus operation.
-type DeleteStatusBadRequest struct{}
-
-func (*DeleteStatusBadRequest) deleteStatusRes() {}
-
-// DeleteStatusOK is response for DeleteStatus operation.
-type DeleteStatusOK struct{}
-
-func (*DeleteStatusOK) deleteStatusRes() {}
-
 // GetIncidentByIdBadRequest is response for GetIncidentById operation.
 type GetIncidentByIdBadRequest struct{}
 
@@ -100,16 +64,6 @@ func (*GetIncidentByIdNotFound) getIncidentByIdRes() {}
 type GetIncidentsBadRequest struct{}
 
 func (*GetIncidentsBadRequest) getIncidentsRes() {}
-
-// GetStatusByIdBadRequest is response for GetStatusById operation.
-type GetStatusByIdBadRequest struct{}
-
-func (*GetStatusByIdBadRequest) getStatusByIdRes() {}
-
-// GetStatusByIdNotFound is response for GetStatusById operation.
-type GetStatusByIdNotFound struct{}
-
-func (*GetStatusByIdNotFound) getStatusByIdRes() {}
 
 // GetStatusesBadRequest is response for GetStatuses operation.
 type GetStatusesBadRequest struct{}
@@ -149,7 +103,7 @@ func (*GetUsersNotFound) getUsersRes() {}
 // Ref: #/components/schemas/Incident
 type Incident struct {
 	// Incident id.
-	ID       string `json:"id"`
+	ID       OptInt `json:"id"`
 	Region   string `json:"region"`
 	Fio      string `json:"fio"`
 	StatusId string `json:"statusId"`
@@ -157,7 +111,7 @@ type Incident struct {
 }
 
 // GetID returns the value of ID.
-func (s *Incident) GetID() string {
+func (s *Incident) GetID() OptInt {
 	return s.ID
 }
 
@@ -182,7 +136,7 @@ func (s *Incident) GetDate() string {
 }
 
 // SetID sets the value of ID.
-func (s *Incident) SetID(val string) {
+func (s *Incident) SetID(val OptInt) {
 	s.ID = val
 }
 
@@ -206,16 +160,52 @@ func (s *Incident) SetDate(val string) {
 	s.Date = val
 }
 
-func (*Incident) addIncidentsRes()    {}
-func (*Incident) getIncidentByIdRes() {}
-func (*Incident) updateIncidentsRes() {}
+// Ref: #/components/schemas/IncidentResponse
+type IncidentResponse struct {
+	TrackingId string   `json:"trackingId"`
+	Status     string   `json:"status"`
+	Data       Incident `json:"data"`
+}
+
+// GetTrackingId returns the value of TrackingId.
+func (s *IncidentResponse) GetTrackingId() string {
+	return s.TrackingId
+}
+
+// GetStatus returns the value of Status.
+func (s *IncidentResponse) GetStatus() string {
+	return s.Status
+}
+
+// GetData returns the value of Data.
+func (s *IncidentResponse) GetData() Incident {
+	return s.Data
+}
+
+// SetTrackingId sets the value of TrackingId.
+func (s *IncidentResponse) SetTrackingId(val string) {
+	s.TrackingId = val
+}
+
+// SetStatus sets the value of Status.
+func (s *IncidentResponse) SetStatus(val string) {
+	s.Status = val
+}
+
+// SetData sets the value of Data.
+func (s *IncidentResponse) SetData(val Incident) {
+	s.Data = val
+}
+
+func (*IncidentResponse) addIncidentRes()     {}
+func (*IncidentResponse) getIncidentByIdRes() {}
+func (*IncidentResponse) updateIncidentRes()  {}
 
 // Ref: #/components/schemas/IncidentsResponse
 type IncidentsResponse struct {
 	TrackingId string     `json:"trackingId"`
 	Status     string     `json:"status"`
 	Data       []Incident `json:"data"`
-	Statuses   []Status   `json:"statuses"`
 }
 
 // GetTrackingId returns the value of TrackingId.
@@ -233,11 +223,6 @@ func (s *IncidentsResponse) GetData() []Incident {
 	return s.Data
 }
 
-// GetStatuses returns the value of Statuses.
-func (s *IncidentsResponse) GetStatuses() []Status {
-	return s.Statuses
-}
-
 // SetTrackingId sets the value of TrackingId.
 func (s *IncidentsResponse) SetTrackingId(val string) {
 	s.TrackingId = val
@@ -251,11 +236,6 @@ func (s *IncidentsResponse) SetStatus(val string) {
 // SetData sets the value of Data.
 func (s *IncidentsResponse) SetData(val []Incident) {
 	s.Data = val
-}
-
-// SetStatuses sets the value of Statuses.
-func (s *IncidentsResponse) SetStatuses(val []Status) {
-	s.Statuses = val
 }
 
 func (*IncidentsResponse) getIncidentsRes() {}
@@ -321,6 +301,52 @@ func (o OptDate) Or(d time.Time) time.Time {
 	return d
 }
 
+// NewOptInt returns new OptInt with value set to v.
+func NewOptInt(v int) OptInt {
+	return OptInt{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptInt is optional int.
+type OptInt struct {
+	Value int
+	Set   bool
+}
+
+// IsSet returns true if OptInt was set.
+func (o OptInt) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptInt) Reset() {
+	var v int
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptInt) SetTo(v int) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptInt) Get() (v int, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptInt) Or(d int) int {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptString returns new OptString with value set to v.
 func NewOptString(v string) OptString {
 	return OptString{
@@ -370,12 +396,12 @@ func (o OptString) Or(d string) string {
 // Ref: #/components/schemas/Status
 type Status struct {
 	// Status id.
-	ID   string `json:"id"`
+	ID   int    `json:"id"`
 	Name string `json:"name"`
 }
 
 // GetID returns the value of ID.
-func (s *Status) GetID() string {
+func (s *Status) GetID() int {
 	return s.ID
 }
 
@@ -385,7 +411,7 @@ func (s *Status) GetName() string {
 }
 
 // SetID sets the value of ID.
-func (s *Status) SetID(val string) {
+func (s *Status) SetID(val int) {
 	s.ID = val
 }
 
@@ -394,94 +420,59 @@ func (s *Status) SetName(val string) {
 	s.Name = val
 }
 
-func (*Status) addStatusRes()     {}
-func (*Status) getStatusByIdRes() {}
-func (*Status) updateStatusRes()  {}
-
-// Ref: #/components/schemas/StatususResponse
-type StatususResponse struct {
+// Ref: #/components/schemas/StatusesResponse
+type StatusesResponse struct {
 	TrackingId string   `json:"trackingId"`
 	Status     string   `json:"status"`
 	Data       []Status `json:"data"`
 }
 
 // GetTrackingId returns the value of TrackingId.
-func (s *StatususResponse) GetTrackingId() string {
+func (s *StatusesResponse) GetTrackingId() string {
 	return s.TrackingId
 }
 
 // GetStatus returns the value of Status.
-func (s *StatususResponse) GetStatus() string {
+func (s *StatusesResponse) GetStatus() string {
 	return s.Status
 }
 
 // GetData returns the value of Data.
-func (s *StatususResponse) GetData() []Status {
+func (s *StatusesResponse) GetData() []Status {
 	return s.Data
 }
 
 // SetTrackingId sets the value of TrackingId.
-func (s *StatususResponse) SetTrackingId(val string) {
+func (s *StatusesResponse) SetTrackingId(val string) {
 	s.TrackingId = val
 }
 
 // SetStatus sets the value of Status.
-func (s *StatususResponse) SetStatus(val string) {
+func (s *StatusesResponse) SetStatus(val string) {
 	s.Status = val
 }
 
 // SetData sets the value of Data.
-func (s *StatususResponse) SetData(val []Status) {
+func (s *StatusesResponse) SetData(val []Status) {
 	s.Data = val
 }
 
-func (*StatususResponse) getStatusesRes() {}
+func (*StatusesResponse) getStatusesRes() {}
 
-type UpdateIncidentsApplicationJSON Incident
+// UpdateIncidentBadRequest is response for UpdateIncident operation.
+type UpdateIncidentBadRequest struct{}
 
-func (*UpdateIncidentsApplicationJSON) updateIncidentsReq() {}
+func (*UpdateIncidentBadRequest) updateIncidentRes() {}
 
-type UpdateIncidentsApplicationXWwwFormUrlencoded Incident
+// UpdateIncidentNotFound is response for UpdateIncident operation.
+type UpdateIncidentNotFound struct{}
 
-func (*UpdateIncidentsApplicationXWwwFormUrlencoded) updateIncidentsReq() {}
+func (*UpdateIncidentNotFound) updateIncidentRes() {}
 
-// UpdateIncidentsBadRequest is response for UpdateIncidents operation.
-type UpdateIncidentsBadRequest struct{}
+// UpdateIncidentUnprocessableEntity is response for UpdateIncident operation.
+type UpdateIncidentUnprocessableEntity struct{}
 
-func (*UpdateIncidentsBadRequest) updateIncidentsRes() {}
-
-// UpdateIncidentsNotFound is response for UpdateIncidents operation.
-type UpdateIncidentsNotFound struct{}
-
-func (*UpdateIncidentsNotFound) updateIncidentsRes() {}
-
-// UpdateIncidentsUnprocessableEntity is response for UpdateIncidents operation.
-type UpdateIncidentsUnprocessableEntity struct{}
-
-func (*UpdateIncidentsUnprocessableEntity) updateIncidentsRes() {}
-
-type UpdateStatusApplicationJSON Status
-
-func (*UpdateStatusApplicationJSON) updateStatusReq() {}
-
-type UpdateStatusApplicationXWwwFormUrlencoded Status
-
-func (*UpdateStatusApplicationXWwwFormUrlencoded) updateStatusReq() {}
-
-// UpdateStatusBadRequest is response for UpdateStatus operation.
-type UpdateStatusBadRequest struct{}
-
-func (*UpdateStatusBadRequest) updateStatusRes() {}
-
-// UpdateStatusNotFound is response for UpdateStatus operation.
-type UpdateStatusNotFound struct{}
-
-func (*UpdateStatusNotFound) updateStatusRes() {}
-
-// UpdateStatusUnprocessableEntity is response for UpdateStatus operation.
-type UpdateStatusUnprocessableEntity struct{}
-
-func (*UpdateStatusUnprocessableEntity) updateStatusRes() {}
+func (*UpdateIncidentUnprocessableEntity) updateIncidentRes() {}
 
 // UpdateUserBadRequest is response for UpdateUser operation.
 type UpdateUserBadRequest struct{}
@@ -496,11 +487,11 @@ func (*UpdateUserNotFound) updateUserRes() {}
 // Ref: #/components/schemas/User
 type User struct {
 	// User id.
-	ID string `json:"id"`
+	ID OptInt `json:"id"`
 	// Yandex id.
 	YandexId   string    `json:"yandexId"`
-	Surname    OptString `json:"surname"`
-	Name       string    `json:"name"`
+	LastName   OptString `json:"last_name"`
+	FirstName  OptString `json:"first_name"`
 	Patronymic OptString `json:"patronymic"`
 	CallSign   OptString `json:"callSign"`
 	Gender     OptString `json:"gender"`
@@ -514,7 +505,7 @@ type User struct {
 }
 
 // GetID returns the value of ID.
-func (s *User) GetID() string {
+func (s *User) GetID() OptInt {
 	return s.ID
 }
 
@@ -523,14 +514,14 @@ func (s *User) GetYandexId() string {
 	return s.YandexId
 }
 
-// GetSurname returns the value of Surname.
-func (s *User) GetSurname() OptString {
-	return s.Surname
+// GetLastName returns the value of LastName.
+func (s *User) GetLastName() OptString {
+	return s.LastName
 }
 
-// GetName returns the value of Name.
-func (s *User) GetName() string {
-	return s.Name
+// GetFirstName returns the value of FirstName.
+func (s *User) GetFirstName() OptString {
+	return s.FirstName
 }
 
 // GetPatronymic returns the value of Patronymic.
@@ -584,7 +575,7 @@ func (s *User) GetRole() string {
 }
 
 // SetID sets the value of ID.
-func (s *User) SetID(val string) {
+func (s *User) SetID(val OptInt) {
 	s.ID = val
 }
 
@@ -593,14 +584,14 @@ func (s *User) SetYandexId(val string) {
 	s.YandexId = val
 }
 
-// SetSurname sets the value of Surname.
-func (s *User) SetSurname(val OptString) {
-	s.Surname = val
+// SetLastName sets the value of LastName.
+func (s *User) SetLastName(val OptString) {
+	s.LastName = val
 }
 
-// SetName sets the value of Name.
-func (s *User) SetName(val string) {
-	s.Name = val
+// SetFirstName sets the value of FirstName.
+func (s *User) SetFirstName(val OptString) {
+	s.FirstName = val
 }
 
 // SetPatronymic sets the value of Patronymic.
@@ -653,10 +644,47 @@ func (s *User) SetRole(val string) {
 	s.Role = val
 }
 
-func (*User) checkUserRes()   {}
-func (*User) getUserByIdRes() {}
-func (*User) getUserRes()     {}
-func (*User) updateUserRes()  {}
+// Ref: #/components/schemas/UserResponse
+type UserResponse struct {
+	TrackingId string `json:"trackingId"`
+	Status     string `json:"status"`
+	Data       User   `json:"data"`
+}
+
+// GetTrackingId returns the value of TrackingId.
+func (s *UserResponse) GetTrackingId() string {
+	return s.TrackingId
+}
+
+// GetStatus returns the value of Status.
+func (s *UserResponse) GetStatus() string {
+	return s.Status
+}
+
+// GetData returns the value of Data.
+func (s *UserResponse) GetData() User {
+	return s.Data
+}
+
+// SetTrackingId sets the value of TrackingId.
+func (s *UserResponse) SetTrackingId(val string) {
+	s.TrackingId = val
+}
+
+// SetStatus sets the value of Status.
+func (s *UserResponse) SetStatus(val string) {
+	s.Status = val
+}
+
+// SetData sets the value of Data.
+func (s *UserResponse) SetData(val User) {
+	s.Data = val
+}
+
+func (*UserResponse) checkUserRes()   {}
+func (*UserResponse) getUserByIdRes() {}
+func (*UserResponse) getUserRes()     {}
+func (*UserResponse) updateUserRes()  {}
 
 // Ref: #/components/schemas/UsersResponse
 type UsersResponse struct {
