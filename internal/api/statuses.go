@@ -5,8 +5,8 @@ import (
 	"fmt"
 
 	"github.com/sarc-tech/backend/internal/oas"
+	"github.com/sarc-tech/backend/internal/utils"
 )
-
 
 // GetStatuses implements oas.Handler.
 func (h Handler) GetStatuses(ctx context.Context) (oas.GetStatusesRes, error) {
@@ -20,5 +20,5 @@ func (h Handler) GetStatuses(ctx context.Context) (oas.GetStatusesRes, error) {
 		res[i] = *status.MapStatusToAPi()
 	}
 
-	return &oas.StatusesResponse{Data: res}, nil
+	return &oas.StatusesResponse{TrackingId: utils.GetTraceID(ctx), Data: res}, nil
 }

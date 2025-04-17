@@ -8,6 +8,7 @@ import (
 
 	"github.com/sarc-tech/backend/internal/models"
 	"github.com/sarc-tech/backend/internal/oas"
+	"github.com/sarc-tech/backend/internal/utils"
 )
 
 type UsersHandler interface {
@@ -20,7 +21,7 @@ func (h Handler) GetUser(ctx context.Context) (oas.GetUserRes, error) {
 		return nil, fmt.Errorf("failed to get user")
 	}
 
-	return &oas.UserResponse{Data: *user.MapUserToApi()}, nil
+	return &oas.UserResponse{TrackingId: utils.GetTraceID(ctx), Data: *user.MapUserToApi()}, nil
 }
 
 func (h Handler) GetUsers(ctx context.Context) (oas.GetUsersRes, error) {
@@ -34,7 +35,7 @@ func (h Handler) GetUsers(ctx context.Context) (oas.GetUsersRes, error) {
 		res[i] = *user.MapUserToApi()
 	}
 
-	return &oas.UsersResponse{Data: res}, nil
+	return &oas.UsersResponse{TrackingId: utils.GetTraceID(ctx), Data: res}, nil
 }
 
 func (h Handler) GetUserById(ctx context.Context, params oas.GetUserByIdParams) (oas.GetUserByIdRes, error) {
@@ -43,7 +44,7 @@ func (h Handler) GetUserById(ctx context.Context, params oas.GetUserByIdParams) 
 		return nil, fmt.Errorf("failed to get user by id")
 	}
 
-	return &oas.UserResponse{Data: *user.MapUserToApi()}, nil
+	return &oas.UserResponse{TrackingId: utils.GetTraceID(ctx), Data: *user.MapUserToApi()}, nil
 }
 
 func (h Handler) UpdateUser(ctx context.Context, req *oas.User) (oas.UpdateUserRes, error) {
@@ -52,7 +53,7 @@ func (h Handler) UpdateUser(ctx context.Context, req *oas.User) (oas.UpdateUserR
 		return nil, fmt.Errorf("failed to update user")
 	}
 
-	return &oas.UserResponse{Data: *user.MapUserToApi()}, nil
+	return &oas.UserResponse{TrackingId: utils.GetTraceID(ctx), Data: *user.MapUserToApi()}, nil
 }
 
 // Logout implements oas.Handler.
@@ -100,5 +101,5 @@ func (h Handler) CheckUser(ctx context.Context, params oas.CheckUserParams) (oas
 		return &oas.CheckUserBadRequest{}, err
 	}
 	// Возвращаем пользователя
-	return &oas.UserResponse{Data: *userFromDb.MapUserToApi()}, nil
+	return &oas.UserResponse{TrackingId: utils.GetTraceID(ctx), Data: *userFromDb.MapUserToApi()}, nil
 }

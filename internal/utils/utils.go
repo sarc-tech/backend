@@ -1,11 +1,13 @@
 package utils
 
 import (
+	"context"
 	"database/sql"
 	"os"
 	"time"
 
 	"github.com/sarc-tech/backend/internal/oas"
+	"go.opentelemetry.io/otel/trace"
 )
 
 func getEnv(key, fallback string) string {
@@ -13,6 +15,15 @@ func getEnv(key, fallback string) string {
 		return value
 	}
 	return fallback
+}
+
+func GetTraceID(ctx context.Context) string {
+    span := trace.SpanFromContext(ctx)
+    sc := span.SpanContext()
+    if sc.HasTraceID() {
+        return sc.TraceID().String()
+    }
+    return ""
 }
 
 func ToNullStringFromOptString(s oas.OptString) sql.NullString {

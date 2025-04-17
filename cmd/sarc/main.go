@@ -22,7 +22,7 @@ import (
 const shutdownTimeout = 15 * time.Second
 
 func main() {
-	app.Run(func(ctx context.Context, lg *zap.Logger, m *app.Metrics) error {
+	app.Run(func(ctx context.Context, lg *zap.Logger, m *app.Telemetry) error {
 		addr := "0.0.0.0:"+utils.PORT
 
 		lg.Info("Initializing",zap.String("http.addr", addr),)

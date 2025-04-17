@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/sarc-tech/backend/internal/oas"
+	"github.com/sarc-tech/backend/internal/utils"
 )
 
 // AddIncidents implements oas.Handler.
@@ -13,7 +14,7 @@ func (h Handler) AddIncident(ctx context.Context, req *oas.Incident) (oas.AddInc
 	if err != nil {
 		return nil, err
 	}
-	return &oas.IncidentResponse{Data: *inc.MapIncidentToAPi()}, nil
+	return &oas.IncidentResponse{TrackingId: utils.GetTraceID(ctx), Data: *inc.MapIncidentToAPi()}, nil
 }
 
 // DeleteIncident implements oas.Handler.
@@ -31,7 +32,7 @@ func (h Handler) GetIncidentById(ctx context.Context, params oas.GetIncidentById
 	if err != nil {
 		return &oas.GetIncidentByIdBadRequest{}, fmt.Errorf("failed to get incident by id")
 	}
-	return &oas.IncidentResponse{Data: *inc.MapIncidentToAPi()}, nil
+	return &oas.IncidentResponse{TrackingId: utils.GetTraceID(ctx), Data: *inc.MapIncidentToAPi()}, nil
 }
 
 // GetIncidents implements oas.Handler.
@@ -46,7 +47,7 @@ func (h Handler) GetIncidents(ctx context.Context) (oas.GetIncidentsRes, error) 
 		res[i] = *inc.MapIncidentToAPi()
 	}
 
-	return &oas.IncidentsResponse{Data: res}, nil
+	return &oas.IncidentsResponse{TrackingId: utils.GetTraceID(ctx), Data: res}, nil
 }
 
 // UpdateIncidents implements oas.Handler.
@@ -56,5 +57,5 @@ func (h Handler) UpdateIncident(ctx context.Context, req *oas.Incident) (oas.Upd
 		return nil, fmt.Errorf("failed to update incident")
 	}
 
-	return &oas.IncidentResponse{Data: *inc.MapIncidentToAPi()}, nil
+	return &oas.IncidentResponse{TrackingId: utils.GetTraceID(ctx), Data: *inc.MapIncidentToAPi()}, nil
 }
