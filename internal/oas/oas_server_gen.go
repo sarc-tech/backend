@@ -10,7 +10,6 @@ import (
 type Handler interface {
 	IncidentsHandler
 	StatusesHandler
-	UsersHandler
 }
 
 // IncidentsHandler handles operations described by OpenAPI v3 specification.
@@ -59,48 +58,6 @@ type StatusesHandler interface {
 	//
 	// GET /statuses
 	GetStatuses(ctx context.Context) (GetStatusesRes, error)
-}
-
-// UsersHandler handles operations described by OpenAPI v3 specification.
-//
-// x-ogen-operation-group: Users
-type UsersHandler interface {
-	// CheckUser implements CheckUser operation.
-	//
-	// Returns a user.
-	//
-	// POST /checkuser/{token}
-	CheckUser(ctx context.Context, params CheckUserParams) (CheckUserRes, error)
-	// GetUser implements getUser operation.
-	//
-	// Returns a user.
-	//
-	// GET /user
-	GetUser(ctx context.Context) (GetUserRes, error)
-	// GetUserById implements getUserById operation.
-	//
-	// Returns a user.
-	//
-	// GET /user/{userId}
-	GetUserById(ctx context.Context, params GetUserByIdParams) (GetUserByIdRes, error)
-	// GetUsers implements getUsers operation.
-	//
-	// Returns a users.
-	//
-	// GET /users
-	GetUsers(ctx context.Context) (GetUsersRes, error)
-	// Logout implements Logout operation.
-	//
-	// Удаляет сессию пользователя.
-	//
-	// POST /logout
-	Logout(ctx context.Context) (LogoutRes, error)
-	// UpdateUser implements updateUser operation.
-	//
-	// Update a user.
-	//
-	// PUT /user
-	UpdateUser(ctx context.Context, req *User) (UpdateUserRes, error)
 }
 
 // Server implements http server based on OpenAPI v3 specification and

@@ -7,15 +7,9 @@ type OperationName = string
 
 const (
 	AddIncidentOperation     OperationName = "AddIncident"
-	CheckUserOperation       OperationName = "CheckUser"
 	DeleteIncidentOperation  OperationName = "DeleteIncident"
 	GetIncidentByIdOperation OperationName = "GetIncidentById"
 	GetIncidentsOperation    OperationName = "GetIncidents"
 	GetStatusesOperation     OperationName = "GetStatuses"
-	GetUserOperation         OperationName = "GetUser"
-	GetUserByIdOperation     OperationName = "GetUserById"
-	GetUsersOperation        OperationName = "GetUsers"
-	LogoutOperation          OperationName = "Logout"
 	UpdateIncidentOperation  OperationName = "UpdateIncident"
-	UpdateUserOperation      OperationName = "UpdateUser"
 )

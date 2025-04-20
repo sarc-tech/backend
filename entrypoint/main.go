@@ -15,7 +15,7 @@ import (
 	"github.com/sarc-tech/backend/internal/api"
 	"github.com/sarc-tech/backend/internal/httpmiddleware"
 	"github.com/sarc-tech/backend/internal/oas"
-	"github.com/sarc-tech/backend/internal/repo"
+	"github.com/sarc-tech/backend/internal/controller"
 	"github.com/sarc-tech/backend/internal/utils"
 )
 
@@ -27,10 +27,10 @@ func main() {
 
 		lg.Info("Initializing",zap.String("http.addr", addr),)
 
-		repo := repo.NewCommonDBHandler(lg)
-		defer repo.Close()
+		mainController := controller.NewController(lg)
+		defer mainController.Close()
 
-		oasServer, err := oas.NewServer(api.NewHandler(repo), api.NewHandlerSecurity(repo))
+		oasServer, err := oas.NewServer(api.NewHandler(mainController), api.NewHandlerSecurity(mainController))
 		if err != nil {
 			return errors.Wrap(err, "server init")
 		}

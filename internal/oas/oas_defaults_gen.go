@@ -25,19 +25,3 @@ func (s *StatusesResponse) setDefaults() {
 		s.Status = val
 	}
 }
-
-// setDefaults set default value of fields.
-func (s *UserResponse) setDefaults() {
-	{
-		val := string("Ok")
-		s.Status = val
-	}
-}
-
-// setDefaults set default value of fields.
-func (s *UsersResponse) setDefaults() {
-	{
-		val := string("Ok")
-		s.Status = val
-	}
-}

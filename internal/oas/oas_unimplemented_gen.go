@@ -22,15 +22,6 @@ func (UnimplementedHandler) AddIncident(ctx context.Context, req *Incident) (r A
 	return r, ht.ErrNotImplemented
 }
 
-// CheckUser implements CheckUser operation.
-//
-// Returns a user.
-//
-// POST /checkuser/{token}
-func (UnimplementedHandler) CheckUser(ctx context.Context, params CheckUserParams) (r CheckUserRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
 // DeleteIncident implements deleteIncident operation.
 //
 // Delete an incidents.
@@ -67,56 +58,11 @@ func (UnimplementedHandler) GetStatuses(ctx context.Context) (r GetStatusesRes, 
 	return r, ht.ErrNotImplemented
 }
 
-// GetUser implements getUser operation.
-//
-// Returns a user.
-//
-// GET /user
-func (UnimplementedHandler) GetUser(ctx context.Context) (r GetUserRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// GetUserById implements getUserById operation.
-//
-// Returns a user.
-//
-// GET /user/{userId}
-func (UnimplementedHandler) GetUserById(ctx context.Context, params GetUserByIdParams) (r GetUserByIdRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// GetUsers implements getUsers operation.
-//
-// Returns a users.
-//
-// GET /users
-func (UnimplementedHandler) GetUsers(ctx context.Context) (r GetUsersRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// Logout implements Logout operation.
-//
-// Удаляет сессию пользователя.
-//
-// POST /logout
-func (UnimplementedHandler) Logout(ctx context.Context) (r LogoutRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
 // UpdateIncident implements updateIncident operation.
 //
 // Update an existing incidents by Id.
 //
 // PUT /incidents
 func (UnimplementedHandler) UpdateIncident(ctx context.Context, req *Incident) (r UpdateIncidentRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// UpdateUser implements updateUser operation.
-//
-// Update a user.
-//
-// PUT /user
-func (UnimplementedHandler) UpdateUser(ctx context.Context, req *User) (r UpdateUserRes, _ error) {
 	return r, ht.ErrNotImplemented
 }

@@ -6,7 +6,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/sarc-tech/backend/internal/oas"
 	"go.opentelemetry.io/otel/trace"
 )
 
@@ -26,25 +25,11 @@ func GetTraceID(ctx context.Context) string {
     return ""
 }
 
-func ToNullStringFromOptString(s oas.OptString) sql.NullString {
-	if s.IsSet() {
-        return sql.NullString{String: s.Value, Valid: true}
-    }
-    return sql.NullString{Valid: false}
-}
-
 func ToNullStringFromString(s *string) sql.NullString {
     if s != nil && *s != "" {
         return sql.NullString{String: *s, Valid: true}
     }
     return sql.NullString{Valid: false}
-}
-
-func ToNullDateFromOptDate(t oas.OptDate) sql.NullTime {
-	if t.IsSet() {
-		return sql.NullTime{Time: t.Value, Valid: true}
-    }
-    return sql.NullTime{Valid: false}
 }
 
 func ToNullDateFromString(s string) sql.NullTime {

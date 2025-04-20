@@ -10,7 +10,7 @@ import (
 
 // GetStatuses implements oas.Handler.
 func (h Handler) GetStatuses(ctx context.Context) (oas.GetStatusesRes, error) {
-	statuses, err := h.repo.GetStatuses()
+	statuses, err := h.controller.GetStatuses()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get statuses")
 	}

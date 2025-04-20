@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/sarc-tech/backend/internal/repo"
+	"github.com/sarc-tech/backend/internal/controller"
 
 	"github.com/sarc-tech/backend/internal/oas"
 )
@@ -13,31 +13,31 @@ import (
 var _ oas.Handler = (*Handler)(nil)
 
 type Handler struct {
-	repo                     *repo.RepoHandler
+	controller                     *controller.Controller
 	oas.UnimplementedHandler // automatically implement all methods
 }
 
-func NewHandler(repo *repo.RepoHandler) *Handler {
+func NewHandler(controller *controller.Controller) *Handler {
 	return &Handler{
-		repo: repo,
+		controller: controller,
 	}
 }
 
 // HandleUserLogin implements oas.Handler.
 type HandlerSecurity struct {
-	repo                     *repo.RepoHandler
+	controller                     *controller.Controller
 }
 
-func NewHandlerSecurity(repo *repo.RepoHandler) *HandlerSecurity {
+func NewHandlerSecurity(controller *controller.Controller) *HandlerSecurity {
 	return &HandlerSecurity{
-		repo: repo,
+		controller: controller,
 	}
 }
 
 // HandleBearerAuth implements oas.SecurityHandler.
 func (h HandlerSecurity) HandleBearerAuth(ctx context.Context, operationName oas.OperationName, t oas.BearerAuth) (context.Context, error) {
-	_, err := h.repo.GetSession(t.Token)
-	if err != nil {
+	valid := h.controller.GetSession(t.Token)
+	if !valid {
 		return ctx, fmt.Errorf("unauthorized")
 	}
 	ctx = context.WithValue(ctx, "TOKEN", t.Token)

@@ -1,10 +1,10 @@
-package repo
+package controller
 
 import (
 	"github.com/sarc-tech/backend/internal/models"
 )
 
-func (r *RepoHandler) GetStatuses() ([]*models.Status, error) {
+func (r *Controller) GetStatuses() ([]*models.Status, error) {
 	statuses := []*models.Status{}
 	err := r.Db.Select(
 		&statuses, 

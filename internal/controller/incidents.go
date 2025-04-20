@@ -1,4 +1,4 @@
-package repo
+package controller
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 	"github.com/sarc-tech/backend/internal/oas"
 )
 
-func (r *RepoHandler) GetIncidentById(id int) (*models.Incident, error) {
+func (r *Controller) GetIncidentById(id int) (*models.Incident, error) {
 	incident := &models.Incident{}
 	err := r.Db.Get(
 		incident,
@@ -17,7 +17,7 @@ func (r *RepoHandler) GetIncidentById(id int) (*models.Incident, error) {
 	return incident, err
 }
 
-func (r *RepoHandler) CreateIncident(incidentToCreate *oas.Incident) (*models.Incident, error) {
+func (r *Controller) CreateIncident(incidentToCreate *oas.Incident) (*models.Incident, error) {
 	incidentModel := models.MapIncidentFromAPi(incidentToCreate)
 	rows, err := r.Db.NamedQuery(
 		`INSERT INTO incident_incident` + incidentModel.GetSqlInsertMapString() + `RETURNING ` + incidentModel.GetSqlReturningString(), 
@@ -37,12 +37,12 @@ func (r *RepoHandler) CreateIncident(incidentToCreate *oas.Incident) (*models.In
 	return &incident, fmt.Errorf("insert failed, no rows returned")
 }
 
-func (r *RepoHandler) DeleteIncident(id int) (err error) {
+func (r *Controller) DeleteIncident(id int) (err error) {
 	_, err = r.Db.Exec(`DELETE FROM incident_incident WHERE id = $1;`, id)
 	return
 }
 
-func (r *RepoHandler) GetIncidents() ([]*models.Incident, error) {
+func (r *Controller) GetIncidents() ([]*models.Incident, error) {
 	var incidents []*models.Incident
 	err := r.Db.Select(
 		&incidents, 
@@ -51,7 +51,7 @@ func (r *RepoHandler) GetIncidents() ([]*models.Incident, error) {
 	return incidents, err
 }
 
-func (r *RepoHandler) UpdateIncident(incidentToUpdate *oas.Incident) (*models.Incident, error) {
+func (r *Controller) UpdateIncident(incidentToUpdate *oas.Incident) (*models.Incident, error) {
 	incidentModel := models.MapIncidentFromAPi(incidentToUpdate)
 	rows, err := r.Db.NamedQuery(
 		`UPDATE incident_incident SET` + incidentModel.GetSqlUpdateMapString() + `WHERE id = :id RETURNING ` + incidentModel.GetSqlReturningString(),

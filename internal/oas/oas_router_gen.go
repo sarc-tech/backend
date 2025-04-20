@@ -61,34 +61,6 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				break
 			}
 			switch elem[0] {
-			case 'c': // Prefix: "checkuser/"
-				origElem := elem
-				if l := len("checkuser/"); len(elem) >= l && elem[0:l] == "checkuser/" {
-					elem = elem[l:]
-				} else {
-					break
-				}
-
-				// Param: "token"
-				// Leaf parameter
-				args[0] = elem
-				elem = ""
-
-				if len(elem) == 0 {
-					// Leaf node.
-					switch r.Method {
-					case "POST":
-						s.handleCheckUserRequest([1]string{
-							args[0],
-						}, elemIsEscaped, w, r)
-					default:
-						s.notAllowed(w, r, "POST")
-					}
-
-					return
-				}
-
-				elem = origElem
 			case 'i': // Prefix: "incidents"
 				origElem := elem
 				if l := len("incidents"); len(elem) >= l && elem[0:l] == "incidents" {
@@ -147,27 +119,6 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				}
 
 				elem = origElem
-			case 'l': // Prefix: "logout"
-				origElem := elem
-				if l := len("logout"); len(elem) >= l && elem[0:l] == "logout" {
-					elem = elem[l:]
-				} else {
-					break
-				}
-
-				if len(elem) == 0 {
-					// Leaf node.
-					switch r.Method {
-					case "POST":
-						s.handleLogoutRequest([0]string{}, elemIsEscaped, w, r)
-					default:
-						s.notAllowed(w, r, "POST")
-					}
-
-					return
-				}
-
-				elem = origElem
 			case 's': // Prefix: "statuses"
 				origElem := elem
 				if l := len("statuses"); len(elem) >= l && elem[0:l] == "statuses" {
@@ -186,79 +137,6 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					}
 
 					return
-				}
-
-				elem = origElem
-			case 'u': // Prefix: "user"
-				origElem := elem
-				if l := len("user"); len(elem) >= l && elem[0:l] == "user" {
-					elem = elem[l:]
-				} else {
-					break
-				}
-
-				if len(elem) == 0 {
-					switch r.Method {
-					case "GET":
-						s.handleGetUserRequest([0]string{}, elemIsEscaped, w, r)
-					case "PUT":
-						s.handleUpdateUserRequest([0]string{}, elemIsEscaped, w, r)
-					default:
-						s.notAllowed(w, r, "GET,PUT")
-					}
-
-					return
-				}
-				switch elem[0] {
-				case '/': // Prefix: "/"
-					origElem := elem
-					if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
-						elem = elem[l:]
-					} else {
-						break
-					}
-
-					// Param: "userId"
-					// Leaf parameter
-					args[0] = elem
-					elem = ""
-
-					if len(elem) == 0 {
-						// Leaf node.
-						switch r.Method {
-						case "GET":
-							s.handleGetUserByIdRequest([1]string{
-								args[0],
-							}, elemIsEscaped, w, r)
-						default:
-							s.notAllowed(w, r, "GET")
-						}
-
-						return
-					}
-
-					elem = origElem
-				case 's': // Prefix: "s"
-					origElem := elem
-					if l := len("s"); len(elem) >= l && elem[0:l] == "s" {
-						elem = elem[l:]
-					} else {
-						break
-					}
-
-					if len(elem) == 0 {
-						// Leaf node.
-						switch r.Method {
-						case "GET":
-							s.handleGetUsersRequest([0]string{}, elemIsEscaped, w, r)
-						default:
-							s.notAllowed(w, r, "GET")
-						}
-
-						return
-					}
-
-					elem = origElem
 				}
 
 				elem = origElem
@@ -357,36 +235,6 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 				break
 			}
 			switch elem[0] {
-			case 'c': // Prefix: "checkuser/"
-				origElem := elem
-				if l := len("checkuser/"); len(elem) >= l && elem[0:l] == "checkuser/" {
-					elem = elem[l:]
-				} else {
-					break
-				}
-
-				// Param: "token"
-				// Leaf parameter
-				args[0] = elem
-				elem = ""
-
-				if len(elem) == 0 {
-					// Leaf node.
-					switch method {
-					case "POST":
-						r.name = CheckUserOperation
-						r.summary = "Получение токена"
-						r.operationID = "CheckUser"
-						r.pathPattern = "/checkuser/{token}"
-						r.args = args
-						r.count = 1
-						return r, true
-					default:
-						return
-					}
-				}
-
-				elem = origElem
 			case 'i': // Prefix: "incidents"
 				origElem := elem
 				if l := len("incidents"); len(elem) >= l && elem[0:l] == "incidents" {
@@ -467,31 +315,6 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 				}
 
 				elem = origElem
-			case 'l': // Prefix: "logout"
-				origElem := elem
-				if l := len("logout"); len(elem) >= l && elem[0:l] == "logout" {
-					elem = elem[l:]
-				} else {
-					break
-				}
-
-				if len(elem) == 0 {
-					// Leaf node.
-					switch method {
-					case "POST":
-						r.name = LogoutOperation
-						r.summary = "Выход из акаунта"
-						r.operationID = "Logout"
-						r.pathPattern = "/logout"
-						r.args = args
-						r.count = 0
-						return r, true
-					default:
-						return
-					}
-				}
-
-				elem = origElem
 			case 's': // Prefix: "statuses"
 				origElem := elem
 				if l := len("statuses"); len(elem) >= l && elem[0:l] == "statuses" {
@@ -514,95 +337,6 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 					default:
 						return
 					}
-				}
-
-				elem = origElem
-			case 'u': // Prefix: "user"
-				origElem := elem
-				if l := len("user"); len(elem) >= l && elem[0:l] == "user" {
-					elem = elem[l:]
-				} else {
-					break
-				}
-
-				if len(elem) == 0 {
-					switch method {
-					case "GET":
-						r.name = GetUserOperation
-						r.summary = "получение текущего пользователя"
-						r.operationID = "getUser"
-						r.pathPattern = "/user"
-						r.args = args
-						r.count = 0
-						return r, true
-					case "PUT":
-						r.name = UpdateUserOperation
-						r.summary = "Обновление текущего пользователя"
-						r.operationID = "updateUser"
-						r.pathPattern = "/user"
-						r.args = args
-						r.count = 0
-						return r, true
-					default:
-						return
-					}
-				}
-				switch elem[0] {
-				case '/': // Prefix: "/"
-					origElem := elem
-					if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
-						elem = elem[l:]
-					} else {
-						break
-					}
-
-					// Param: "userId"
-					// Leaf parameter
-					args[0] = elem
-					elem = ""
-
-					if len(elem) == 0 {
-						// Leaf node.
-						switch method {
-						case "GET":
-							r.name = GetUserByIdOperation
-							r.summary = "получение пользователя по id"
-							r.operationID = "getUserById"
-							r.pathPattern = "/user/{userId}"
-							r.args = args
-							r.count = 1
-							return r, true
-						default:
-							return
-						}
-					}
-
-					elem = origElem
-				case 's': // Prefix: "s"
-					origElem := elem
-					if l := len("s"); len(elem) >= l && elem[0:l] == "s" {
-						elem = elem[l:]
-					} else {
-						break
-					}
-
-					if len(elem) == 0 {
-						// Leaf node.
-						switch method {
-						case "GET":
-							r.name = GetUsersOperation
-							r.summary = "получение списка пользователей"
-							r.operationID = "getUsers"
-							r.pathPattern = "/users"
-							r.args = args
-							r.count = 0
-							return r, true
-						default:
-							return
-						}
-					}
-
-					elem = origElem
 				}
 
 				elem = origElem

@@ -10,7 +10,7 @@ import (
 
 // AddIncidents implements oas.Handler.
 func (h Handler) AddIncident(ctx context.Context, req *oas.Incident) (oas.AddIncidentRes, error) {
-	inc, err := h.repo.CreateIncident(req)
+	inc, err := h.controller.CreateIncident(req)
 	if err != nil {
 		return nil, err
 	}
@@ -19,7 +19,7 @@ func (h Handler) AddIncident(ctx context.Context, req *oas.Incident) (oas.AddInc
 
 // DeleteIncident implements oas.Handler.
 func (h Handler) DeleteIncident(ctx context.Context, params oas.DeleteIncidentParams) (oas.DeleteIncidentRes, error) {
-	err := h.repo.DeleteIncident(params.IncidentId)
+	err := h.controller.DeleteIncident(params.IncidentId)
 	if err != nil {
 		return &oas.DeleteIncidentBadRequest{}, fmt.Errorf("failed to delete incident by id")
 	}
@@ -28,7 +28,7 @@ func (h Handler) DeleteIncident(ctx context.Context, params oas.DeleteIncidentPa
 
 // GetIncidentById implements oas.Handler.
 func (h Handler) GetIncidentById(ctx context.Context, params oas.GetIncidentByIdParams) (oas.GetIncidentByIdRes, error) {
-	inc, err := h.repo.GetIncidentById(params.IncidentId)
+	inc, err := h.controller.GetIncidentById(params.IncidentId)
 	if err != nil {
 		return &oas.GetIncidentByIdBadRequest{}, fmt.Errorf("failed to get incident by id")
 	}
@@ -37,7 +37,7 @@ func (h Handler) GetIncidentById(ctx context.Context, params oas.GetIncidentById
 
 // GetIncidents implements oas.Handler.
 func (h Handler) GetIncidents(ctx context.Context) (oas.GetIncidentsRes, error) {
-	incidents, err := h.repo.GetIncidents()
+	incidents, err := h.controller.GetIncidents()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get incidents")
 	}
@@ -52,7 +52,7 @@ func (h Handler) GetIncidents(ctx context.Context) (oas.GetIncidentsRes, error) 
 
 // UpdateIncidents implements oas.Handler.
 func (h Handler) UpdateIncident(ctx context.Context, req *oas.Incident) (oas.UpdateIncidentRes, error) {
-	inc, err := h.repo.UpdateIncident(req)
+	inc, err := h.controller.UpdateIncident(req)
 	if err != nil {
 		return nil, fmt.Errorf("failed to update incident")
 	}

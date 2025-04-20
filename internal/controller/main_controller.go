@@ -1,4 +1,4 @@
-package repo
+package controller
 
 import (
 	"fmt"
@@ -8,28 +8,29 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/jmoiron/sqlx"
+	"github.com/syncMutex/sarc_user_lib/lib"
 )
 
 // Compile-time check for Handler.
-type RepoHandler struct {
+type Controller struct {
 	Db *sqlx.DB
-	sessionTTL *sessionTTLMap
+	authLib *lib.AuthClient
 }
 
-func NewCommonDBHandler(lg *zap.Logger) *RepoHandler {
+func NewController(lg *zap.Logger) *Controller {
 	port, _ := strconv.ParseInt(utils.POSTGRES_PORT, 10, 16)
 	connStr := fmt.Sprintf("postgresql://%s:%s@%s:%d/%s?sslmode=disable", utils.POSTGRES_USER, utils.POSTGRES_PASSWORD, utils.POSTGRES_HOST, uint16(port), utils.POSTGRES_DB)
 	db, err := sqlx.Connect("postgres", connStr)
-	sessionTTL := newSessionTTLMap(7200)
 	if err != nil {
 		lg.Fatal("error connecting to DB", zap.Error(err))
 	}
-	return &RepoHandler{
+	authLib := lib.NewAuthClient("localhost")
+	return &Controller{
 		Db: db,
-		sessionTTL: sessionTTL,
+		authLib: authLib,
 	}
 }
 
-func (r *RepoHandler) Close() {
+func (r *Controller) Close() {
 	r.Db.Close()
 }

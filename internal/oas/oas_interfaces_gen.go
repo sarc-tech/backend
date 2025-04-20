@@ -5,10 +5,6 @@ type AddIncidentRes interface {
 	addIncidentRes()
 }
 
-type CheckUserRes interface {
-	checkUserRes()
-}
-
 type DeleteIncidentRes interface {
 	deleteIncidentRes()
 }
@@ -25,26 +21,6 @@ type GetStatusesRes interface {
 	getStatusesRes()
 }
 
-type GetUserByIdRes interface {
-	getUserByIdRes()
-}
-
-type GetUserRes interface {
-	getUserRes()
-}
-
-type GetUsersRes interface {
-	getUsersRes()
-}
-
-type LogoutRes interface {
-	logoutRes()
-}
-
 type UpdateIncidentRes interface {
 	updateIncidentRes()
-}
-
-type UpdateUserRes interface {
-	updateUserRes()
 }
